@@ -2,11 +2,13 @@
 interface Props {
   title?: string;
   description?: string;
+  episodeTitle?: string;
 }
 
 const {
   title = "Мужские голоса — подкаст",
   description = "Подкаст про мужчин и для мужчин. О внутренней силе, уязвимости и пути, на котором мужчина учится быть собой.",
+  episodeTitle,
 } = Astro.props;
 ---
 
@@ -22,8 +24,25 @@ const {
   </head>
   <body>
     <header class="site-header">
-      <a href={import.meta.env.BASE_URL} class="site-title">Мужские голоса</a>
-      <span class="site-tagline">подкаст</span>
+      <div class="site-header-inner">
+        <a href={import.meta.env.BASE_URL} class="site-brand">
+          <img
+            src={`${import.meta.env.BASE_URL}logo.jpg`}
+            alt=""
+            class="site-logo"
+            width="32"
+            height="32"
+          />
+          <span class="site-title">Мужские голоса</span>
+        </a>
+        {!episodeTitle && <span class="site-tagline">подкаст</span>}
+        {episodeTitle && (
+          <span class="site-meta">
+            <span class="site-sep" aria-hidden="true">·</span>
+            <span class="site-episode">{episodeTitle}</span>
+          </span>
+        )}
+      </div>
     </header>
 
     <main class="site-main">
@@ -32,8 +51,8 @@ const {
 
     <footer class="site-footer">
       <p>
-        Ведущие: <a href="https://t.me/sensologist" rel="noopener">Анри</a> и
-        <a href="https://t.me/AlexanderOlnev" rel="noopener">Александр</a>
+        Ведущие: <a href="https://t.me/sensologist" target="_blank" rel="noopener noreferrer">Анри</a> и
+        <a href="https://t.me/AlexanderOlnev" target="_blank" rel="noopener noreferrer">Александр</a>
       </p>
     </footer>
 
@@ -44,10 +63,12 @@ const {
         --color-bg: #ffffff;
         --color-border: #e5e5e5;
         --color-accent: #f5d116;
+        --color-brand: #2b6e9b;
         --font-serif: Georgia, "Times New Roman", serif;
         --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
           Arial, sans-serif;
         --content-width: 720px;
+        --header-height: 60px;
       }
 
       * {
@@ -86,26 +107,80 @@ const {
       }
 
       .site-header {
-        max-width: var(--content-width);
-        margin: 0 auto;
-        padding: 32px 24px 16px;
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        background: var(--color-bg);
+        padding: 16px 24px;
         display: flex;
         align-items: baseline;
         gap: 12px;
         border-bottom: 1px solid var(--color-border);
+        min-height: var(--header-height);
+      }
+
+      .site-header-inner {
+        max-width: var(--content-width);
+        margin: 0 auto;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+      }
+
+      .site-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        flex-shrink: 0;
+      }
+
+      .site-logo {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        display: block;
+      }
+
+      .site-meta {
+        font-family: var(--font-sans);
+        font-size: 18px;
+        line-height: 1;
+        color: var(--color-muted);
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        min-width: 0;
+        overflow: hidden;
+      }
+
+      .site-sep {
+        color: var(--color-border);
+        flex-shrink: 0;
+      }
+
+      .site-episode {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        min-width: 0;
       }
 
       .site-title {
         font-family: var(--font-sans);
         font-weight: 700;
-        font-size: 20px;
+        font-size: 18px;
+        line-height: 1;
         text-decoration: none;
       }
 
       .site-tagline {
         font-family: var(--font-sans);
         color: var(--color-muted);
-        font-size: 14px;
+        font-size: 18px;
+        line-height: 1;
       }
 
       .site-main {
@@ -122,6 +197,7 @@ const {
         font-family: var(--font-sans);
         font-size: 14px;
         color: var(--color-muted);
+        line-height: 1.4;
       }
 
       .site-footer p {

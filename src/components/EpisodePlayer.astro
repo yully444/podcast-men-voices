@@ -39,9 +39,29 @@ const { audioUrl, embedUrl, title } = Astro.props;
   )
 }
 
+<script>
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    const button = target.closest<HTMLElement>("[data-seek]");
+    if (!button) return;
+    const seek = Number(button.dataset.seek);
+    if (!Number.isFinite(seek)) return;
+    const audio = document.querySelector<HTMLAudioElement>("audio");
+    if (!audio) return;
+    audio.currentTime = seek;
+    audio.play().catch(() => {});
+  });
+</script>
+
 <style>
   .player {
+    position: sticky;
+    top: var(--header-height);
+    z-index: 20;
     margin: 24px 0 32px;
+    padding: 12px 0;
+    background: var(--color-bg);
   }
 
   .player audio {

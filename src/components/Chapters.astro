@@ -1,0 +1,104 @@
+---
+import { parseTimecode } from "../lib/format";
+
+interface Chapter {
+  time: string;
+  title: string;
+}
+
+interface Props {
+  intro?: string;
+  chapters?: Chapter[];
+}
+
+const { intro, chapters = [] } = Astro.props;
+---
+
+{
+  chapters.length > 0 && (
+    <section class="chapters">
+      <h2 class="chapters-title">Что обсуждаем</h2>
+      {intro && <p class="chapters-intro">{intro}</p>}
+      <ol class="chapter-list">
+        {chapters.map((chapter) => (
+          <li class="chapter">
+            <button
+              type="button"
+              class="chapter-time"
+              data-seek={parseTimecode(chapter.time)}
+              aria-label={`Перейти к ${chapter.time}`}
+            >
+              {chapter.time}
+            </button>
+            <span class="chapter-text">{chapter.title}</span>
+          </li>
+        ))}
+      </ol>
+    </section>
+  )
+}
+
+<style>
+  .chapters {
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .chapters-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 16px;
+  }
+
+  .chapters-intro {
+    margin: 0 0 20px;
+    color: var(--color-text);
+  }
+
+  .chapter-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .chapter {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 12px;
+    align-items: baseline;
+  }
+
+  .chapter-time {
+    font-family: var(--font-sans);
+    font-variant-numeric: tabular-nums;
+    font-size: 14px;
+    color: var(--color-brand);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .chapter-time:hover {
+    text-decoration: underline;
+  }
+
+  .chapter-text {
+    color: var(--color-text);
+  }
+
+  @media (max-width: 540px) {
+    .chapter {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+  }
+</style>

@@ -3,6 +3,8 @@ import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import EpisodePlayer from "../../components/EpisodePlayer.astro";
 import Transcript from "../../components/Transcript.astro";
+import Chapters from "../../components/Chapters.astro";
+import { formatDuration } from "../../lib/format";
 
 export async function getStaticPaths() {
   const episodes = await getCollection("episodes");
@@ -32,7 +34,11 @@ const vttKey = Object.keys(vttFiles).find((path) =>
 const vttRaw = vttKey ? vttFiles[vttKey] : undefined;
 ---
 
-<Layout title={`${episode.data.title} — Мужские голоса`} description={episode.data.description}>
+<Layout
+  title={`${episode.data.title} — Мужские голоса`}
+  description={episode.data.description}
+  episodeTitle={episode.data.title}
+>
   <article class="episode">
     <nav class="back">
       <a href={import.meta.env.BASE_URL}>← Все выпуски</a>
@@ -41,11 +47,19 @@ const vttRaw = vttKey ? vttFiles[vttKey] : undefined;
     <header class="episode-header">
       <div class="episode-meta">
         {episode.data.season && episode.data.number && (
-          <span>Сезон {episode.data.season}, выпуск {episode.data.number}</span>
+          <>
+            <span>Выпуск {String(episode.data.number).padStart(2, "0")}</span>
+            <span class="sep">·</span>
+            <span>Сезон {episode.data.season}</span>
+            <span class="sep">·</span>
+          </>
         )}
-        {episode.data.duration && <span>·</span>}
-        {episode.data.duration && <span>{episode.data.duration}</span>}
-        <span>·</span>
+        {formatDuration(episode.data.duration) && (
+          <>
+            <span>{formatDuration(episode.data.duration)}</span>
+            <span class="sep">·</span>
+          </>
+        )}
         <time datetime={episode.data.date.toISOString()}>
           {dateFormatter.format(episode.data.date)}
         </time>
@@ -62,6 +76,8 @@ const vttRaw = vttKey ? vttFiles[vttKey] : undefined;
     <div class="episode-body">
       <Content />
     </div>
+
+    <Chapters intro={episode.data.chaptersIntro} chapters={episode.data.chapters} />
 
     <Transcript vttRaw={vttRaw} />
   </article>
@@ -97,6 +113,10 @@ const vttRaw = vttKey ? vttFiles[vttKey] : undefined;
     margin-bottom: 12px;
   }
 
+  .episode-meta .sep {
+    color: var(--color-border);
+  }
+
   .episode-title {
     font-size: 36px;
     margin: 0;
@@ -104,12 +124,13 @@ const vttRaw = vttKey ? vttFiles[vttKey] : undefined;
   }
 
   .episode-body :global(h2) {
-    font-size: 22px;
+    font-size: 28px;
     margin-top: 32px;
   }
 
   .episode-body :global(h3) {
     font-size: 18px;
+    font-weight: 700;
     margin-top: 24px;
   }
 

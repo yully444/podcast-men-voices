@@ -41,22 +41,6 @@ const cues = vttRaw ? parseVtt(vttRaw) : [];
   }
 </section>
 
-<script>
-  document.addEventListener("click", (event) => {
-    const target = event.target;
-    if (!(target instanceof HTMLElement)) return;
-    const button = target.closest<HTMLElement>("[data-seek]");
-    if (!button) return;
-    const seek = Number(button.dataset.seek);
-    if (!Number.isFinite(seek)) return;
-    const audio = document.querySelector<HTMLAudioElement>("audio");
-    if (!audio) return;
-    audio.currentTime = seek;
-    audio.play().catch(() => {});
-    audio.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  });
-</script>
-
 <style>
   .transcript {
     margin-top: 48px;
@@ -97,8 +81,8 @@ const cues = vttRaw ? parseVtt(vttRaw) : [];
   .cue-time {
     font-family: var(--font-sans);
     font-variant-numeric: tabular-nums;
-    font-size: 13px;
-    color: var(--color-muted);
+    font-size: 14px;
+    color: var(--color-brand);
     background: none;
     border: none;
     padding: 0;
@@ -107,7 +91,6 @@ const cues = vttRaw ? parseVtt(vttRaw) : [];
   }
 
   .cue-time:hover {
-    color: var(--color-text);
     text-decoration: underline;
   }
 

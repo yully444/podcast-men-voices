@@ -12,6 +12,15 @@ const episodes = defineCollection({
     duration: z.string().optional(),
     season: z.number().optional(),
     number: z.number().optional(),
+    chaptersIntro: z.string().optional(),
+    chapters: z
+      .array(
+        z.object({
+          time: z.string(),
+          title: z.string(),
+        }),
+      )
+      .optional(),
   }),
 });
 
