@@ -1,0 +1,115 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+
+const episodes = (await getCollection("episodes")).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+const dateFormatter = new Intl.DateTimeFormat("ru-RU", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+---
+
+<Layout>
+  <section class="intro">
+    <p>
+      «Мужские голоса» — подкаст про мужчин и для мужчин. Через личный опыт и
+      прожитые состояния мы говорим о внутренней силе, уязвимости и пути, на
+      котором мужчина учится быть собой.
+    </p>
+  </section>
+
+  <section class="episodes">
+    <h2 class="episodes-title">Все выпуски</h2>
+    <ol class="episode-list">
+      {
+        episodes.map((episode) => (
+          <li class="episode-item">
+            <a href={`/episodes/${episode.id}/`} class="episode-link">
+              <div class="episode-meta">
+                <span>Выпуск</span>
+                {episode.data.duration && <span>·</span>}
+                {episode.data.duration && <span>{episode.data.duration}</span>}
+                <span>·</span>
+                <time datetime={episode.data.date.toISOString()}>
+                  {dateFormatter.format(episode.data.date)}
+                </time>
+              </div>
+              <h3 class="episode-title">{episode.data.title}</h3>
+              <p class="episode-description">{episode.data.description}</p>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+</Layout>
+
+<style>
+  .intro {
+    margin: 16px 0 48px;
+    color: var(--color-muted);
+  }
+
+  .intro p {
+    margin: 0;
+  }
+
+  .episodes-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 24px;
+  }
+
+  .episode-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .episode-item {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .episode-item:last-child {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .episode-link {
+    display: block;
+    padding: 24px 0;
+    text-decoration: none;
+  }
+
+  .episode-link:hover .episode-title {
+    text-decoration: underline;
+    text-decoration-color: var(--color-text);
+    text-underline-offset: 4px;
+  }
+
+  .episode-meta {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--color-muted);
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+
+  .episode-title {
+    font-size: 28px;
+    margin: 0 0 8px;
+  }
+
+  .episode-description {
+    margin: 0;
+    color: var(--color-text);
+  }
+</style>

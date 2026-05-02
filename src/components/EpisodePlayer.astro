@@ -1,0 +1,71 @@
+---
+interface Props {
+  audioUrl?: string;
+  embedUrl?: string;
+  title: string;
+}
+
+const { audioUrl, embedUrl, title } = Astro.props;
+---
+
+{
+  audioUrl && (
+    <div class="player">
+      <audio controls preload="metadata" src={audioUrl} aria-label={title}>
+        Ваш браузер не поддерживает HTML5 аудио.
+      </audio>
+    </div>
+  )
+}
+
+{
+  !audioUrl && embedUrl && (
+    <div class="player player--embed">
+      <iframe
+        src={embedUrl}
+        title={title}
+        loading="lazy"
+        allow="autoplay; encrypted-media"
+      />
+    </div>
+  )
+}
+
+{
+  !audioUrl && !embedUrl && (
+    <div class="player player--placeholder">
+      <p>Аудио будет добавлено позже.</p>
+    </div>
+  )
+}
+
+<style>
+  .player {
+    margin: 24px 0 32px;
+  }
+
+  .player audio {
+    width: 100%;
+  }
+
+  .player--embed iframe {
+    width: 100%;
+    min-height: 180px;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+  }
+
+  .player--placeholder {
+    padding: 16px 20px;
+    background: #fafafa;
+    border: 1px dashed var(--color-border);
+    border-radius: 12px;
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 14px;
+  }
+
+  .player--placeholder p {
+    margin: 0;
+  }
+</style>

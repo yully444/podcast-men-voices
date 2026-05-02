@@ -1,0 +1,137 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import EpisodePlayer from "../../components/EpisodePlayer.astro";
+import Transcript from "../../components/Transcript.astro";
+
+export async function getStaticPaths() {
+  const episodes = await getCollection("episodes");
+  return episodes.map((episode) => ({
+    params: { id: episode.id },
+    props: { episode },
+  }));
+}
+
+const vttFiles = import.meta.glob<string>(
+  "../../content/episodes/*.vtt",
+  { query: "?raw", import: "default", eager: true },
+);
+
+const { episode } = Astro.props;
+const { Content } = await render(episode);
+
+const dateFormatter = new Intl.DateTimeFormat("ru-RU", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+
+const vttKey = Object.keys(vttFiles).find((path) =>
+  path.endsWith(`/${episode.id}.vtt`),
+);
+const vttRaw = vttKey ? vttFiles[vttKey] : undefined;
+---
+
+<Layout title={`${episode.data.title} — Мужские голоса`} description={episode.data.description}>
+  <article class="episode">
+    <nav class="back">
+      <a href="/">← Все выпуски</a>
+    </nav>
+
+    <header class="episode-header">
+      <div class="episode-meta">
+        {episode.data.season && episode.data.number && (
+          <span>Сезон {episode.data.season}, выпуск {episode.data.number}</span>
+        )}
+        {episode.data.duration && <span>·</span>}
+        {episode.data.duration && <span>{episode.data.duration}</span>}
+        <span>·</span>
+        <time datetime={episode.data.date.toISOString()}>
+          {dateFormatter.format(episode.data.date)}
+        </time>
+      </div>
+      <h1 class="episode-title">{episode.data.title}</h1>
+    </header>
+
+    <EpisodePlayer
+      audioUrl={episode.data.audioUrl}
+      embedUrl={episode.data.embedUrl}
+      title={episode.data.title}
+    />
+
+    <div class="episode-body">
+      <Content />
+    </div>
+
+    <Transcript vttRaw={vttRaw} />
+  </article>
+</Layout>
+
+<style>
+  .back {
+    margin-bottom: 24px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+  }
+
+  .back a {
+    color: var(--color-muted);
+    text-decoration: none;
+  }
+
+  .back a:hover {
+    color: var(--color-text);
+  }
+
+  .episode-header {
+    margin-bottom: 24px;
+  }
+
+  .episode-meta {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--color-muted);
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  .episode-title {
+    font-size: 36px;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .episode-body :global(h2) {
+    font-size: 22px;
+    margin-top: 32px;
+  }
+
+  .episode-body :global(h3) {
+    font-size: 18px;
+    margin-top: 24px;
+  }
+
+  .episode-body :global(p) {
+    margin: 0 0 16px;
+  }
+
+  .episode-body :global(ul),
+  .episode-body :global(ol) {
+    padding-left: 24px;
+    margin: 0 0 16px;
+  }
+
+  .episode-body :global(li) {
+    margin-bottom: 6px;
+  }
+
+  .episode-body :global(blockquote) {
+    margin: 16px 0;
+    padding-left: 16px;
+    border-left: 3px solid var(--color-border);
+    color: var(--color-muted);
+    font-style: italic;
+  }
+</style>

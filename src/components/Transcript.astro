@@ -1,0 +1,124 @@
+---
+import { parseVtt, formatTime } from "../lib/vtt";
+
+interface Props {
+  vttRaw?: string;
+}
+
+const { vttRaw } = Astro.props;
+const cues = vttRaw ? parseVtt(vttRaw) : [];
+---
+
+<section class="transcript">
+  <h2 class="transcript-title">Транскрипт</h2>
+
+  {
+    cues.length === 0 && (
+      <p class="transcript-empty">
+        Транскрипт скоро появится. Пока можно слушать аудио выше.
+      </p>
+    )
+  }
+
+  {
+    cues.length > 0 && (
+      <ol class="cues">
+        {cues.map((cue) => (
+          <li class="cue">
+            <button
+              type="button"
+              class="cue-time"
+              data-seek={cue.start}
+              aria-label={`Перейти к ${formatTime(cue.start)}`}
+            >
+              {formatTime(cue.start)}
+            </button>
+            <p class="cue-text">{cue.text}</p>
+          </li>
+        ))}
+      </ol>
+    )
+  }
+</section>
+
+<script>
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    const button = target.closest<HTMLElement>("[data-seek]");
+    if (!button) return;
+    const seek = Number(button.dataset.seek);
+    if (!Number.isFinite(seek)) return;
+    const audio = document.querySelector<HTMLAudioElement>("audio");
+    if (!audio) return;
+    audio.currentTime = seek;
+    audio.play().catch(() => {});
+    audio.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  });
+</script>
+
+<style>
+  .transcript {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .transcript-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 24px;
+  }
+
+  .transcript-empty {
+    color: var(--color-muted);
+    font-style: italic;
+  }
+
+  .cues {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .cue {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 12px;
+    align-items: baseline;
+  }
+
+  .cue-time {
+    font-family: var(--font-sans);
+    font-variant-numeric: tabular-nums;
+    font-size: 13px;
+    color: var(--color-muted);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .cue-time:hover {
+    color: var(--color-text);
+    text-decoration: underline;
+  }
+
+  .cue-text {
+    margin: 0;
+  }
+
+  @media (max-width: 540px) {
+    .cue {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+  }
+</style>
