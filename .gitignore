@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # claude code session data
 .claude/
+
+# local notes (instructions, drafts) — kept on disk, not pushed
+NOTES.md
