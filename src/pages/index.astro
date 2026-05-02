@@ -28,7 +28,7 @@ const dateFormatter = new Intl.DateTimeFormat("ru-RU", {
       {
         episodes.map((episode) => (
           <li class="episode-item">
-            <a href={`/episodes/${episode.id}/`} class="episode-link">
+            <a href={`${import.meta.env.BASE_URL}episodes/${episode.id}/`} class="episode-link">
               <div class="episode-meta">
                 <span>Выпуск</span>
                 {episode.data.duration && <span>·</span>}

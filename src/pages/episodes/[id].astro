@@ -35,7 +35,7 @@ const vttRaw = vttKey ? vttFiles[vttKey] : undefined;
 <Layout title={`${episode.data.title} — Мужские голоса`} description={episode.data.description}>
   <article class="episode">
     <nav class="back">
-      <a href="/">← Все выпуски</a>
+      <a href={import.meta.env.BASE_URL}>← Все выпуски</a>
     </nav>
 
     <header class="episode-header">
