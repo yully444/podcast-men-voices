@@ -466,16 +466,12 @@ const contacts = [
       .navBurger { display: inline-flex !important; }
       .heroCanvas { aspect-ratio: 5/3 !important; }
       .heroCredit {
-        position: absolute !important;
-        left: 0 !important; right: 0 !important;
-        bottom: 11% !important; top: auto !important;
-        text-align: center !important;
-        padding: 0 16px !important;
-        margin: 0 !important;
+        position: static !important;
+        right: auto !important; bottom: auto !important; top: auto !important;
+        text-align: right !important;
+        margin-top: 24px !important;
+        padding: 0 4px !important;
       }
-      .heroCredit .mono { color: rgba(236,230,216,0.6) !important; }
-      .heroCredit a.mensVoicesLink { color: var(--paper) !important; font-size: 18px !important; justify-content: center !important; }
-      .heroCredit a.mensVoicesLink .mensVoicesArrow { color: var(--accent) !important; }
       #schedule ul li { grid-template-columns: 92px 1fr !important; gap: 14px !important; }
       #schedule ul li .display { font-size: 16px !important; }
       #pricing .display { font-size: 24px !important; }
