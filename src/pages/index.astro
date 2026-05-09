@@ -1,240 +1,1337 @@
 ---
-import { getCollection } from "astro:content";
-import Layout from "../layouts/Layout.astro";
-import { formatDuration } from "../lib/format";
+const baseUrl = import.meta.env.BASE_URL;
+const podcastUrl = `${baseUrl}podcast/`;
 
-const episodes = (await getCollection("episodes")).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
-);
+// Build the torn-hole SVG paths server-side using a seeded RNG.
+// Mirrors the algorithm from the design source (primitives.jsx → TornHole).
+function buildTornHole() {
+  let s = 7;
+  const rnd = () => {
+    s = (s * 9301 + 49297) % 233280;
+    return s / 233280;
+  };
+  const cx = 500;
+  const cy = 500;
+  const rx = 360;
+  const ry = 380;
+  const N = 220;
+  const pts: [number, number][] = [];
+  for (let i = 0; i < N; i++) {
+    const a = (i / N) * Math.PI * 2;
+    const slow =
+      Math.sin(a * 3 + 0.7) * 0.04 + Math.cos(a * 5 - 1.2) * 0.03;
+    const jitter = (rnd() - 0.5) * 0.06;
+    const notch = rnd() > 0.94 ? -0.07 - rnd() * 0.05 : 0;
+    const jr = 1 + slow + jitter + notch;
+    pts.push([
+      cx + Math.cos(a) * rx * jr,
+      cy + Math.sin(a) * ry * jr,
+    ]);
+  }
+  let outer = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+  for (let i = 1; i < N; i++)
+    outer += ` L ${pts[i][0].toFixed(1)} ${pts[i][1].toFixed(1)}`;
+  outer += " Z";
 
-const dateFormatter = new Intl.DateTimeFormat("ru-RU", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-});
+  const innerPts = pts.map(([x, y]) => {
+    const dx = x - cx;
+    const dy = y - cy;
+    const inset = 16 + rnd() * 6;
+    const len = Math.hypot(dx, dy);
+    return [x - (dx / len) * inset, y - (dy / len) * inset];
+  });
+  let inner = `M ${innerPts[0][0].toFixed(1)} ${innerPts[0][1].toFixed(1)}`;
+  for (let i = 1; i < N; i += 2)
+    inner += ` L ${innerPts[i][0].toFixed(1)} ${innerPts[i][1].toFixed(1)}`;
+  inner += " Z";
+
+  let fibers = "";
+  for (let i = 0; i < N; i += 3) {
+    if (rnd() > 0.55) continue;
+    const [x, y] = pts[i];
+    const dx = x - cx;
+    const dy = y - cy;
+    const len = Math.hypot(dx, dy);
+    const nx = dx / len;
+    const ny = dy / len;
+    const out = 4 + rnd() * 9;
+    const tx = -ny * (rnd() - 0.5) * 6;
+    const ty = nx * (rnd() - 0.5) * 6;
+    fibers += `M ${x.toFixed(1)} ${y.toFixed(1)} L ${(x + nx * out + tx).toFixed(1)} ${(y + ny * out + ty).toFixed(1)} `;
+  }
+  return { outer, inner, fibers };
+}
+
+const torn = buildTornHole();
+
+const navItems = [
+  { label: "О формате", href: "#about" },
+  { label: "Ведущие", href: "#facilitators" },
+  { label: "Расписание", href: "#schedule" },
+  { label: "Стоимость", href: "#pricing" },
+  { label: "Подкаст", href: podcastUrl },
+];
+
+const heroInfo = [
+  { l: "ЧТО", v: "Мастерская-тренинг", sub: "" },
+  { l: "ГДЕ", v: "Батуми", sub: "адрес — после регистрации" },
+  { l: "КОГДА", v: "31 мая 2026", sub: "воскресенье · 11—22" },
+  { l: "ДЛЯ КОГО", v: "Только мужчины", sub: "группа 8—14 участников" },
+];
+
+const aboutBlocks = [
+  {
+    title: "Групповая динамика",
+    body: "Практическая мастерская с возможностью живого взаимодействия с собой и с другими мужчинами, которые тоже ищут больше ясности, контакта и честности с собой.",
+  },
+  {
+    title: "Мужчины для мужчин",
+    body: "Только мужчины — в поддерживающем и уважительном пространстве. Мы верим, что внутри каждого мужчины уже есть ресурс для решения жизненных задач. Наша задача — помочь восстановить контакт со своим внутренним голосом.",
+  },
+  {
+    title: "Два ведущих — одна цель",
+    body: "Участники смогут исследовать свои желания и потребности через разные подходы и способы взаимодействия — телесный и фасилитационный.",
+  },
+];
+
+const explore = [
+  "лучше различать свои желания и автоматические «надо»",
+  "замечать сигналы тела и внутреннего напряжения",
+  "понимать, как они обходятся со своими потребностями",
+  "получить опыт честного мужского взаимодействия без конкуренции",
+  "чувствовать больше ясности и контакта с собой",
+];
+
+const how = [
+  "телесные практики для работы с внутренними сигналами",
+  "мужские круги и живой обмен историями",
+  "работа в парах и мини-группах",
+  "другие способы лучше слышать и понимать себя",
+];
+
+const facilitators = [
+  {
+    firstName: "Анри",
+    lastName: "Савиновский",
+    role: "ВЕДУЩИЙ • ТЕЛО",
+    photo: `${baseUrl}masterclass/henri.jpg`,
+    photoPosition: "center 25%",
+    bio: "Телесно-ориентированный психотерапевт и коуч, ведущий мужских групп. Со-автор подкаста «Мужские голоса». Работает с телесными сигналами как с языком, на котором желания становятся слышны.",
+    accent: "var(--accent)",
+    links: [
+      { label: "Личный сайт", href: "https://menstherapy.tilda.ws/" },
+      { label: "Telegram-канал", href: "https://t.me/sensologist" },
+    ],
+  },
+  {
+    firstName: "Александр",
+    lastName: "Ольнев",
+    role: "ВЕДУЩИЙ • КРУГ",
+    photo: `${baseUrl}masterclass/alex.jpg`,
+    photoPosition: "center 30%",
+    bio: "Фасилитатор мужских кругов, IT-специалист. Со-автор подкаста «Мужские голоса». Создаёт пространство, в котором мужской разговор становится возможным — без иерархии и оценок.",
+    accent: "var(--olive-deep)",
+    links: [
+      { label: "Telegram-канал", href: "https://t.me/AlexanderOlnev" },
+    ],
+  },
+];
+
+const schedule = [
+  { time: "10:45 – 11:00", title: "Сбор" },
+  { time: "11:00 – 11:30", title: "Знакомство с ведущими и введение" },
+  { time: "11:30 – 14:00", title: "Практическая работа с перерывом на кофе-брейк" },
+  { time: "14:00 – 15:00", title: "Обед" },
+  { time: "15:00 – 16:30", title: "Практическая работа" },
+  { time: "18:00 – 19:00", title: "Ужин" },
+  { time: "19:00 – 22:00", title: "Мужской круг «Решение»" },
+];
+
+const includes = [
+  "Зал для практик",
+  "Кофе-брейк и чай",
+  "Лёгкий обед",
+  "Все материалы и поддержка ведущих",
+];
+
+const contacts = [
+  { l: "СВЯЗЬ С ОРГАНИЗАТОРОМ", v: "Анри Савиновский", sub: "по всем вопросам" },
+  { l: "ТЕЛЕГРАМ", v: "@sensologist", sub: "написать Анри Савинскому", href: "https://t.me/sensologist" },
+  { l: "МЕСТО", v: "г. Батуми", sub: "адрес — после регистрации" },
+  { l: "ДАТА", v: "31 мая 2026", sub: "воскресенье" },
+];
 ---
 
-<Layout>
-  <section class="hero">
-    <img
-      class="hero-logo"
-      src={`${import.meta.env.BASE_URL}logo.jpg`}
-      alt="Мужские голоса"
-      width="160"
-      height="160"
-    />
-    <div class="hero-text">
-      <h1 class="hero-title">Мужские голоса</h1>
-      <p>
-        «Мужские голоса» — подкаст про мужчин и для мужчин. Через личный опыт и
-        прожитые состояния мы говорим о внутренней силе, уязвимости и пути, на
-        котором мужчина учится быть собой.
-      </p>
-      <p>
-        Мы, <a href="https://t.me/sensologist" target="_blank" rel="noopener noreferrer">Анри</a> и <a
-          href="https://t.me/AlexanderOlnev"
-          target="_blank" rel="noopener noreferrer">Александр</a
-        >, размышляем о поиске, выборе, страхах и смыслах, которые рождаются
-        наедине с собой.
-      </p>
-      <p>
-        О мужской уязвимости — как источнике силы, глубины и подлинности. О том,
-        как проходить свои испытания, оставаться живыми и настоящими.
-      </p>
-      <p>
-        Каждый эпизод — это шаг по пути героя, который живёт в каждом из нас.
-      </p>
-      <div class="hero-links">
-        <a
-          class="hero-link"
-          href="https://golosa.mave.digital/"
-          target="_blank" rel="noopener noreferrer">Подкаст на mave.digital</a
-        >
-        <a
-          class="hero-link"
-          href="https://music.yandex.com/album/39245440"
-          target="_blank" rel="noopener noreferrer">Подкаст на Я.Музыка</a
-        >
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Мастерская-тренинг «Чего хочет мужчина?». Один день для встречи с собой среди мужчин — телесные практики, мужской круг и честный разговор. 31 мая 2026, Батуми." />
+  <link rel="icon" type="image/svg+xml" href={`${baseUrl}favicon.svg`} />
+  <title>Чего хочет мужчина? — Мастерская-тренинг, Батуми, 31 мая 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #ece6d8;
+      --paper-2: #e3dccb;
+      --paper-deep: #d8d0bc;
+      --ink: #232220;
+      --ink-soft: #3a3a37;
+      --ink-mute: #6a6760;
+      --void: #2b2b29;
+      --accent: #e8951f;
+      --accent-soft: #f0a838;
+      --olive: #6a6a2c;
+      --olive-deep: #4d5224;
+      --rule: rgba(35,34,32,0.16);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      background-image:
+        radial-gradient(ellipse at 20% 30%, rgba(0,0,0,0.025) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 70%, rgba(0,0,0,0.02) 0%, transparent 55%),
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.045 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+      pointer-events: none;
+      z-index: 1;
+      mix-blend-mode: multiply;
+    }
+    #top { position: relative; z-index: 2; }
+    .display { font-family: 'Unbounded', sans-serif; font-weight: 800; letter-spacing: -0.02em; line-height: 0.92; }
+    .mono { font-family: 'JetBrains Mono', monospace; font-weight: 400; }
+    .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-mute); }
+    ::selection { background: var(--accent); color: #fff; }
+    a { color: inherit; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+    input, textarea { font-family: inherit; }
+
+    /* Hover-line link patterns */
+    .mensVoicesLink { transition: color 240ms; }
+    .mensVoicesLink .mensVoicesText {
+      background-image: linear-gradient(currentColor, currentColor);
+      background-size: 0% 1px; background-position: 0 100%;
+      background-repeat: no-repeat;
+      transition: background-size 320ms cubic-bezier(.2,.8,.2,1);
+      padding-bottom: 2px;
+    }
+    .mensVoicesLink .mensVoicesArrow {
+      display: inline-block;
+      transition: transform 320ms cubic-bezier(.2,.8,.2,1);
+    }
+    .mensVoicesLink:hover { color: var(--accent); }
+    .mensVoicesLink:hover .mensVoicesText { background-size: 100% 1px; }
+    .mensVoicesLink:hover .mensVoicesArrow { transform: translateX(6px) rotate(-8deg); }
+
+    .podcastCta { display: inline-flex; align-items: center; gap: 4px; }
+    .podcastCtaText {
+      background-image: linear-gradient(currentColor, currentColor);
+      background-size: 0% 1px; background-position: 0 100%;
+      background-repeat: no-repeat;
+      transition: background-size 320ms cubic-bezier(.2,.8,.2,1);
+      padding-bottom: 2px;
+    }
+    .podcastCtaArrow { display: inline-block; transition: transform 320ms cubic-bezier(.2,.8,.2,1); }
+    .podcastStrip:hover .podcastCta { color: var(--accent) !important; }
+    .podcastStrip:hover .podcastCtaText { background-size: 100% 1px; }
+    .podcastStrip:hover .podcastCtaArrow { transform: translateX(6px) rotate(-8deg); }
+    .podcastStrip .podcastPlay { transition: transform 320ms cubic-bezier(.2,.8,.2,1); }
+    .podcastStrip:hover .podcastPlay { transform: scale(1.08); }
+
+    .facLink { transition: color 240ms; }
+    .facLinkText {
+      background-image: linear-gradient(currentColor, currentColor);
+      background-size: 0% 1px; background-position: 0 100%;
+      background-repeat: no-repeat;
+      transition: background-size 320ms cubic-bezier(.2,.8,.2,1);
+      padding-bottom: 2px;
+    }
+    .facLinkArrow { display: inline-block; transition: transform 320ms cubic-bezier(.2,.8,.2,1); }
+    .facLink:hover { color: var(--facAccent, var(--accent)); }
+    .facLink:hover .facLinkText { background-size: 100% 1px; }
+    .facLink:hover .facLinkArrow { transform: translateX(6px) rotate(-8deg); }
+
+    /* CTA button */
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 26px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 500;
+      border-radius: 0;
+      transition: all 200ms ease;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+      border: 1px solid transparent;
+    }
+    .cta--sm { padding: 10px 18px; font-size: 12px; }
+    .cta--filled { background: var(--accent); color: #1a1a18; border-color: var(--accent); }
+    .cta--filled:hover { background: var(--accent-soft); border-color: var(--accent-soft); }
+    .cta--outline { background: transparent; color: var(--ink); border-color: var(--ink); }
+    .cta--outline:hover { background: var(--ink); color: var(--paper); }
+    .cta__arrow { font-size: 14px; transform: translateY(-1px); }
+
+    /* Nav */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+      padding: 20px 48px;
+      background: transparent;
+      border-bottom: 1px solid transparent;
+      transition: all 280ms ease;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 24px;
+    }
+    .nav.is-scrolled {
+      padding: 12px 48px;
+      background: rgba(236,230,216,0.92);
+      backdrop-filter: blur(12px) saturate(150%);
+      -webkit-backdrop-filter: blur(12px) saturate(150%);
+      border-bottom-color: var(--rule);
+    }
+    .nav__brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); }
+    .nav__mark {
+      width: 28px; height: 28px; background: var(--accent);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: 16px;
+      color: var(--ink);
+    }
+    .nav__name { font-family: 'Unbounded', sans-serif; font-weight: 800;
+      letter-spacing: -0.005em; font-size: 14px; line-height: 0.92; }
+    .nav__items { display: flex; align-items: center; gap: 4px; }
+    .navLink {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+      padding: 10px 14px; color: var(--ink-soft); text-decoration: none;
+      transition: color 160ms;
+    }
+    .navLink:hover { color: var(--accent); }
+    .navBurger {
+      display: none;
+      width: 40px; height: 40px; margin-left: 8px;
+      background: transparent; border: 1px solid var(--ink);
+      cursor: pointer; padding: 0;
+      align-items: center; justify-content: center;
+    }
+    .navBurger > span {
+      display: block; position: relative; width: 18px; height: 12px;
+    }
+    .navBurger > span > span {
+      position: absolute; left: 0; right: 0; height: 1.5px; background: var(--ink);
+    }
+    .navBurger > span > span:nth-child(1) { top: 0; }
+    .navBurger > span > span:nth-child(2) { top: 5px; }
+    .navBurger > span > span:nth-child(3) { top: 10px; }
+
+    .menuOverlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 60;
+      background: var(--paper);
+      flex-direction: column;
+      padding: 20px 24px;
+      overflow-y: auto;
+    }
+    .menuOverlay.is-open { display: flex; }
+    .menuOverlay__head { display: flex; justify-content: space-between; align-items: center; }
+    .menuOverlay__close {
+      width: 40px; height: 40px;
+      background: transparent; border: 1px solid var(--ink);
+      font-size: 18px; color: var(--ink); line-height: 1;
+    }
+    .menuOverlay__list { margin-top: 32px; display: flex; flex-direction: column; gap: 0; }
+    .menuOverlay__list a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
+      padding: 16px 0; color: var(--ink-soft);
+      text-decoration: none; border-bottom: 1px solid var(--rule);
+    }
+
+    /* Scroll-top */
+    .scrollTop {
+      position: fixed; right: 20px; bottom: 20px; z-index: 45;
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--ink); color: var(--paper);
+      border: 0; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transform: translateY(20px); pointer-events: none;
+      transition: opacity 240ms, transform 240ms;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+    }
+    .scrollTop.is-visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+    /* Hero scroll cue */
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; transform: scaleY(0.6); transform-origin: top; }
+      50% { opacity: 1; transform: scaleY(1); }
+    }
+
+    /* Apply modal */
+    @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+    .applyOverlay { display: none; position: fixed; inset: 0; z-index: 100; }
+    .applyOverlay.is-open { display: flex; animation: fade 200ms ease; }
+    .applyBackdrop { position: absolute; inset: 0; background: rgba(20,20,18,0.7); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+    .applyModal {
+      position: relative; margin: auto;
+      width: min(720px, 92vw); max-height: 90vh; overflow: auto;
+      background: var(--paper);
+      box-shadow: 0 60px 100px -30px rgba(0,0,0,0.5);
+      animation: slideUp 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .applyTopbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 28px;
+      border-bottom: 1px solid var(--rule);
+      background: var(--paper-2);
+    }
+    .applyProgress { display: flex; gap: 4px; padding: 0 28px; margin-top: 12px; }
+    .applyProgress > span { flex: 1; height: 3px; background: var(--paper-deep); transition: background 300ms; }
+    .applyProgress > span.is-active { background: var(--accent); }
+    .applyBody { padding: 40px 48px 48px; }
+    .applyField {
+      width: 100%; padding: 16px 0; font-size: 22px;
+      font-family: 'Unbounded', sans-serif; font-weight: 400;
+      background: transparent; border: none;
+      border-bottom: 1px solid var(--ink);
+      color: var(--ink); outline: none;
+      letter-spacing: -0.01em;
+    }
+    .applyField--multi { resize: vertical; min-height: 96px; }
+    .applyChip {
+      padding: 10px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+      background: transparent; color: var(--ink);
+      border: 1px solid var(--rule);
+      transition: all 180ms;
+    }
+    .applyChip.is-active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+    .applyChip--accent.is-active { background: var(--accent); color: var(--ink); border-color: var(--accent); }
+    .applyStep { display: none; }
+    .applyStep.is-active { display: block; }
+    .applyDone { display: none; text-align: center; padding: 20px 0 16px; }
+    .applyDone.is-active { display: block; }
+    .applyNav {
+      margin-top: 36px; display: flex;
+      justify-content: space-between; align-items: center; gap: 16px;
+    }
+    .applyBack {
+      font-family: 'JetBrains Mono', monospace; font-size: 12px;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--ink-mute); cursor: pointer;
+      padding: 12px 8px;
+      margin-left: -8px;
+    }
+    .applyBack:disabled { color: var(--paper-deep); cursor: not-allowed; }
+    .applyNext.is-disabled { opacity: 0.4; pointer-events: none; }
+
+    /* Facilitator card hover lift */
+    .facCard { transition: transform 300ms ease, box-shadow 300ms ease; }
+    .facCard:hover { transform: translateY(-4px); box-shadow: 0 30px 60px -30px rgba(0,0,0,0.25); }
+
+    /* About lists: no separators between items */
+    .aboutListUl { list-style: none; }
+
+    /* ========== MOBILE ========== */
+    @media (max-width: 860px) {
+      #top > section { padding-top: 56px !important; padding-bottom: 56px !important; }
+      #top > section:first-of-type { padding-top: 80px !important; padding-bottom: 56px !important; }
+      #contacts { padding-top: 56px !important; padding-bottom: 56px !important; }
+      #top > section > div { padding-left: 20px !important; padding-right: 20px !important; }
+      #top [data-grid] { grid-template-columns: 1fr !important; gap: 20px !important; }
+      #top h1.display, #top h2.display { font-size: clamp(34px, 9vw, 56px) !important; line-height: 0.98 !important; }
+      #hero h1.display { font-size: clamp(56px, 15vw, 104px) !important; line-height: 0.9 !important; }
+      #top h3.display { font-size: clamp(22px, 6vw, 28px) !important; }
+      #top section p { font-size: 15px !important; line-height: 1.55 !important; }
+      .nav { padding: 10px 16px !important; }
+      .nav__items { gap: 6px !important; }
+      .navLink { display: none !important; }
+      .navBurger { display: inline-flex !important; }
+      .heroCanvas { aspect-ratio: 5/3 !important; }
+      #schedule ul li { grid-template-columns: 92px 1fr !important; gap: 14px !important; }
+      #schedule ul li .display { font-size: 16px !important; }
+      #pricing .display { font-size: 24px !important; }
+      .heroScrollCue { display: none !important; }
+      #top > section:first-of-type { min-height: auto !important; }
+      .heroInfoGrid { display: none !important; }
+      .heroInfoMobile { display: block !important; }
+      .narrativeOpenerBlock { margin-bottom: 24px !important; }
+      .narrativeAside { position: static !important; top: auto !important; margin-bottom: 24px; }
+      .narrativeBr { display: none !important; }
+      .narrativeNbsp { display: inline; }
+      .narrativeOpener {
+        font-size: 16px !important; line-height: 1.65 !important;
+        font-weight: 400 !important; color: var(--ink-soft) !important;
+      }
+      .narrativeOpener br { display: inline; }
+      .narrativeOpenerAccent { font-weight: 400 !important; color: var(--ink-soft) !important; }
+      .narrativeAsideHead {
+        font-family: 'Inter', sans-serif !important;
+        font-size: 16px !important; line-height: 1.65 !important;
+        font-weight: 400 !important; color: var(--ink-soft) !important;
+        letter-spacing: 0 !important;
+      }
+      .narrativeBody { font-size: 16px !important; line-height: 1.65 !important; }
+      .narrativeBody p { font-size: 16px !important; line-height: 1.65 !important; }
+      .narrativeBodyEmphasis {
+        font-weight: 400 !important; color: var(--ink-soft) !important;
+        font-size: 16px !important; line-height: 1.65 !important;
+        padding-top: 0 !important; border-top: 0 !important;
+      }
+      .narrativeAsideQuote {
+        margin-top: 20px !important; padding-top: 0 !important;
+        border-top: 0 !important; padding-left: 16px !important;
+        border-left: 2px solid var(--accent) !important;
+      }
+      .narrativeAsideQuoteText {
+        font-family: 'Inter', sans-serif !important;
+        font-size: 16px !important; font-style: italic !important;
+        color: var(--ink) !important; letter-spacing: 0 !important;
+        line-height: 1.55 !important;
+      }
+      #about .aboutFeatures {
+        grid-template-columns: 1fr !important; gap: 0 !important;
+        background: transparent !important; border: 0 !important;
+      }
+      #about .aboutFeatureCard {
+        min-height: auto !important; padding: 12px 0 !important; gap: 12px !important;
+        border-bottom: 1px solid var(--rule) !important; background: transparent !important;
+      }
+      #about .aboutFeatureCard:last-of-type { border-bottom: 0 !important; }
+      #about .aboutFeatureCard h3.display { font-size: 22px !important; }
+      #about .aboutFeatureCard p { font-size: 15px !important; line-height: 1.5 !important; }
+      #about .aboutLists { margin-top: 12px !important; gap: 0 !important; }
+      #about .aboutListBlock {
+        padding: 12px 0 !important; border-bottom: 1px solid var(--rule);
+        display: flex; flex-direction: column; gap: 12px;
+      }
+      #about .aboutListBlock:last-of-type { border-bottom: 0; }
+      #about .aboutListHead { font-size: 22px !important; color: var(--ink) !important; margin-bottom: 0 !important; }
+      #about .aboutListItem { padding: 4px 0 !important; font-size: 15px !important; line-height: 1.5 !important; gap: 12px !important; }
+      #contacts .contactGrid {
+        display: flex !important; flex-direction: column !important;
+        gap: 0 !important; background: transparent !important; border: 0 !important;
+      }
+      #contacts .contactCell {
+        padding: 14px 0 !important;
+        border-bottom: 1px solid rgba(236,230,216,0.15) !important;
+        display: grid !important; grid-template-columns: 110px 1fr !important;
+        gap: 16px !important; align-items: baseline !important;
+      }
+      #contacts .contactCell:last-of-type { border-bottom: 0 !important; }
+      #contacts .contactCell .display { font-size: 15px !important; margin-bottom: 0 !important; line-height: 1.3 !important; }
+      #contacts .contactCell .mono:first-of-type { font-size: 10px !important; margin-bottom: 0 !important; align-self: center !important; }
+      #contacts .contactCell .mono:last-of-type { display: none !important; }
+      #pricing .standardTier { display: none !important; }
+      #pricing .afterEarly { display: inline; }
+      .applyModal { width: 100% !important; max-width: 100% !important; height: 100% !important; max-height: 100% !important; border-radius: 0 !important; }
+    }
+    @media (max-width: 480px) {
+      #top > section > div { padding-left: 16px !important; padding-right: 16px !important; }
+      #top h1.display, #top h2.display { font-size: clamp(30px, 10vw, 44px) !important; }
+      .nav .cta--filled { display: none !important; }
+    }
+    .afterEarly { display: none; }
+  </style>
+</head>
+<body>
+<div id="top">
+  <!-- Nav -->
+  <nav id="siteNav" class="nav">
+    <a href="#top" class="nav__brand">
+      <span class="nav__mark">?</span>
+      <span class="nav__name">Чего хочет мужчина</span>
+    </a>
+    <div class="nav__items">
+      {navItems.map((it) => (
+        <a href={it.href} class="navLink">{it.label}</a>
+      ))}
+      <button id="burgerBtn" class="navBurger" aria-label="Открыть меню">
+        <span><span></span><span></span><span></span></span>
+      </button>
+      <button class="cta cta--filled cta--sm" data-apply-open style="margin-left: 12px;">
+        <span>Участвовать</span>
+        <span class="cta__arrow">→</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile menu overlay -->
+  <div id="menuOverlay" class="menuOverlay">
+    <div class="menuOverlay__head">
+      <span class="display" style="font-size: 14px; color: var(--ink);">Меню</span>
+      <button id="menuClose" class="menuOverlay__close" aria-label="Закрыть">×</button>
+    </div>
+    <div class="menuOverlay__list">
+      {navItems.map((it) => (
+        <a href={it.href} data-menu-link>{it.label}</a>
+      ))}
+    </div>
+    <button class="cta cta--filled" data-apply-open style="margin-top: 32px;">
+      <span>Участвовать</span>
+      <span class="cta__arrow">→</span>
+    </button>
+  </div>
+
+  <!-- HERO -->
+  <section id="hero" style="position: relative; min-height: 100vh; padding-top: 80px; padding-bottom: 80px; overflow: hidden;">
+    <!-- Event banner -->
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 48px; position: relative; z-index: 3; margin-bottom: 48px;">
+      <div class="heroInfoMobile mono" style="display: none; padding: 12px 0; font-size: 13px; letter-spacing: 0.06em; color: var(--ink); font-weight: 700; text-align: center;">
+        Мастерская-тренинг · <span style="color: var(--accent);">31 мая 2026</span> · Батуми
+      </div>
+      <div class="heroInfoGrid" data-grid style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--rule); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink);">
+        {heroInfo.map((x) => (
+          <div style="background: var(--paper); padding: 24px 24px;">
+            <div class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 12px;">{x.l}</div>
+            <div class="display" style="font-size: 22px; line-height: 1.15; color: var(--ink); margin-bottom: 6px; letter-spacing: -0.01em;">{x.v}</div>
+            <div class="mono" style="font-size: 11px; letter-spacing: 0.18em; color: var(--ink-mute);">{x.sub}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Hero canvas: paper background with the void hole and title -->
+    <div style="position: relative; max-width: 1280px; margin: 0 auto; padding: 0 48px;">
+      <div class="heroCanvas" style="position: relative; aspect-ratio: 1180 / 760; width: 100%;">
+        <!-- Void blob -->
+        <div id="heroVoid" class="heroVoid" style="position: absolute; inset: 8% 10% 6% 18%; transition: transform 80ms linear;">
+          <svg viewBox="0 0 1000 1000" preserveAspectRatio="none" style="width: 100%; height: 100%; display: block;" aria-hidden="true">
+            <defs>
+              <filter id="tornDropShadow" x="-15%" y="-15%" width="130%" height="130%">
+                <feGaussianBlur stdDeviation="14" />
+              </filter>
+              <filter id="tornGrain" x="-5%" y="-5%" width="110%" height="110%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="4" />
+                <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.35 0" />
+                <feComposite in2="SourceGraphic" operator="in" />
+              </filter>
+              <radialGradient id="tornVoidGrad" cx="50%" cy="48%" r="58%">
+                <stop offset="0%" stop-color="var(--void)" stop-opacity="1" />
+                <stop offset="78%" stop-color="var(--void)" stop-opacity="1" />
+                <stop offset="100%" stop-color="#000" stop-opacity="1" />
+              </radialGradient>
+              <linearGradient id="tornRimLight" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="rgba(255,255,255,0.18)" />
+                <stop offset="40%" stop-color="rgba(255,255,255,0)" />
+              </linearGradient>
+            </defs>
+            <path d={torn.outer} fill="rgba(0,0,0,0.35)" filter="url(#tornDropShadow)" transform="translate(0 14)" />
+            <path d={torn.outer} fill="url(#tornVoidGrad)" />
+            <path d={torn.inner} fill="none" stroke="rgba(0,0,0,0.55)" stroke-width="3" />
+            <path d={torn.outer} fill="url(#tornRimLight)" opacity="0.5" />
+            <path d={torn.fibers} stroke="var(--void)" stroke-width="1.6" stroke-linecap="round" fill="none" opacity="0.75" />
+            <path d={torn.fibers} stroke="rgba(0,0,0,0.4)" stroke-width="0.6" stroke-linecap="round" fill="none" />
+          </svg>
+        </div>
+
+        <!-- Title -->
+        <div id="heroTitle" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
+          <h1 class="display" style="font-size: clamp(72px, 13vw, 200px); line-height: 0.86; color: var(--accent); text-align: center; font-weight: 900; letter-spacing: -0.025em; text-shadow: 0 6px 40px rgba(0,0,0,0.35);">
+            Чего хочет<br />мужчина<span style="color: var(--accent-soft);">?</span>
+          </h1>
+        </div>
+
+        <!-- Pod credit -->
+        <div style="position: absolute; right: 2%; bottom: 4%; text-align: right;">
+          <div class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 4px;">ОТ АВТОРОВ ПОДКАСТА</div>
+          <a href={podcastUrl} class="display mensVoicesLink" style="font-size: 22px; color: var(--olive-deep); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; position: relative;">
+            <span class="mensVoicesText">«Мужские голоса»</span>
+            <span class="mensVoicesArrow" aria-hidden="true" style="font-size: 18px;">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA row -->
+    <div style="max-width: 1280px; margin: 0 auto; padding: 48px 48px 0; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
+      <div style="max-width: 460px;">
+        <p style="font-size: 18px; line-height: 1.5; color: var(--ink-soft); font-weight: 400;">
+          Один день для встречи с собой среди мужчин — телесные практики, мужской круг и честный разговор без необходимости кем-то казаться.
+        </p>
+      </div>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <a href="#pricing" class="cta cta--outline">
+          <span>Узнать условия</span>
+          <span class="cta__arrow">→</span>
+        </a>
+        <button class="cta cta--filled" data-apply-open>
+          <span>Оставить заявку</span>
+          <span class="cta__arrow">→</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Scroll cue -->
+    <div id="heroScrollCue" class="heroScrollCue" style="position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0.6; transition: opacity 300ms;">
+      <span class="mono" style="font-size: 10px; letter-spacing: 0.3em; color: var(--ink-mute);">ПРОКРУТИТЬ</span>
+      <div style="width: 1px; height: 32px; background: var(--ink-mute); animation: scrollPulse 2s ease-in-out infinite;"></div>
+    </div>
+  </section>
+
+  <!-- NARRATIVE -->
+  <section id="narrative" style="position: relative; padding-top: 80px; padding-bottom: 80px;">
+    <div style="background: var(--paper-2); position: absolute; inset: 0; z-index: -1;"></div>
+    <div style="max-width: 1100px; margin: 0 auto; padding: 0 48px; position: relative;">
+      <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 56px;">
+        <span class="mono" style="font-size: 12px; color: var(--ink-mute); letter-spacing: 0.18em;">02 / ЛИЧНОЕ ПИСЬМО</span>
+        <span style="flex: 1; height: 1px; background: var(--rule);"></span>
+      </div>
+      <div class="narrativeOpenerBlock" style="margin-bottom: 72px;">
+        <p style="font-family: 'Inter', sans-serif; font-size: clamp(18px, 1.6vw, 22px); color: var(--ink-mute); margin-bottom: 24px; font-style: italic;">
+          Когда я в последний раз по-настоящему задавал себе вопрос:
+        </p>
+        <h3 class="display" style="font-size: clamp(56px, 8vw, 120px); color: var(--accent); line-height: 0.95; margin-bottom: 32px;">
+          «Чего <span style="color: var(--ink);">я<span class="narrativeNbsp">&nbsp;</span></span><br class="narrativeBr" />хочу?»
+        </h3>
+        <p class="narrativeOpener" style="font-size: clamp(20px, 2vw, 28px); line-height: 1.45; font-weight: 300; color: var(--ink-soft);">
+          Не для семьи, не для работы, не потому что «так правильно».<br />
+          <em class="narrativeOpenerAccent" style="color: var(--accent); font-style: normal; font-weight: 500;">А для себя.</em>
+        </p>
+      </div>
+      <div data-grid style="display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start;">
+        <aside class="narrativeAside" style="position: sticky; top: 120px;">
+          <p class="narrativeAsideHead display" style="font-size: 24px; line-height: 1.2; color: var(--ink); letter-spacing: -0.01em;">
+            И&nbsp;это совсем не&nbsp;риторический вопрос.
+          </p>
+          <div class="narrativeAsideQuote" style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--rule);">
+            <p class="narrativeAsideQuoteText mono" style="font-size: 12px; color: var(--ink-mute); line-height: 1.6;">
+              что для меня важно?<br />
+              как я это чувствую?<br />
+              как могу выражать в&nbsp;своей жизни?
+            </p>
+          </div>
+        </aside>
+        <div class="narrativeBody" style="display: flex; flex-direction: column; gap: 24px; font-size: 17px; line-height: 1.65; color: var(--ink-soft);">
+          <p>Для многих мужчин контакт со своими желаниями оказывается сложнее, чем кажется. Мы умеем справляться, быть полезными, брать ответственность, решать задачи. Но за всем этим легко потерять контакт с собой.</p>
+          <p>Именно поэтому мы создаём пространство, где можно исследовать свои потребности вместе с другими мужчинами&nbsp;— честно, спокойно и без необходимости кем-то казаться.</p>
+          <p>Через телесные переживания, наблюдение за собой, мужской диалог и групповое взаимодействие мы будем постепенно собирать более ясное понимание себя.</p>
+          <p class="narrativeBodyEmphasis" style="font-weight: 500; color: var(--ink); font-size: 19px; padding-top: 16px; border-top: 1px solid var(--rule);">
+            Приглашаем узнать себя лучше и прикоснуться к&nbsp;своим настоящим желаниям на&nbsp;мужской мастерской «Чего хочет мужчина?»
+          </p>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="episodes">
-    <h2 class="episodes-title">Все выпуски</h2>
-    <ol class="episode-list">
-      {
-        episodes.map((episode) => (
-          <li class="episode-item">
-            <a
-              href={`${import.meta.env.BASE_URL}episodes/${episode.id}/`}
-              class="episode-link"
-            >
-              <div class="episode-meta">
-                {episode.data.season && episode.data.number && (
-                  <>
-                    <span>
-                      Выпуск {String(episode.data.number).padStart(2, "0")}
-                    </span>
-                    <span class="sep">·</span>
-                    <span>Сезон {episode.data.season}</span>
-                    <span class="sep">·</span>
-                  </>
-                )}
-                {formatDuration(episode.data.duration) && (
-                  <>
-                    <span>{formatDuration(episode.data.duration)}</span>
-                    <span class="sep">·</span>
-                  </>
-                )}
-                <time datetime={episode.data.date.toISOString()}>
-                  {dateFormatter.format(episode.data.date)}
-                </time>
-              </div>
-              <h3 class="episode-title">{episode.data.title}</h3>
-              <p class="episode-description">{episode.data.description}</p>
-            </a>
-          </li>
-        ))
-      }
-    </ol>
+  <!-- ABOUT -->
+  <section id="about" style="position: relative; padding-top: 80px; padding-bottom: 80px;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 48px;">
+      <header style="max-width: 980px; margin-bottom: 96px;">
+        <div class="mono" style="font-size: 12px; color: var(--ink-mute); letter-spacing: 0.18em; margin-bottom: 24px;">03 / О ФОРМАТЕ</div>
+        <h2 class="display" style="font-size: clamp(40px, 5vw, 76px); line-height: 0.95; margin-bottom: 32px;">
+          Пространство для разговора <span style="color: var(--accent);">о&nbsp;себе</span>
+        </h2>
+        <p style="font-size: 19px; line-height: 1.6; color: var(--ink-soft); max-width: 620px;">
+          Пространство, где можно слышать, что для тебя важно, как ты это чувствуешь и как можешь это выражать. Без давления, без необходимости быть кем-то другим.
+        </p>
+      </header>
+
+      <div class="aboutFeatures" data-grid style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule);">
+        {aboutBlocks.map((b) => (
+          <div class="aboutFeatureCard" style="background: var(--paper); padding: 40px; display: flex; flex-direction: column; gap: 20px; min-height: 320px; position: relative;">
+            <h3 class="display" style="font-size: 28px; line-height: 1.05; color: var(--ink);">{b.title}</h3>
+            <p style="font-size: 15px; line-height: 1.55; color: var(--ink-soft);">{b.body}</p>
+          </div>
+        ))}
+      </div>
+
+      <div class="aboutLists" data-grid style="margin-top: 96px; display: grid; grid-template-columns: 1fr 1fr; gap: 64px;">
+        <div class="aboutListBlock">
+          <div class="aboutListHead display" style="font-size: 26px; letter-spacing: -0.01em; color: var(--olive-deep); margin-bottom: 28px; font-weight: 600;">После мастерской сможете:</div>
+          <ul class="aboutListUl" style="display: flex; flex-direction: column; gap: 0;">
+            {explore.map((it) => (
+              <li class="aboutListItem" style="display: flex; gap: 20px; align-items: baseline; padding: 10px 0; font-size: 18px; line-height: 1.4; color: var(--ink);">
+                <span class="aboutListDot" style="width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; transform: translateY(-3px);"></span>
+                <span>{it}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="aboutListBlock">
+          <div class="aboutListHead display" style="font-size: 26px; letter-spacing: -0.01em; color: var(--accent); margin-bottom: 28px; font-weight: 600;">Как будем исследовать</div>
+          <ul class="aboutListUl" style="display: flex; flex-direction: column; gap: 0;">
+            {how.map((it) => (
+              <li class="aboutListItem" style="display: flex; gap: 20px; align-items: baseline; padding: 10px 0; font-size: 18px; line-height: 1.4; color: var(--ink);">
+                <span class="aboutListDot" style="width: 6px; height: 6px; border-radius: 50%; background: var(--olive-deep); flex-shrink: 0; transform: translateY(-3px);"></span>
+                <span>{it}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <div style="margin-top: 80px; padding: 28px 32px; background: var(--void); color: var(--paper); display: flex; align-items: flex-start; gap: 24px; flex-wrap: wrap;">
+        <span class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: var(--accent); white-space: nowrap; line-height: 24px;">ВАЖНО!</span>
+        <span style="flex: 1; font-size: 16px; line-height: 24px; font-weight: 400;">
+          Подтверждение о регистрации только после короткого собеседования с ведущим.<br />
+          Это помогает собрать честную и настроенную группу.
+        </span>
+      </div>
+    </div>
   </section>
-</Layout>
 
-<style>
-  .hero {
-    position: relative;
-    margin: 16px 0 56px;
-  }
+  <!-- FACILITATORS -->
+  <section id="facilitators" style="position: relative; padding-top: 80px; padding-bottom: 80px; background: var(--paper-2);">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 48px;">
+      <header data-grid style="margin-bottom: 56px; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: end;">
+        <div>
+          <div class="mono" style="font-size: 12px; letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 24px;">04 / ВЕДУЩИЕ</div>
+          <h2 class="display" style="font-size: clamp(48px, 6vw, 96px); line-height: 0.92;">
+            Два <span style="color: var(--accent);">голоса</span>,<br />один разговор
+          </h2>
+        </div>
+        <p style="font-size: 17px; line-height: 1.6; color: var(--ink-soft); padding-bottom: 12px;">
+          Разные подходы и оптики складываются в один формат. Один работает с телом, второй — с групповой динамикой и кругом.
+        </p>
+      </header>
 
-  .hero-logo {
-    width: 160px;
-    height: 160px;
-    border-radius: 16px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-    display: block;
-  }
+      <div data-grid style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+        {facilitators.map((f) => (
+          <article class="facCard" style={`background: var(--paper-2); position: relative; box-shadow: 0 1px 0 rgba(0,0,0,0.05); --facAccent: ${f.accent};`}>
+            <div style="position: relative; aspect-ratio: 4 / 5; overflow: hidden;">
+              <img src={f.photo} alt={`${f.firstName} ${f.lastName}`} style={`width: 100%; height: 100%; object-fit: cover; object-position: ${f.photoPosition}; display: block;`} />
+              <div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 32px 28px 24px; background: linear-gradient(to top, rgba(0,0,0,0.85), transparent); color: var(--paper);">
+                <div class="mono" style={`font-size: 11px; letter-spacing: 0.22em; color: ${f.accent}; margin-bottom: 8px;`}>{f.role}</div>
+                <h3 class="display" style="font-size: 32px; line-height: 1.05; color: var(--paper);">{f.firstName}<br />{f.lastName}</h3>
+              </div>
+            </div>
+            <div style="padding: 32px 32px 36px;">
+              <p style="font-size: 16px; line-height: 1.6; color: var(--ink-soft); margin-bottom: 24px;">{f.bio}</p>
+              <div style="border-top: 1px solid var(--rule); padding-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+                {f.links.map((l) => (
+                  <a href={l.href} target="_blank" rel="noopener noreferrer" class="mono facLink" style="font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink); text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
+                    <span class="facLinkText">{l.label}</span>
+                    <span class="facLinkArrow" aria-hidden="true" style={`color: ${f.accent};`}>→</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
 
-  /* Wide viewports: float the logo into the left margin so the text uses full content width. */
-  @media (min-width: 1080px) {
-    .hero-logo {
-      position: absolute;
-      top: 0;
-      right: calc(100% + 32px);
+      <a href={podcastUrl} class="podcastStrip" style="margin-top: 32px; display: flex; align-items: center; justify-content: space-between; padding: 28px 36px; background: var(--void); color: var(--paper); text-decoration: none; gap: 24px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 24px;">
+          <span class="podcastPlay" style="width: 48px; height: 48px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; color: var(--ink); font-size: 18px;">▶</span>
+          <div>
+            <div class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: var(--accent); margin-bottom: 4px;">ПОДКАСТ ВЕДУЩИХ</div>
+            <div class="display" style="font-size: 28px;">«Мужские голоса»</div>
+          </div>
+        </div>
+        <div class="mono podcastCta" style="font-size: 12px; letter-spacing: 0.22em; color: rgba(236,230,216,0.7);">
+          <span class="podcastCtaText">СЛУШАТЬ</span>
+          <span class="podcastCtaArrow" aria-hidden="true">&nbsp;→</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- SCHEDULE -->
+  <section id="schedule" style="position: relative; padding-top: 80px; padding-bottom: 80px; background: var(--paper);">
+    <div style="max-width: 980px; margin: 0 auto; padding: 0 48px; position: relative;">
+      <header style="margin-bottom: 56px;">
+        <div class="mono" style="font-size: 12px; letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 24px;">05 / РАСПИСАНИЕ</div>
+        <h2 class="display" style="font-size: clamp(48px, 6vw, 96px); line-height: 0.92; margin-bottom: 24px; margin-left: -0.05em;">
+          Расписание
+        </h2>
+        <div class="mono" style="font-size: 12px; letter-spacing: 0.22em; color: var(--accent);">
+          31 МАЯ · ВС · БАТУМИ
+        </div>
+      </header>
+      <ul style="list-style: none; margin: 0; padding: 0;">
+        {schedule.map((it, i) => (
+          <li style={`display: grid; grid-template-columns: 180px 1fr; gap: 32px; align-items: baseline; padding: 16px 0; ${i === schedule.length - 1 ? '' : 'border-bottom: 1px solid var(--rule);'}`}>
+            <div class="mono" style="font-size: 13px; letter-spacing: 0.06em; color: var(--ink-mute); font-variant-numeric: tabular-nums;">
+              {it.time}
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap;">
+              <span class="display" style="font-size: 19px; line-height: 1.3; color: var(--ink); letter-spacing: -0.005em;">{it.title}</span>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing" style="position: relative; padding-top: 80px; padding-bottom: 80px; background: var(--paper-2);">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 48px;">
+      <header style="margin-bottom: 48px;">
+        <div class="mono" style="font-size: 12px; letter-spacing: 0.22em; color: var(--ink-mute);">06 / СТОИМОСТЬ И УСЛОВИЯ</div>
+      </header>
+
+      <div id="countdownBanner" style="background: var(--void); color: var(--paper); padding: 20px 28px; margin-bottom: 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
+        <div class="mono" style="font-size: 12px; letter-spacing: 0.22em; color: var(--accent);">
+          ДО ЗАВЕРШЕНИЯ РАННЕГО ТАРИФА
+        </div>
+        <div style="display: flex; gap: 24px; align-items: flex-start;" id="countdownDigits">
+          <div style="text-align: center; min-width: 56px;">
+            <div class="display" data-cd="d" style="font-size: 32px; color: var(--paper); letter-spacing: 0.02em;">00</div>
+            <div class="mono" style="font-size: 10px; letter-spacing: 0.22em; color: rgba(236,230,216,0.55); margin-top: 4px;">ДНЕЙ</div>
+          </div>
+          <div style="text-align: center; min-width: 56px;">
+            <div class="display" data-cd="h" style="font-size: 32px; color: var(--paper); letter-spacing: 0.02em;">00</div>
+            <div class="mono" style="font-size: 10px; letter-spacing: 0.22em; color: rgba(236,230,216,0.55); margin-top: 4px;">ЧАСОВ</div>
+          </div>
+          <div class="display" style="font-size: 32px; color: rgba(236,230,216,0.4); line-height: 1; align-self: flex-start;">:</div>
+          <div style="text-align: center; min-width: 56px;">
+            <div class="display" data-cd="m" style="font-size: 32px; color: var(--paper); letter-spacing: 0.02em;">00</div>
+            <div class="mono" style="font-size: 10px; letter-spacing: 0.22em; color: rgba(236,230,216,0.55); margin-top: 4px;">МИНУТ</div>
+          </div>
+          <div class="display" style="font-size: 32px; color: rgba(236,230,216,0.4); line-height: 1; align-self: flex-start;">:</div>
+          <div style="text-align: center; min-width: 56px;">
+            <div class="display" data-cd="s" style="font-size: 32px; color: var(--paper); letter-spacing: 0.02em;">00</div>
+            <div class="mono" style="font-size: 10px; letter-spacing: 0.22em; color: rgba(236,230,216,0.55); margin-top: 4px;">СЕКУНД</div>
+          </div>
+        </div>
+      </div>
+
+      <div data-grid style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        <div style="background: var(--paper-2); padding: 40px; position: relative; border: 2px solid var(--accent);">
+          <div style="position: absolute; top: -1px; right: -1px; background: var(--accent); color: var(--ink); padding: 6px 14px;">
+            <span class="mono" style="font-size: 11px; letter-spacing: 0.22em; font-weight: 500;">РАННИЙ ТАРИФ</span>
+          </div>
+          <div class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 12px;">ДО 20 МАЯ 2026</div>
+          <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px;">
+            <span class="display" style="font-size: 88px; line-height: 1; color: var(--ink);">170</span>
+            <span class="display" style="font-size: 28px; color: var(--ink-mute);">₾</span>
+          </div>
+          <p style="font-size: 14px; color: var(--ink-mute); margin-bottom: 24px;">
+            при оплате брони <strong style="color: var(--ink);">80&nbsp;лари</strong> до&nbsp;20&nbsp;мая<span class="afterEarly"><br />с&nbsp;20&nbsp;мая цена <strong style="color: var(--ink);">220&nbsp;лари</strong></span>
+          </p>
+          <div style="height: 1px; background: var(--rule); margin: 8px 0 24px;"></div>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px;">
+            {includes.map((it) => (
+              <li style="font-size: 15px; line-height: 1.4; color: var(--ink-soft); display: flex; gap: 10px;">
+                <span style="color: var(--accent); font-weight: 600;">+</span>{it}
+              </li>
+            ))}
+          </ul>
+          <button class="cta cta--filled" data-apply-open>
+            <span>Оставить заявку</span>
+            <span class="cta__arrow">→</span>
+          </button>
+        </div>
+
+        <div class="standardTier" style="background: var(--paper-2); padding: 40px; position: relative; border: 1px solid var(--rule);">
+          <div class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 12px;">ПОСЛЕ 20 МАЯ</div>
+          <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px;">
+            <span class="display" style="font-size: 88px; line-height: 1; color: var(--ink-soft);">220</span>
+            <span class="display" style="font-size: 28px; color: var(--ink-mute);">₾</span>
+          </div>
+          <p style="font-size: 14px; color: var(--ink-mute); margin-bottom: 24px;">стандартная стоимость участия</p>
+          <div style="height: 1px; background: var(--rule); margin: 8px 0 24px;"></div>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px;">
+            {includes.map((it) => (
+              <li style="font-size: 15px; line-height: 1.4; color: var(--ink-soft); display: flex; gap: 10px;">
+                <span style="color: var(--ink-mute);">·</span>{it}
+              </li>
+            ))}
+          </ul>
+          <button class="cta cta--outline" data-apply-open>
+            <span>Оставить заявку</span>
+            <span class="cta__arrow">→</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACTS / FOOTER -->
+  <section id="contacts" style="background: var(--void); color: var(--paper); position: relative; padding-top: 80px; padding-bottom: 40px;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 48px; position: relative;">
+      <div class="mono" style="font-size: 12px; letter-spacing: 0.22em; color: var(--accent); margin-bottom: 32px;">07 / КОНТАКТЫ</div>
+
+      <div class="contactGrid" data-grid style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: rgba(236,230,216,0.12); border-top: 1px solid rgba(236,230,216,0.12); border-bottom: 1px solid rgba(236,230,216,0.12);">
+        {contacts.map((x) => (
+          <div class="contactCell" style="background: var(--void); padding: 32px 24px;">
+            <div class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: rgba(236,230,216,0.55); margin-bottom: 12px;">{x.l}</div>
+            <div class="display" style="font-size: 22px; line-height: 1.15; color: var(--paper); margin-bottom: 6px;">
+              {x.href ? <a href={x.href} target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">{x.v}</a> : x.v}
+            </div>
+            <div class="mono" style="font-size: 11px; letter-spacing: 0.18em; color: rgba(236,230,216,0.4);">{x.sub}</div>
+          </div>
+        ))}
+      </div>
+
+      <div style="margin-top: 56px; display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <span style="width: 32px; height: 32px; background: var(--accent); display: inline-flex; align-items: center; justify-content: center; color: var(--ink); font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: 18px;">?</span>
+          <div>
+            <div class="display" style="font-size: 16px; color: var(--paper);">Чего хочет мужчина</div>
+            <div class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: rgba(236,230,216,0.5); margin-top: 4px;">МАСТЕРСКАЯ-ТРЕНИНГ • БАТУМИ</div>
+          </div>
+        </div>
+        <div class="mono" style="font-size: 11px; letter-spacing: 0.18em; color: rgba(236,230,216,0.5); display: flex; gap: 20px;">
+          <span>© 2026 — права защищены</span>
+          <span style="color: rgba(236,230,216,0.7);">Договор и Правила</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <button id="scrollTopBtn" class="scrollTop" aria-label="Наверх">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M8 13 V3 M3 8 L8 3 L13 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="square" />
+    </svg>
+  </button>
+</div>
+
+<!-- APPLY MODAL -->
+<div id="applyOverlay" class="applyOverlay" aria-hidden="true">
+  <div class="applyBackdrop" data-apply-close></div>
+  <div class="applyModal" role="dialog" aria-modal="true" aria-labelledby="applyTitle">
+    <div class="applyTopbar">
+      <div class="mono" id="applyStepLabel" style="font-size: 11px; letter-spacing: 0.22em; color: var(--ink-mute);">ЗАЯВКА · ШАГ 1 / 4</div>
+      <button data-apply-close style="width: 40px; height: 40px; font-size: 22px; color: var(--ink-mute);" aria-label="Закрыть">×</button>
+    </div>
+
+    <div class="applyProgress" id="applyProgress">
+      <span class="is-active"></span><span></span><span></span><span></span>
+    </div>
+
+    <div class="applyBody">
+      <!-- Step 0: name -->
+      <div class="applyStep is-active" data-step="0">
+        <div class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">01 / ИМЯ</div>
+        <h3 id="applyTitle" class="display" style="font-size: 36px; line-height: 1.1; margin-bottom: 12px;">Как к вам обращаться?</h3>
+        <p style="font-size: 15px; color: var(--ink-mute); margin-bottom: 28px; line-height: 1.5;">Имя, как вам комфортно. Можно неформально.</p>
+        <input class="applyField" type="text" id="applyName" placeholder="Например, Сергей" />
+      </div>
+
+      <!-- Step 1: contact -->
+      <div class="applyStep" data-step="1">
+        <div class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">02 / КОНТАКТ</div>
+        <h3 class="display" style="font-size: 36px; line-height: 1.1; margin-bottom: 12px;">Как с вами связаться?</h3>
+        <p style="font-size: 15px; color: var(--ink-mute); margin-bottom: 28px; line-height: 1.5;">Ведущий напишет лично — никаких рассылок, только собеседование.</p>
+        <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;" id="contactTypeChips">
+          <button type="button" class="applyChip is-active" data-contact-type="telegram">Telegram</button>
+          <button type="button" class="applyChip" data-contact-type="phone">Телефон</button>
+          <button type="button" class="applyChip" data-contact-type="email">Email</button>
+        </div>
+        <input class="applyField" type="text" id="applyContact" placeholder="@username" />
+      </div>
+
+      <!-- Step 2: expectations -->
+      <div class="applyStep" data-step="2">
+        <div class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">03 / ОБ ЭТОМ</div>
+        <h3 class="display" style="font-size: 36px; line-height: 1.1; margin-bottom: 12px;">Что вас сюда привело?</h3>
+        <p style="font-size: 15px; color: var(--ink-mute); margin-bottom: 28px; line-height: 1.5;">Несколько фраз — что хотелось бы исследовать на мастерской. Это поможет настроить разговор.</p>
+        <textarea class="applyField applyField--multi" id="applyExpectations" rows="4" placeholder="Свободно, без формальностей — для ведущего."></textarea>
+        <div class="mono" id="applyExpectationsHint" style="margin-top: 8px; font-size: 11px; letter-spacing: 0.22em; color: var(--ink-mute);">МИНИМУМ 6 СИМВОЛОВ</div>
+        <div style="margin-top: 16px;">
+          <div class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 8px;">УДОБНОЕ ВРЕМЯ ДЛЯ СОБЕСЕДОВАНИЯ</div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="interviewChips">
+            <button type="button" class="applyChip applyChip--accent is-active" data-interview="weekday-evening">Будни, вечер</button>
+            <button type="button" class="applyChip applyChip--accent" data-interview="weekend">Выходные</button>
+            <button type="button" class="applyChip applyChip--accent" data-interview="any">Любое</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: confirmation -->
+      <div class="applyStep" data-step="3">
+        <div class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">04 / ПОДТВЕРЖДЕНИЕ</div>
+        <h3 class="display" style="font-size: 36px; line-height: 1.1; margin-bottom: 12px;">Почти готово</h3>
+        <p style="font-size: 15px; color: var(--ink-mute); margin-bottom: 28px; line-height: 1.5;">Прежде чем отправить — пара важных деталей.</p>
+        <div style="background: var(--paper-2); padding: 24px; margin-bottom: 20px; font-size: 14px; line-height: 1.6; color: var(--ink-soft);">
+          <p style="margin-bottom: 12px;">· Ведущий напишет в&nbsp;течение 1–2&nbsp;дней для короткого разговора.</p>
+          <p style="margin-bottom: 12px;">· После собеседования мы&nbsp;подтвердим регистрацию и&nbsp;пришлём реквизиты для оплаты брони (80&nbsp;лари).</p>
+          <p style="margin-bottom: 0;">· Заявка не&nbsp;обязывает — это начало разговора.</p>
+        </div>
+        <label id="applyAgreeWrap" style="display: flex; gap: 12px; padding: 16px; border: 1px solid var(--rule); cursor: pointer; align-items: flex-start; transition: border-color 200ms;">
+          <input type="checkbox" id="applyAgree" style="margin-top: 4px; accent-color: var(--accent);" />
+          <span style="font-size: 14px; color: var(--ink-soft); line-height: 1.5;">
+            Согласен(на) с обработкой персональных данных и условиями участия.
+          </span>
+        </label>
+      </div>
+
+      <!-- Done state -->
+      <div class="applyDone" id="applyDone">
+        <div class="display" style="font-size: 64px; margin-bottom: 16px; color: var(--accent);">✓</div>
+        <h3 class="display" style="font-size: 36px; margin-bottom: 16px; line-height: 1.1;">Заявка принята</h3>
+        <p style="font-size: 16px; line-height: 1.6; color: var(--ink-soft); max-width: 460px; margin: 0 auto 28px;" id="applyDoneText">
+          Спасибо. Ведущий свяжется с вами в течение 1–2 дней для короткого собеседования.
+        </p>
+        <button class="cta cta--outline" data-apply-close>
+          <span>Закрыть</span>
+          <span class="cta__arrow">→</span>
+        </button>
+      </div>
+
+      <!-- Error state -->
+      <div class="applyDone" id="applyError">
+        <div class="display" style="font-size: 64px; margin-bottom: 16px; color: var(--ink-mute);">!</div>
+        <h3 class="display" style="font-size: 36px; margin-bottom: 16px; line-height: 1.1;">Не удалось отправить</h3>
+        <p style="font-size: 16px; line-height: 1.6; color: var(--ink-soft); max-width: 460px; margin: 0 auto 28px;">
+          Что-то пошло не так с отправкой. Напишите Анри напрямую в Telegram — он свяжется с вами для собеседования.
+        </p>
+        <a class="cta cta--filled" href="https://t.me/sensologist" target="_blank" rel="noopener noreferrer" style="margin-bottom: 12px;">
+          <span>Написать @sensologist</span>
+          <span class="cta__arrow">→</span>
+        </a>
+        <div>
+          <button class="cta cta--outline" data-apply-close>
+            <span>Закрыть</span>
+            <span class="cta__arrow">→</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="applyNav" id="applyNav">
+        <button type="button" id="applyBack" class="applyBack" disabled>← Назад</button>
+        <button type="button" id="applyNext" class="cta cta--outline applyNext is-disabled">
+          <span id="applyNextLabel">Дальше</span>
+          <span class="cta__arrow">→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  // -- nav scrolled state ----------------------------------------------------
+  const nav = document.getElementById('siteNav');
+  const onScroll = () => {
+    if (window.scrollY > 60) nav.classList.add('is-scrolled');
+    else nav.classList.remove('is-scrolled');
+    const cue = document.getElementById('heroScrollCue');
+    if (cue) cue.style.opacity = window.scrollY > 40 ? '0' : '0.6';
+    const heroVoid = document.getElementById('heroVoid');
+    const heroTitle = document.getElementById('heroTitle');
+    if (heroVoid && heroTitle) {
+      const voidShift = Math.min(window.scrollY * 0.15, 60);
+      const titleShift = Math.min(window.scrollY * 0.06, 24);
+      heroVoid.style.transform = `translateY(${voidShift * 0.3}px)`;
+      heroTitle.style.transform = `translateY(${-titleShift}px)`;
     }
-  }
-
-  /* Narrower viewports: stack logo above text. */
-  @media (max-width: 1079px) {
-    .hero-logo {
-      margin: 0 0 24px;
+    const stb = document.getElementById('scrollTopBtn');
+    if (stb) {
+      if (window.scrollY > window.innerHeight) stb.classList.add('is-visible');
+      else stb.classList.remove('is-visible');
     }
-  }
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 
-  .hero-title {
-    font-size: 36px;
-    margin: 0 0 12px;
-    line-height: 1.15;
-  }
+  document.getElementById('scrollTopBtn').addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 
-  .hero-text p {
-    margin: 0 0 12px;
-  }
+  // -- mobile menu ------------------------------------------------------------
+  const menu = document.getElementById('menuOverlay');
+  const burger = document.getElementById('burgerBtn');
+  const menuClose = document.getElementById('menuClose');
+  const openMenu = () => { menu.classList.add('is-open'); document.body.style.overflow = 'hidden'; };
+  const closeMenu = () => { menu.classList.remove('is-open'); document.body.style.overflow = ''; };
+  burger.addEventListener('click', openMenu);
+  menuClose.addEventListener('click', closeMenu);
+  document.querySelectorAll('[data-menu-link]').forEach((a) => {
+    a.addEventListener('click', closeMenu);
+  });
 
-  .hero-text p:last-child {
-    margin-bottom: 0;
-  }
+  // -- countdown --------------------------------------------------------------
+  const target = new Date('2026-05-20T23:59:00+04:00').getTime();
+  const cdEls = {
+    d: document.querySelector('[data-cd="d"]'),
+    h: document.querySelector('[data-cd="h"]'),
+    m: document.querySelector('[data-cd="m"]'),
+    s: document.querySelector('[data-cd="s"]'),
+  };
+  const banner = document.getElementById('countdownBanner');
+  const tickCountdown = () => {
+    const diff = Math.max(0, target - Date.now());
+    if (diff <= 0) { banner.style.display = 'none'; return; }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff / 3600000) % 24);
+    const m = Math.floor((diff / 60000) % 60);
+    const s = Math.floor((diff / 1000) % 60);
+    cdEls.d.textContent = String(d).padStart(2, '0');
+    cdEls.h.textContent = String(h).padStart(2, '0');
+    cdEls.m.textContent = String(m).padStart(2, '0');
+    cdEls.s.textContent = String(s).padStart(2, '0');
+  };
+  tickCountdown();
+  setInterval(tickCountdown, 1000);
 
-  .hero-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 24px;
-  }
+  // -- apply modal ------------------------------------------------------------
+  const overlay = document.getElementById('applyOverlay');
+  const stepLabel = document.getElementById('applyStepLabel');
+  const progress = document.getElementById('applyProgress');
+  const backBtn = document.getElementById('applyBack');
+  const nextBtn = document.getElementById('applyNext');
+  const nextLabel = document.getElementById('applyNextLabel');
+  const applyNav = document.getElementById('applyNav');
+  const doneBlock = document.getElementById('applyDone');
+  const doneText = document.getElementById('applyDoneText');
+  const placeholders = { telegram: '@username', phone: '+995 ...', email: 'you@example.com' };
+  let step = 0;
+  const totalSteps = 4;
+  const state = { name: '', contact: '', contactType: 'telegram', expectations: '', interview: 'weekday-evening', agreed: false };
 
-  .hero-link {
-    display: inline-block;
-    padding: 10px 18px;
-    border: 1px solid var(--color-brand);
-    border-radius: 8px;
-    color: var(--color-brand);
-    font-family: var(--font-sans);
-    font-size: 14px;
-    text-decoration: none;
-    transition: background-color 0.15s ease, color 0.15s ease;
-  }
+  const setStep = (n) => {
+    step = Math.max(0, Math.min(totalSteps - 1, n));
+    document.querySelectorAll('.applyStep').forEach((el) => {
+      el.classList.toggle('is-active', Number(el.dataset.step) === step);
+    });
+    stepLabel.textContent = `ЗАЯВКА · ШАГ ${step + 1} / ${totalSteps}`;
+    Array.from(progress.children).forEach((bar, i) => {
+      bar.classList.toggle('is-active', i <= step);
+    });
+    backBtn.disabled = step === 0;
+    nextLabel.textContent = step === totalSteps - 1 ? 'Отправить заявку' : 'Дальше';
+    updateNextEnabled();
+    setTimeout(() => {
+      const focus = document.querySelector('.applyStep.is-active input, .applyStep.is-active textarea');
+      if (focus) focus.focus();
+    }, 50);
+  };
 
-  .hero-link:hover {
-    background: var(--color-brand);
-    color: #ffffff;
-  }
-
-  @media (max-width: 600px) {
-    .hero-logo {
-      width: 120px;
-      height: 120px;
+  const canNext = () => {
+    if (step === 0) return state.name.trim().length > 1;
+    if (step === 1) return state.contact.trim().length > 2;
+    if (step === 2) return state.expectations.trim().length > 5;
+    if (step === 3) return state.agreed;
+    return false;
+  };
+  const updateNextEnabled = () => {
+    if (canNext()) {
+      nextBtn.classList.remove('is-disabled', 'cta--outline');
+      nextBtn.classList.add('cta--filled');
+    } else {
+      nextBtn.classList.add('is-disabled');
+      nextBtn.classList.remove('cta--filled');
+      nextBtn.classList.add('cta--outline');
     }
+  };
 
-    .hero-title {
-      font-size: 28px;
+  document.querySelectorAll('[data-apply-open]').forEach((b) => {
+    b.addEventListener('click', () => {
+      overlay.classList.add('is-open');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      doneBlock.classList.remove('is-active');
+      applyNav.style.display = 'flex';
+      progress.style.display = 'flex';
+      setStep(0);
+    });
+  });
+  document.querySelectorAll('[data-apply-close]').forEach((b) => {
+    b.addEventListener('click', () => {
+      overlay.classList.remove('is-open');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    });
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && overlay.classList.contains('is-open')) {
+      overlay.classList.remove('is-open');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
     }
-  }
+  });
 
-  .episodes-title {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--color-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin: 0 0 24px;
-  }
+  document.getElementById('applyName').addEventListener('input', (e) => { state.name = e.target.value; updateNextEnabled(); });
+  document.getElementById('applyContact').addEventListener('input', (e) => { state.contact = e.target.value; updateNextEnabled(); });
+  const expectationsHint = document.getElementById('applyExpectationsHint');
+  document.getElementById('applyExpectations').addEventListener('input', (e) => {
+    state.expectations = e.target.value;
+    const len = state.expectations.trim().length;
+    if (len > 5) {
+      expectationsHint.textContent = `${len} СИМВОЛОВ`;
+      expectationsHint.style.color = 'var(--accent)';
+    } else {
+      expectationsHint.textContent = len > 0 ? `${len} / 6 СИМВОЛОВ` : 'МИНИМУМ 6 СИМВОЛОВ';
+      expectationsHint.style.color = 'var(--ink-mute)';
+    }
+    updateNextEnabled();
+  });
+  document.getElementById('applyAgree').addEventListener('change', (e) => {
+    state.agreed = e.target.checked;
+    document.getElementById('applyAgreeWrap').style.borderColor = state.agreed ? 'var(--ink)' : 'var(--rule)';
+    updateNextEnabled();
+  });
 
-  .episode-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
+  document.querySelectorAll('#contactTypeChips [data-contact-type]').forEach((b) => {
+    b.addEventListener('click', () => {
+      state.contactType = b.dataset.contactType;
+      document.querySelectorAll('#contactTypeChips [data-contact-type]').forEach((x) => x.classList.toggle('is-active', x === b));
+      const inp = document.getElementById('applyContact');
+      inp.placeholder = placeholders[state.contactType];
+      inp.focus();
+    });
+  });
+  document.querySelectorAll('#interviewChips [data-interview]').forEach((b) => {
+    b.addEventListener('click', () => {
+      state.interview = b.dataset.interview;
+      document.querySelectorAll('#interviewChips [data-interview]').forEach((x) => x.classList.toggle('is-active', x === b));
+    });
+  });
 
-  .episode-item {
-    border-top: 1px solid var(--color-border);
-  }
+  backBtn.addEventListener('click', () => { if (step > 0) setStep(step - 1); });
 
-  .episode-item:last-child {
-    border-bottom: 1px solid var(--color-border);
-  }
+  const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScezKnWmzmj9BC58Mns5o0Irs1b4H145dc4jlPgtIwtfqFD1Q/formResponse';
+  const CONTACT_TYPE_MAP = { telegram: 'Telegram', phone: 'Телефон', email: 'Email' };
+  const INTERVIEW_MAP = { 'weekday-evening': 'Будни, вечер', weekend: 'Выходные', any: 'Любое' };
+  const errorBlock = document.getElementById('applyError');
 
-  .episode-link {
-    display: block;
-    padding: 24px 0;
-    text-decoration: none;
-  }
+  const showResult = (block) => {
+    document.querySelectorAll('.applyStep').forEach((el) => el.classList.remove('is-active'));
+    doneBlock.classList.remove('is-active');
+    errorBlock.classList.remove('is-active');
+    block.classList.add('is-active');
+    applyNav.style.display = 'none';
+    progress.style.display = 'none';
+  };
 
-  .episode-link:hover .episode-title {
-    text-decoration: underline;
-    text-decoration-color: var(--color-text);
-    text-underline-offset: 4px;
-  }
+  nextBtn.addEventListener('click', () => {
+    if (!canNext()) return;
+    if (step < totalSteps - 1) {
+      setStep(step + 1);
+      return;
+    }
+    // submit to Google Forms
+    nextBtn.classList.add('is-disabled');
+    backBtn.disabled = true;
+    nextLabel.textContent = 'Отправляется…';
 
-  .episode-meta {
-    font-family: var(--font-sans);
-    font-size: 14px;
-    color: var(--color-muted);
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 8px;
-  }
+    const body = new URLSearchParams();
+    body.set('entry.1925631356', state.name);
+    body.set('entry.1979587863', CONTACT_TYPE_MAP[state.contactType] || '');
+    body.set('entry.204819364', state.contact);
+    body.set('entry.454240511', state.expectations);
+    body.set('entry.1045321552', INTERVIEW_MAP[state.interview] || '');
 
-  .episode-meta .sep {
-    color: var(--color-border);
-  }
-
-  .episode-title {
-    font-size: 28px;
-    margin: 0 0 8px;
-  }
-
-  .episode-description {
-    margin: 0;
-    color: var(--color-text);
-  }
-</style>
+    fetch(FORM_URL, { method: 'POST', mode: 'no-cors', body })
+      .then(() => {
+        stepLabel.textContent = 'ЗАЯВКА · ПРИНЯТА';
+        const firstName = (state.name.split(' ')[0] || 'брат').trim();
+        doneText.textContent = `Спасибо, ${firstName}. Ведущий свяжется с вами в течение 1–2 дней для короткого собеседования. После него мы подтвердим регистрацию и вышлем реквизиты для оплаты брони.`;
+        showResult(doneBlock);
+      })
+      .catch(() => {
+        stepLabel.textContent = 'ЗАЯВКА · ОШИБКА';
+        showResult(errorBlock);
+      });
+  });
+</script>
+</body>
+</html>

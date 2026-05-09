@@ -1,0 +1,240 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import { formatDuration } from "../../lib/format";
+
+const episodes = (await getCollection("episodes")).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+const dateFormatter = new Intl.DateTimeFormat("ru-RU", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+---
+
+<Layout>
+  <section class="hero">
+    <img
+      class="hero-logo"
+      src={`${import.meta.env.BASE_URL}logo.jpg`}
+      alt="Мужские голоса"
+      width="160"
+      height="160"
+    />
+    <div class="hero-text">
+      <h1 class="hero-title">Мужские голоса</h1>
+      <p>
+        «Мужские голоса» — подкаст про мужчин и для мужчин. Через личный опыт и
+        прожитые состояния мы говорим о внутренней силе, уязвимости и пути, на
+        котором мужчина учится быть собой.
+      </p>
+      <p>
+        Мы, <a href="https://t.me/sensologist" target="_blank" rel="noopener noreferrer">Анри</a> и <a
+          href="https://t.me/AlexanderOlnev"
+          target="_blank" rel="noopener noreferrer">Александр</a
+        >, размышляем о поиске, выборе, страхах и смыслах, которые рождаются
+        наедине с собой.
+      </p>
+      <p>
+        О мужской уязвимости — как источнике силы, глубины и подлинности. О том,
+        как проходить свои испытания, оставаться живыми и настоящими.
+      </p>
+      <p>
+        Каждый эпизод — это шаг по пути героя, который живёт в каждом из нас.
+      </p>
+      <div class="hero-links">
+        <a
+          class="hero-link"
+          href="https://golosa.mave.digital/"
+          target="_blank" rel="noopener noreferrer">Подкаст на mave.digital</a
+        >
+        <a
+          class="hero-link"
+          href="https://music.yandex.com/album/39245440"
+          target="_blank" rel="noopener noreferrer">Подкаст на Я.Музыка</a
+        >
+      </div>
+    </div>
+  </section>
+
+  <section class="episodes">
+    <h2 class="episodes-title">Все выпуски</h2>
+    <ol class="episode-list">
+      {
+        episodes.map((episode) => (
+          <li class="episode-item">
+            <a
+              href={`${import.meta.env.BASE_URL}podcast/${episode.id}/`}
+              class="episode-link"
+            >
+              <div class="episode-meta">
+                {episode.data.season && episode.data.number && (
+                  <>
+                    <span>
+                      Выпуск {String(episode.data.number).padStart(2, "0")}
+                    </span>
+                    <span class="sep">·</span>
+                    <span>Сезон {episode.data.season}</span>
+                    <span class="sep">·</span>
+                  </>
+                )}
+                {formatDuration(episode.data.duration) && (
+                  <>
+                    <span>{formatDuration(episode.data.duration)}</span>
+                    <span class="sep">·</span>
+                  </>
+                )}
+                <time datetime={episode.data.date.toISOString()}>
+                  {dateFormatter.format(episode.data.date)}
+                </time>
+              </div>
+              <h3 class="episode-title">{episode.data.title}</h3>
+              <p class="episode-description">{episode.data.description}</p>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+</Layout>
+
+<style>
+  .hero {
+    position: relative;
+    margin: 16px 0 56px;
+  }
+
+  .hero-logo {
+    width: 160px;
+    height: 160px;
+    border-radius: 16px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+    display: block;
+  }
+
+  /* Wide viewports: float the logo into the left margin so the text uses full content width. */
+  @media (min-width: 1080px) {
+    .hero-logo {
+      position: absolute;
+      top: 0;
+      right: calc(100% + 32px);
+    }
+  }
+
+  /* Narrower viewports: stack logo above text. */
+  @media (max-width: 1079px) {
+    .hero-logo {
+      margin: 0 0 24px;
+    }
+  }
+
+  .hero-title {
+    font-size: 36px;
+    margin: 0 0 12px;
+    line-height: 1.15;
+  }
+
+  .hero-text p {
+    margin: 0 0 12px;
+  }
+
+  .hero-text p:last-child {
+    margin-bottom: 0;
+  }
+
+  .hero-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .hero-link {
+    display: inline-block;
+    padding: 10px 18px;
+    border: 1px solid var(--color-brand);
+    border-radius: 8px;
+    color: var(--color-brand);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    text-decoration: none;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .hero-link:hover {
+    background: var(--color-brand);
+    color: #ffffff;
+  }
+
+  @media (max-width: 600px) {
+    .hero-logo {
+      width: 120px;
+      height: 120px;
+    }
+
+    .hero-title {
+      font-size: 28px;
+    }
+  }
+
+  .episodes-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 24px;
+  }
+
+  .episode-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .episode-item {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .episode-item:last-child {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .episode-link {
+    display: block;
+    padding: 24px 0;
+    text-decoration: none;
+  }
+
+  .episode-link:hover .episode-title {
+    text-decoration: underline;
+    text-decoration-color: var(--color-text);
+    text-underline-offset: 4px;
+  }
+
+  .episode-meta {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--color-muted);
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+
+  .episode-meta .sep {
+    color: var(--color-border);
+  }
+
+  .episode-title {
+    font-size: 28px;
+    margin: 0 0 8px;
+  }
+
+  .episode-description {
+    margin: 0;
+    color: var(--color-text);
+  }
+</style>
