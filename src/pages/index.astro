@@ -541,6 +541,8 @@ const contacts = [
       #contacts .contactCell .mono:last-of-type { display: none !important; }
       #pricing .standardTier { display: none !important; }
       #pricing .afterEarly { display: inline; }
+      #pricing .cdSeconds, #pricing .cdColonSeconds { display: none !important; }
+      .podcastStrip .podcastPlay { display: none !important; }
       .applyModal { width: 100% !important; max-width: 100% !important; height: 100% !important; max-height: 100% !important; border-radius: 0 !important; }
     }
     @media (max-width: 480px) {
@@ -896,8 +898,8 @@ const contacts = [
             <div class="display" data-cd="m" style="font-size: 32px; color: var(--paper); letter-spacing: 0.02em;">00</div>
             <div class="mono" style="font-size: 10px; letter-spacing: 0.22em; color: rgba(236,230,216,0.55); margin-top: 4px;">МИНУТ</div>
           </div>
-          <div class="display" style="font-size: 32px; color: rgba(236,230,216,0.4); line-height: 1; align-self: flex-start;">:</div>
-          <div style="text-align: center; min-width: 56px;">
+          <div class="cdColonSeconds display" style="font-size: 32px; color: rgba(236,230,216,0.4); line-height: 1; align-self: flex-start;">:</div>
+          <div class="cdSeconds" style="text-align: center; min-width: 56px;">
             <div class="display" data-cd="s" style="font-size: 32px; color: var(--paper); letter-spacing: 0.02em;">00</div>
             <div class="mono" style="font-size: 10px; letter-spacing: 0.22em; color: rgba(236,230,216,0.55); margin-top: 4px;">СЕКУНД</div>
           </div>
