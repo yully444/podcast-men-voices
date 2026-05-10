@@ -2,68 +2,6 @@
 const baseUrl = import.meta.env.BASE_URL;
 const podcastUrl = `${baseUrl}podcast/`;
 
-// Build the torn-hole SVG paths server-side using a seeded RNG.
-// Mirrors the algorithm from the design source (primitives.jsx → TornHole).
-function buildTornHole() {
-  let s = 7;
-  const rnd = () => {
-    s = (s * 9301 + 49297) % 233280;
-    return s / 233280;
-  };
-  const cx = 500;
-  const cy = 500;
-  const rx = 360;
-  const ry = 380;
-  const N = 220;
-  const pts: [number, number][] = [];
-  for (let i = 0; i < N; i++) {
-    const a = (i / N) * Math.PI * 2;
-    const slow =
-      Math.sin(a * 3 + 0.7) * 0.04 + Math.cos(a * 5 - 1.2) * 0.03;
-    const jitter = (rnd() - 0.5) * 0.06;
-    const notch = rnd() > 0.94 ? -0.07 - rnd() * 0.05 : 0;
-    const jr = 1 + slow + jitter + notch;
-    pts.push([
-      cx + Math.cos(a) * rx * jr,
-      cy + Math.sin(a) * ry * jr,
-    ]);
-  }
-  let outer = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
-  for (let i = 1; i < N; i++)
-    outer += ` L ${pts[i][0].toFixed(1)} ${pts[i][1].toFixed(1)}`;
-  outer += " Z";
-
-  const innerPts = pts.map(([x, y]) => {
-    const dx = x - cx;
-    const dy = y - cy;
-    const inset = 16 + rnd() * 6;
-    const len = Math.hypot(dx, dy);
-    return [x - (dx / len) * inset, y - (dy / len) * inset];
-  });
-  let inner = `M ${innerPts[0][0].toFixed(1)} ${innerPts[0][1].toFixed(1)}`;
-  for (let i = 1; i < N; i += 2)
-    inner += ` L ${innerPts[i][0].toFixed(1)} ${innerPts[i][1].toFixed(1)}`;
-  inner += " Z";
-
-  let fibers = "";
-  for (let i = 0; i < N; i += 3) {
-    if (rnd() > 0.55) continue;
-    const [x, y] = pts[i];
-    const dx = x - cx;
-    const dy = y - cy;
-    const len = Math.hypot(dx, dy);
-    const nx = dx / len;
-    const ny = dy / len;
-    const out = 4 + rnd() * 9;
-    const tx = -ny * (rnd() - 0.5) * 6;
-    const ty = nx * (rnd() - 0.5) * 6;
-    fibers += `M ${x.toFixed(1)} ${y.toFixed(1)} L ${(x + nx * out + tx).toFixed(1)} ${(y + ny * out + ty).toFixed(1)} `;
-  }
-  return { outer, inner, fibers };
-}
-
-const torn = buildTornHole();
-
 const navItems = [
   { label: "О формате", href: "#about" },
   { label: "Ведущие", href: "#facilitators" },
@@ -79,34 +17,69 @@ const heroInfo = [
   { l: "ДЛЯ КОГО", v: "Только мужчины", sub: "группа 8—14 участников" },
 ];
 
-const aboutBlocks = [
+const aboutMobileBlocks = [
   {
-    title: "Групповая динамика",
-    body: "Практическая мастерская с возможностью живого взаимодействия с собой и с другими мужчинами, которые тоже ищут больше ясности, контакта и честности с собой.",
+    title: "Групповой формат",
+    subhead: "Даёт возможность увидеть себя через других.",
+    intro: "В группе мужчина начинает замечать:",
+    bullets: [
+      "как по-разному мужчины обходятся со своими желаниями,",
+      "какие стратегии помогают,",
+      "а какие приводят к напряжению, усталости или внутренней пустоте.",
+    ],
+    outro: "Чужой опыт становится зеркалом, в котором легче увидеть себя.",
   },
   {
     title: "Мужчины для мужчин",
-    body: "Только мужчины — в поддерживающем и уважительном пространстве. Мы верим, что внутри каждого мужчины уже есть ресурс для решения жизненных задач. Наша задача — помочь восстановить контакт со своим внутренним голосом.",
+    body: [
+      "Для многих мужчин привычная модель взаимодействия — сравнение, соперничество, проверка статуса.",
+      "В безопасной группе появляется другой опыт:",
+    ],
+    bullets: [
+      "быть услышанным,",
+      "быть принятым,",
+      "получать поддержку,",
+      "видеть силу не только в достижениях.",
+    ],
+    outro: "Это редкий и очень ценный опыт.",
   },
   {
-    title: "Два ведущих — одна цель",
-    body: "Участники смогут исследовать свои желания и потребности через разные подходы и способы взаимодействия — телесный и фасилитационный.",
+    title: "Два ведущих —<br />одна цель",
+    body: [
+      "Формат с двумя ведущими позволяет создать более устойчивое, живое и безопасное пространство.",
+      "Участники получают возможность исследовать себя через разные подходы — телесную практику, групповое взаимодействие и мужской диалог.",
+      "А сама работа становится глубже благодаря сочетанию двух разных мужских опытов и способов ведения.",
+    ],
   },
-];
-
-const explore = [
-  "лучше различать свои желания и автоматические «надо»",
-  "замечать сигналы тела и внутреннего напряжения",
-  "понимать, как они обходятся со своими потребностями",
-  "получить опыт честного мужского взаимодействия без конкуренции",
-  "чувствовать больше ясности и контакта с собой",
-];
-
-const how = [
-  "телесные практики для работы с внутренними сигналами",
-  "мужские круги и живой обмен историями",
-  "работа в парах и мини-группах",
-  "другие способы лучше слышать и понимать себя",
+  {
+    title: "После мастерской участники смогут:",
+    bullets: [
+      "лучше различать свои желания и автоматические «надо»",
+      "замечать сигналы тела и внутреннего напряжения",
+      "понимать, как они обходятся со своими потребностями",
+      "получить опыт честного мужского взаимодействия без конкуренции",
+      "чувствовать больше ясности и контакта с собой",
+    ],
+  },
+  {
+    title: "Как будем исследовать:",
+    bullets: [
+      "телесные практики для работы с внутренними сигналами",
+      "мужские круги и живой обмен историями",
+      "работа в парах и мини-группах",
+      "прикладные способы лучше слышать и понимать себя",
+    ],
+  },
+  {
+    title: "Количество мест ограничено",
+    intro: "Мы намеренно делаем небольшую группу, чтобы сохранить:",
+    bullets: [
+      "глубину работы",
+      "возможность личного взаимодействия",
+      "безопасность и качество группового процесса",
+    ],
+    outro: "Это оправдывает ограничение мест.",
+  },
 ];
 
 const facilitators = [
@@ -116,7 +89,7 @@ const facilitators = [
     role: "ВЕДУЩИЙ • ТЕЛО",
     photo: `${baseUrl}masterclass/henri.jpg`,
     photoPosition: "center 25%",
-    bio: "Телесно-ориентированный психотерапевт и коуч, ведущий мужских групп. Со-автор подкаста «Мужские голоса». Работает с телесными сигналами как с языком, на котором желания становятся слышны.",
+    bio: "Телесно-ориентированный психотерапевт и коуч, ведущий мужских групп, со-автор подкаста «Мужские голоса». Помогаю мужчинам лучше слышать себя через тело, эмоции и внутренние сигналы.",
     accent: "var(--accent)",
     links: [
       { label: "Личный сайт", href: "https://menstherapy.tilda.ws/" },
@@ -129,7 +102,7 @@ const facilitators = [
     role: "ВЕДУЩИЙ • КРУГ",
     photo: `${baseUrl}masterclass/alex.jpg`,
     photoPosition: "center 30%",
-    bio: "Фасилитатор мужских кругов, IT-специалист. Со-автор подкаста «Мужские голоса». Создаёт пространство, в котором мужской разговор становится возможным — без иерархии и оценок.",
+    bio: "Фасилитатор мужских кругов, IT-специалист, со-автор подкаста «Мужские голоса». Работаю с групповым взаимодействием, поддержкой и созданием пространства, где быть собой безопасно.",
     accent: "var(--olive-deep)",
     roleColor: "var(--accent)",
     links: [
@@ -169,7 +142,11 @@ const contacts = [
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Мастерская-тренинг «Чего хочет мужчина?». Один день для встречи с собой среди мужчин — телесные практики, мужской круг и честный разговор. 31 мая 2026, Батуми." />
-  <link rel="icon" type="image/svg+xml" href={`${baseUrl}favicon.svg`} />
+  <link rel="icon" type="image/png" sizes="32x32" href={`${baseUrl}favicon/favicon-32x32.png`} />
+  <link rel="icon" type="image/png" sizes="16x16" href={`${baseUrl}favicon/favicon-16x16.png`} />
+  <link rel="apple-touch-icon" sizes="180x180" href={`${baseUrl}favicon/apple-touch-icon.png`} />
+  <link rel="manifest" href={`${baseUrl}favicon/site.webmanifest`} />
+  <link rel="shortcut icon" href={`${baseUrl}favicon/favicon.ico`} />
   <title>Чего хочет мужчина? — Мастерская-тренинг, Батуми, 31 мая 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -188,6 +165,14 @@ const contacts = [
       --olive: #6a6a2c;
       --olive-deep: #4d5224;
       --rule: rgba(35,34,32,0.16);
+
+      /* Type scale — 6 levels */
+      --fs-caption: 12px;
+      --fs-body: 17px;
+      --fs-lead: 22px;
+      --fs-h3: 28px;
+      --fs-h2: clamp(34px, 7vw, 88px);
+      --fs-h1: clamp(48px, 9vw, 112px);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -213,7 +198,7 @@ const contacts = [
     #top { position: relative; z-index: 2; }
     .display { font-family: 'Unbounded', sans-serif; font-weight: 800; letter-spacing: -0.02em; line-height: 0.92; }
     .mono { font-family: 'JetBrains Mono', monospace; font-weight: 400; }
-    .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-mute); }
+    .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: var(--fs-caption); letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-mute); }
     ::selection { background: var(--accent); color: #fff; }
     a { color: inherit; }
     button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
@@ -282,7 +267,7 @@ const contacts = [
       white-space: nowrap;
       border: 1px solid transparent;
     }
-    .cta--sm { padding: 10px 18px; font-size: 12px; }
+    .cta--sm { padding: 10px 18px; font-size: var(--fs-caption); }
     .cta--filled { background: var(--accent); color: #1a1a18; border-color: var(--accent); }
     .cta--filled:hover { background: var(--accent-soft); border-color: var(--accent-soft); }
     .cta--outline { background: transparent; color: var(--ink); border-color: var(--ink); }
@@ -310,7 +295,7 @@ const contacts = [
     .nav__mark {
       width: 28px; height: 28px; background: var(--accent);
       display: inline-flex; align-items: center; justify-content: center;
-      font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: 16px;
+      font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: var(--fs-body);
       color: var(--ink);
     }
     .nav__name { font-family: 'Unbounded', sans-serif; font-weight: 800;
@@ -318,7 +303,7 @@ const contacts = [
     .nav__items { display: flex; align-items: center; gap: 4px; }
     .navLink {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+      font-size: var(--fs-caption); letter-spacing: 0.18em; text-transform: uppercase;
       padding: 10px 14px; color: var(--ink-soft); text-decoration: none;
       transition: color 160ms;
     }
@@ -353,13 +338,13 @@ const contacts = [
     .menuOverlay__close {
       width: 40px; height: 40px;
       background: transparent; border: 1px solid var(--ink);
-      font-size: 18px; color: var(--ink); line-height: 1;
+      font-size: var(--fs-lead); color: var(--ink); line-height: 1;
     }
     .menuOverlay__list { margin-top: 32px; display: flex; flex-direction: column; gap: 0; }
     .menuOverlay__list a {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
-      padding: 16px 0; color: var(--ink-soft);
+      font-size: var(--fs-caption); letter-spacing: 0.18em; text-transform: uppercase;
+      padding: 16px 0 16px 26px; color: var(--ink-soft);
       text-decoration: none; border-bottom: 1px solid var(--rule);
     }
 
@@ -406,7 +391,7 @@ const contacts = [
     .applyProgress > span.is-active { background: var(--accent); }
     .applyBody { padding: 40px 48px 48px; }
     .applyField {
-      width: 100%; padding: 16px 0; font-size: 22px;
+      width: 100%; padding: 16px 0; font-size: var(--fs-h3);
       font-family: 'Unbounded', sans-serif; font-weight: 400;
       background: transparent; border: none;
       border-bottom: 1px solid var(--ink);
@@ -417,7 +402,7 @@ const contacts = [
     .applyChip {
       padding: 10px 16px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+      font-size: var(--fs-caption); letter-spacing: 0.18em; text-transform: uppercase;
       background: transparent; color: var(--ink);
       border: 1px solid var(--rule);
       transition: all 180ms;
@@ -433,7 +418,7 @@ const contacts = [
       justify-content: space-between; align-items: center; gap: 16px;
     }
     .applyBack {
-      font-family: 'JetBrains Mono', monospace; font-size: 12px;
+      font-family: 'JetBrains Mono', monospace; font-size: var(--fs-caption);
       letter-spacing: 0.18em; text-transform: uppercase;
       color: var(--ink-mute); cursor: pointer;
       padding: 12px 8px;
@@ -449,17 +434,147 @@ const contacts = [
     /* About lists: no separators between items */
     .aboutListUl { list-style: none; }
 
+    /* About desktop: scrollspy — content left, sticky nav right */
+    .aboutScrollspy {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 80px;
+      align-items: start;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .aboutScrollspyMain {
+      display: flex;
+      flex-direction: column;
+      gap: 96px;
+    }
+    .aboutScrollspySection {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      scroll-margin-top: 120px;
+    }
+    .aboutScrollspyTitle {
+      font-size: var(--fs-h3);
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.2;
+      margin: 0;
+    }
+    .aboutScrollspySubhead {
+      font-size: var(--fs-body);
+      line-height: 1.55;
+      color: var(--ink);
+      margin: 0;
+    }
+    .aboutScrollspyP {
+      font-size: var(--fs-body);
+      line-height: 1.6;
+      color: var(--ink-soft);
+      margin: 0;
+    }
+    .aboutScrollspyOutro { color: var(--ink); }
+    .aboutScrollspyBullets {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin: 0;
+      padding: 0;
+    }
+    .aboutScrollspyBullets li {
+      display: flex;
+      gap: 12px;
+      align-items: baseline;
+      font-size: var(--fs-body);
+      line-height: 1.6;
+      color: var(--ink-soft);
+    }
+    .aboutScrollspyDot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+      transform: translateY(-3px);
+    }
+    .aboutScrollspyNav {
+      position: sticky;
+      top: 120px;
+    }
+    .aboutScrollspyNavList {
+      list-style: none;
+      padding: 0 0 0 24px;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      border-left: 1px solid var(--rule);
+    }
+    .aboutScrollspyNavItem {
+      transition: opacity 350ms ease, transform 350ms ease;
+    }
+    .aboutScrollspyNavItem.is-passed {
+      opacity: 0;
+      transform: translateY(-12px);
+      pointer-events: none;
+    }
+    .aboutScrollspyNavLink {
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 600;
+      font-size: var(--fs-body);
+      color: var(--ink-mute);
+      text-decoration: none;
+      display: block;
+      line-height: 1.3;
+      transition: color 200ms ease;
+    }
+    .aboutScrollspyNavLink:hover { color: var(--ink); }
+    .aboutScrollspyNavItem.is-active .aboutScrollspyNavLink {
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    /* About "ВАЖНО" callout: aligns to the left content column on desktop, full width on mobile */
+    .aboutImportant {
+      max-width: 1100px;
+      margin: 16px auto 0;
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 80px;
+    }
+    .aboutImportantBox {
+      padding: 28px 32px;
+      background: var(--void);
+      color: var(--paper);
+      display: flex;
+      align-items: flex-start;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    /* Narrative: desktop visible, mobile hidden by default; flipped in mobile media query */
+    .narrativeMobile { display: none; }
+    .aboutMobile { display: none; }
+
     /* ========== MOBILE ========== */
     @media (max-width: 860px) {
+      :root {
+        --fs-caption: 11px;
+        --fs-body: 15px;
+        --fs-lead: 18px;
+        --fs-h3: 22px;
+        /* --fs-h2 and --fs-h1 already fluid via clamp */
+      }
       #top > section { padding-top: 56px !important; padding-bottom: 56px !important; }
       #top > section:first-of-type { padding-top: 80px !important; padding-bottom: 56px !important; }
       #contacts { padding-top: 56px !important; padding-bottom: 56px !important; }
       #top > section > div { padding-left: 20px !important; padding-right: 20px !important; }
       #top [data-grid] { grid-template-columns: 1fr !important; gap: 20px !important; }
-      #top h1.display, #top h2.display { font-size: clamp(34px, 9vw, 56px) !important; line-height: 0.98 !important; }
-      #hero h1.display { font-size: clamp(56px, 15vw, 104px) !important; line-height: 0.9 !important; }
-      #top h3.display { font-size: clamp(22px, 6vw, 28px) !important; }
-      #top section p { font-size: 15px !important; line-height: 1.55 !important; }
+      #facilitators header[data-grid] { gap: 0 !important; }
+      #top h1.display, #top h2.display { line-height: 0.98 !important; }
+      #hero h1.display { font-size: clamp(44px, 12vw, 88px) !important; line-height: 0.9 !important; }
+      #top section p { font-size: var(--fs-body) !important; line-height: 1.55 !important; }
       .nav { padding: 10px 16px !important; }
       .nav__items { gap: 6px !important; }
       .navLink { display: none !important; }
@@ -468,50 +583,133 @@ const contacts = [
       .heroCredit {
         position: static !important;
         right: auto !important; bottom: auto !important; top: auto !important;
-        text-align: right !important;
+        text-align: center !important;
         margin-top: 24px !important;
         padding: 0 4px !important;
       }
+      .heroCtaRow {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 24px !important;
+        padding-top: 32px !important;
+      }
+      .heroLead { max-width: none !important; }
+      .heroLead p { text-align: center !important; }
+      .heroCtas { flex-wrap: nowrap !important; gap: 8px !important; justify-content: center !important; }
+      .heroCtas .cta {
+        flex: 1 1 0 !important;
+        padding: 14px 12px !important;
+        font-size: var(--fs-caption) !important;
+        letter-spacing: 0.12em !important;
+        gap: 8px !important;
+        justify-content: center !important;
+      }
       #schedule ul li { grid-template-columns: 92px 1fr !important; gap: 14px !important; }
-      #schedule ul li .display { font-size: 16px !important; }
-      #pricing .display { font-size: 24px !important; }
+      #schedule ul li .display { font-size: var(--fs-body) !important; }
+      #pricing .display { font-size: var(--fs-h3) !important; }
+      #pricing .priceNum { font-size: 88px !important; }
       .heroScrollCue { display: none !important; }
       #top > section:first-of-type { min-height: auto !important; }
       .heroInfoGrid { display: none !important; }
       .heroInfoMobile { display: block !important; }
-      .narrativeOpenerBlock { margin-bottom: 24px !important; }
-      .narrativeAside { position: static !important; top: auto !important; margin-bottom: 24px; }
-      .narrativeBr { display: none !important; }
-      .narrativeNbsp { display: inline; }
-      .narrativeOpener {
-        font-size: 16px !important; line-height: 1.65 !important;
-        font-weight: 400 !important; color: var(--ink-soft) !important;
+      #narrative .narrativeEyebrow { margin-bottom: 24px !important; }
+      #narrative .narrativeDesktop { display: none !important; }
+      #narrative .narrativeMobile {
+        display: flex !important;
+        flex-direction: column;
+        gap: 16px;
+        font-family: 'Inter', sans-serif;
+        font-size: var(--fs-body);
+        line-height: 1.65;
+        font-style: italic;
+        color: var(--ink);
       }
-      .narrativeOpener br { display: inline; }
-      .narrativeOpenerAccent { font-weight: 400 !important; color: var(--ink-soft) !important; }
-      .narrativeAsideHead {
-        font-family: 'Inter', sans-serif !important;
-        font-size: 16px !important; line-height: 1.65 !important;
-        font-weight: 400 !important; color: var(--ink-soft) !important;
-        letter-spacing: 0 !important;
+      #narrative .narrativeMobile p { margin: 0; font-size: var(--fs-body) !important; line-height: 1.65 !important; color: var(--ink); }
+      #narrative .narrativeMobile .letterHeading {
+        font-size: var(--fs-h2);
+        line-height: 0.95;
+        margin-bottom: 32px;
+        font-style: normal;
       }
-      .narrativeBody { font-size: 16px !important; line-height: 1.65 !important; }
-      .narrativeBody p { font-size: 16px !important; line-height: 1.65 !important; }
-      .narrativeBodyEmphasis {
-        font-weight: 400 !important; color: var(--ink-soft) !important;
-        font-size: 16px !important; line-height: 1.65 !important;
-        padding-top: 0 !important; border-top: 0 !important;
+      #narrative .narrativeMobile .letterTitle {
+        font-family: 'Unbounded', sans-serif;
+        font-weight: 800;
+        color: var(--accent);
+        letter-spacing: -0.01em;
       }
-      .narrativeAsideQuote {
-        margin-top: 20px !important; padding-top: 0 !important;
-        border-top: 0 !important; padding-left: 16px !important;
-        border-left: 2px solid var(--accent) !important;
+      #narrative .narrativeMobile .letterTitle span { color: var(--ink); }
+      #narrative .narrativeMobile .letterAccent {
+        color: var(--accent);
+        font-weight: 500;
+        font-style: italic;
       }
-      .narrativeAsideQuoteText {
-        font-family: 'Inter', sans-serif !important;
-        font-size: 16px !important; font-style: italic !important;
-        color: var(--ink) !important; letter-spacing: 0 !important;
-        line-height: 1.55 !important;
+      #narrative .narrativeMobile .letterQuote {
+        margin: 0;
+        padding: 0 0 0 16px;
+        border-left: 2px solid var(--accent);
+        font-size: var(--fs-body) !important;
+        line-height: 1.65 !important;
+      }
+      #narrative .narrativeMobile .letterHr {
+        width: 100%; height: 1px; border: 0;
+        background: var(--rule); margin: 0;
+      }
+      #narrative .narrativeMobile .letterClose { margin: 16px 0 0; }
+      #about > div > header { margin-bottom: 24px !important; }
+      #about .aboutDesktop { display: none !important; }
+      #about .aboutMobile {
+        display: flex !important;
+        flex-direction: column;
+        gap: 40px;
+      }
+      #about .aboutMobileBlock {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      #about .aboutMobileTitle {
+        font-size: var(--fs-h3);
+        line-height: 1.2;
+        color: var(--ink);
+        font-weight: 700;
+        margin: 0;
+      }
+      #about .aboutMobileSubhead {
+        font-size: var(--fs-body);
+        line-height: 1.55;
+        color: var(--ink);
+        margin: 0;
+      }
+      #about .aboutMobileBody {
+        font-size: var(--fs-body);
+        line-height: 1.55;
+        color: var(--ink-soft);
+        margin: 0;
+      }
+      #about .aboutMobileOutro { color: var(--ink); }
+      #about .aboutMobileList {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin: 0;
+        padding: 0;
+      }
+      #about .aboutMobileItem {
+        display: flex;
+        gap: 12px;
+        align-items: baseline;
+        font-size: var(--fs-body);
+        line-height: 1.55;
+        color: var(--ink-soft);
+      }
+      #about .aboutMobileDot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--accent);
+        flex-shrink: 0;
+        transform: translateY(-3px);
       }
       #about .aboutFeatures {
         grid-template-columns: 1fr !important; gap: 0 !important;
@@ -522,16 +720,18 @@ const contacts = [
         border-bottom: 1px solid var(--rule) !important; background: transparent !important;
       }
       #about .aboutFeatureCard:last-of-type { border-bottom: 0 !important; }
-      #about .aboutFeatureCard h3.display { font-size: 22px !important; }
-      #about .aboutFeatureCard p { font-size: 15px !important; line-height: 1.5 !important; }
+      #about .aboutFeatureCard h3.display { font-size: var(--fs-h3) !important; }
+      #about .aboutFeatureCard p { font-size: var(--fs-body) !important; line-height: 1.5 !important; }
       #about .aboutLists { margin-top: 12px !important; gap: 0 !important; }
       #about .aboutListBlock {
         padding: 12px 0 !important; border-bottom: 1px solid var(--rule);
         display: flex; flex-direction: column; gap: 12px;
       }
       #about .aboutListBlock:last-of-type { border-bottom: 0; }
-      #about .aboutListHead { font-size: 22px !important; color: var(--ink) !important; margin-bottom: 0 !important; }
-      #about .aboutListItem { padding: 4px 0 !important; font-size: 15px !important; line-height: 1.5 !important; gap: 12px !important; }
+      #about .aboutListHead { font-size: var(--fs-h3) !important; color: var(--ink) !important; margin-bottom: 0 !important; }
+      #about .aboutListItem { padding: 4px 0 !important; font-size: var(--fs-body) !important; line-height: 1.5 !important; gap: 12px !important; }
+      #facilitators .facCard > div:first-child { max-width: 340px !important; margin: 0 auto !important; }
+      #about .aboutImportant { grid-template-columns: 1fr !important; gap: 0 !important; max-width: 880px !important; }
       #contacts .contactGrid {
         display: flex !important; flex-direction: column !important;
         gap: 0 !important; background: transparent !important; border: 0 !important;
@@ -543,21 +743,48 @@ const contacts = [
         gap: 16px !important; align-items: baseline !important;
       }
       #contacts .contactCell:last-of-type { border-bottom: 0 !important; }
-      #contacts .contactCell .display { font-size: 15px !important; margin-bottom: 0 !important; line-height: 1.3 !important; }
-      #contacts .contactCell .mono:first-of-type { font-size: 10px !important; margin-bottom: 0 !important; align-self: center !important; }
+      #contacts .contactCell .display { font-size: var(--fs-body) !important; margin-bottom: 0 !important; line-height: 1.3 !important; }
+      #contacts .contactCell .mono:first-of-type { font-size: var(--fs-caption) !important; margin-bottom: 0 !important; align-self: center !important; }
       #contacts .contactCell .mono:last-of-type { display: none !important; }
       #pricing .standardTier { display: none !important; }
       #pricing .afterEarly { display: inline; }
+      .is-after-early #pricing .earlyTier { display: none !important; }
+      .is-after-early #pricing .standardTier { display: block !important; }
       #pricing .cdSeconds, #pricing .cdColonSeconds { display: none !important; }
       .podcastStrip .podcastPlay { display: none !important; }
       .applyModal { width: 100% !important; max-width: 100% !important; height: 100% !important; max-height: 100% !important; border-radius: 0 !important; }
     }
     @media (max-width: 480px) {
       #top > section > div { padding-left: 16px !important; padding-right: 16px !important; }
-      #top h1.display, #top h2.display { font-size: clamp(30px, 10vw, 44px) !important; }
       .nav .cta--filled { display: none !important; }
     }
     .afterEarly { display: none; }
+
+    /* AFTER-EARLY MODE — applied to <body> when current time >= 2026-05-20 00:00 GMT+4
+       (or via ?after-early=1 URL param for testing) */
+    .is-after-early #countdownBanner { display: none !important; }
+    .is-after-early .earlyTierCta { display: none !important; }
+    .is-after-early .earlyTier {
+      border-color: var(--rule) !important;
+      border-width: 1px !important;
+    }
+    .is-after-early .earlyTier > div:first-child {
+      background: var(--paper-deep) !important;
+      color: var(--ink-mute) !important;
+    }
+    .is-after-early .standardTier { border-color: var(--accent) !important; border-width: 2px !important; }
+    .is-after-early .standardTierCta {
+      background: var(--accent) !important;
+      color: var(--ink) !important;
+      border-color: var(--accent) !important;
+    }
+    .is-after-early .standardTierCta:hover {
+      background: var(--accent-soft) !important;
+      border-color: var(--accent-soft) !important;
+    }
+    .is-after-early .earlyTier .priceNum { color: var(--ink-mute) !important; }
+    .is-after-early .earlyTier strong { color: inherit !important; font-weight: 500 !important; }
+    .is-after-early .standardTier .priceNum { color: var(--ink) !important; }
   </style>
 </head>
 <body>
@@ -575,9 +802,8 @@ const contacts = [
       <button id="burgerBtn" class="navBurger" aria-label="Открыть меню">
         <span><span></span><span></span><span></span></span>
       </button>
-      <button class="cta cta--filled cta--sm" data-apply-open style="margin-left: 12px;">
+      <button class="cta cta--filled cta--sm" data-apply-open style="margin-left: 12px; font-weight: 700;">
         <span>Участвовать</span>
-        <span class="cta__arrow">→</span>
       </button>
     </div>
   </nav>
@@ -585,7 +811,7 @@ const contacts = [
   <!-- Mobile menu overlay -->
   <div id="menuOverlay" class="menuOverlay">
     <div class="menuOverlay__head">
-      <span class="display" style="font-size: 14px; color: var(--ink);">Меню</span>
+      <span class="display" style="font-size: var(--fs-caption); color: var(--ink);">Меню</span>
       <button id="menuClose" class="menuOverlay__close" aria-label="Закрыть">×</button>
     </div>
     <div class="menuOverlay__list">
@@ -593,9 +819,8 @@ const contacts = [
         <a href={it.href} data-menu-link>{it.label}</a>
       ))}
     </div>
-    <button class="cta cta--filled" data-apply-open style="margin-top: 32px;">
+    <button class="cta cta--filled" data-apply-open style="margin-top: 32px; font-weight: 700;">
       <span>Участвовать</span>
-      <span class="cta__arrow">→</span>
     </button>
   </div>
 
@@ -603,15 +828,16 @@ const contacts = [
   <section id="hero" style="position: relative; min-height: 100vh; padding-top: 80px; padding-bottom: 80px; overflow: hidden;">
     <!-- Event banner -->
     <div style="max-width: 1280px; margin: 0 auto; padding: 0 48px; position: relative; z-index: 3; margin-bottom: 48px;">
-      <div class="heroInfoMobile mono" style="display: none; padding: 12px 0; font-size: 13px; letter-spacing: 0.06em; color: var(--ink); font-weight: 700; text-align: center;">
-        Мастерская-тренинг · <span style="color: var(--accent);">31 мая 2026</span> · Батуми
+      <div class="heroInfoMobile mono" style="display: none; padding: 12px 0; font-size: 14px; letter-spacing: 0.04em; color: var(--ink); font-weight: 700; text-align: center; line-height: 1.4;">
+        <div>Мастерская-тренинг</div>
+        <div><span style="color: var(--accent);">31 мая 2026</span> · Батуми</div>
       </div>
       <div class="heroInfoGrid" data-grid style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--rule); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink);">
         {heroInfo.map((x) => (
           <div style="background: var(--paper); padding: 24px 24px;">
-            <div class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 12px;">{x.l}</div>
-            <div class="display" style="font-size: 22px; line-height: 1.15; color: var(--ink); margin-bottom: 6px; letter-spacing: -0.01em;">{x.v}</div>
-            <div class="mono" style="font-size: 11px; letter-spacing: 0.18em; color: var(--ink-mute);">{x.sub}</div>
+            <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 12px;">{x.l}</div>
+            <div class="display" style="font-size: var(--fs-h3); line-height: 1.15; color: var(--ink); margin-bottom: 6px; letter-spacing: -0.01em;">{x.v}</div>
+            <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.18em; color: var(--ink-mute);">{x.sub}</div>
           </div>
         ))}
       </div>
@@ -620,35 +846,12 @@ const contacts = [
     <!-- Hero canvas: paper background with the void hole and title -->
     <div style="position: relative; max-width: 1280px; margin: 0 auto; padding: 0 48px;">
       <div class="heroCanvas" style="position: relative; aspect-ratio: 1180 / 760; width: 100%;">
-        <!-- Void blob -->
-        <div id="heroVoid" class="heroVoid" style="position: absolute; inset: 8% 10% 6% 18%; transition: transform 80ms linear;">
-          <svg viewBox="0 0 1000 1000" preserveAspectRatio="none" style="width: 100%; height: 100%; display: block;" aria-hidden="true">
-            <defs>
-              <filter id="tornDropShadow" x="-15%" y="-15%" width="130%" height="130%">
-                <feGaussianBlur stdDeviation="14" />
-              </filter>
-              <filter id="tornGrain" x="-5%" y="-5%" width="110%" height="110%">
-                <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="4" />
-                <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.35 0" />
-                <feComposite in2="SourceGraphic" operator="in" />
-              </filter>
-              <radialGradient id="tornVoidGrad" cx="50%" cy="48%" r="58%">
-                <stop offset="0%" stop-color="var(--void)" stop-opacity="1" />
-                <stop offset="78%" stop-color="var(--void)" stop-opacity="1" />
-                <stop offset="100%" stop-color="#000" stop-opacity="1" />
-              </radialGradient>
-              <linearGradient id="tornRimLight" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stop-color="rgba(255,255,255,0.18)" />
-                <stop offset="40%" stop-color="rgba(255,255,255,0)" />
-              </linearGradient>
-            </defs>
-            <path d={torn.outer} fill="rgba(0,0,0,0.35)" filter="url(#tornDropShadow)" transform="translate(0 14)" />
-            <path d={torn.outer} fill="url(#tornVoidGrad)" />
-            <path d={torn.inner} fill="none" stroke="rgba(0,0,0,0.55)" stroke-width="3" />
-            <path d={torn.outer} fill="url(#tornRimLight)" opacity="0.5" />
-            <path d={torn.fibers} stroke="var(--void)" stroke-width="1.6" stroke-linecap="round" fill="none" opacity="0.75" />
-            <path d={torn.fibers} stroke="rgba(0,0,0,0.4)" stroke-width="0.6" stroke-linecap="round" fill="none" />
-          </svg>
+        <!-- Void image -->
+        <div id="heroVoid" class="heroVoid" style="position: absolute; inset: 0; transition: transform 80ms linear;">
+          <picture>
+            <source media="(max-width: 768px)" srcset={`${baseUrl}hero-void-mobile.jpg`} />
+            <img src={`${baseUrl}hero-void-desktop.jpg`} alt="" style="width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; -webkit-mask-image: radial-gradient(circle at center, #000 28%, transparent 62%); mask-image: radial-gradient(circle at center, #000 28%, transparent 62%);" />
+          </picture>
         </div>
 
         <!-- Title -->
@@ -662,36 +865,34 @@ const contacts = [
 
       <!-- Pod credit (outside canvas so it sits below the void on mobile) -->
       <div class="heroCredit" style="position: absolute; right: 50px; bottom: 4%; text-align: right;">
-        <div class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 4px;">ОТ АВТОРОВ ПОДКАСТА</div>
-        <a href={podcastUrl} class="display mensVoicesLink" style="font-size: 22px; color: var(--olive-deep); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; position: relative;">
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 4px;">ОТ АВТОРОВ ПОДКАСТА</div>
+        <a href={podcastUrl} class="display mensVoicesLink" style="font-size: var(--fs-h3); color: var(--olive-deep); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; position: relative;">
           <span class="mensVoicesText">«Мужские голоса»</span>
-          <span class="mensVoicesArrow" aria-hidden="true" style="font-size: 18px;">→</span>
+          <span class="mensVoicesArrow" aria-hidden="true" style="font-size: var(--fs-lead);">→</span>
         </a>
       </div>
     </div>
 
     <!-- CTA row -->
-    <div style="max-width: 1280px; margin: 0 auto; padding: 48px 48px 0; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
-      <div style="max-width: 460px;">
-        <p style="font-size: 18px; line-height: 1.5; color: var(--ink-soft); font-weight: 400;">
+    <div class="heroCtaRow" style="max-width: 1280px; margin: 0 auto; padding: 48px 48px 0; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
+      <div class="heroLead" style="max-width: 460px;">
+        <p style="font-size: var(--fs-lead); line-height: 1.5; color: var(--ink-soft); font-weight: 400;">
           Один день для встречи с собой среди мужчин — телесные практики, мужской круг и честный разговор без необходимости кем-то казаться.
         </p>
       </div>
-      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+      <div class="heroCtas" style="display: flex; gap: 12px; flex-wrap: wrap;">
         <a href="#pricing" class="cta cta--outline">
           <span>Узнать условия</span>
-          <span class="cta__arrow">→</span>
         </a>
-        <button class="cta cta--filled" data-apply-open>
+        <button class="cta cta--filled" data-apply-open style="font-weight: 700;">
           <span>Оставить заявку</span>
-          <span class="cta__arrow">→</span>
         </button>
       </div>
     </div>
 
     <!-- Scroll cue -->
     <div id="heroScrollCue" class="heroScrollCue" style="position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0.6; transition: opacity 300ms;">
-      <span class="mono" style="font-size: 10px; letter-spacing: 0.3em; color: var(--ink-mute);">ПРОКРУТИТЬ</span>
+      <span class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.3em; color: var(--ink-mute);">ПРОКРУТИТЬ</span>
       <div style="width: 1px; height: 32px; background: var(--ink-mute); animation: scrollPulse 2s ease-in-out infinite;"></div>
     </div>
   </section>
@@ -700,43 +901,60 @@ const contacts = [
   <section id="narrative" style="position: relative; padding-top: 80px; padding-bottom: 80px;">
     <div style="background: var(--paper-2); position: absolute; inset: 0; z-index: -1;"></div>
     <div style="max-width: 1100px; margin: 0 auto; padding: 0 48px; position: relative;">
-      <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 56px;">
-        <span class="mono" style="font-size: 12px; color: var(--ink-mute); letter-spacing: 0.18em;">02 / ЛИЧНОЕ ПИСЬМО</span>
+      <div class="narrativeEyebrow" style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 24px;">
+        <span class="mono" style="font-size: var(--fs-caption); color: var(--ink-mute); letter-spacing: 0.22em;">02 / ЛИЧНОЕ ПИСЬМО</span>
         <span style="flex: 1; height: 1px; background: var(--rule);"></span>
       </div>
-      <div class="narrativeOpenerBlock" style="margin-bottom: 72px;">
-        <p style="font-family: 'Inter', sans-serif; font-size: clamp(18px, 1.6vw, 22px); color: var(--ink-mute); margin-bottom: 24px; font-style: italic;">
-          Когда я в последний раз по-настоящему задавал себе вопрос:
-        </p>
-        <h3 class="display" style="font-size: clamp(56px, 8vw, 120px); color: var(--accent); line-height: 0.95; margin-bottom: 32px;">
-          «Чего <span style="color: var(--ink);">я<span class="narrativeNbsp">&nbsp;</span></span><br class="narrativeBr" />хочу?»
-        </h3>
-        <p class="narrativeOpener" style="font-size: clamp(20px, 2vw, 28px); line-height: 1.45; font-weight: 300; color: var(--ink-soft);">
-          Не для семьи, не для работы, не потому что «так правильно».<br />
-          <em class="narrativeOpenerAccent" style="color: var(--accent); font-style: normal; font-weight: 500;">А для себя.</em>
-        </p>
-      </div>
-      <div data-grid style="display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start;">
-        <aside class="narrativeAside" style="position: sticky; top: 120px;">
-          <p class="narrativeAsideHead display" style="font-size: 24px; line-height: 1.2; color: var(--ink); letter-spacing: -0.01em;">
-            И&nbsp;это совсем не&nbsp;риторический вопрос.
+      <!-- Desktop: 2-column with sticky aside -->
+      <div class="narrativeDesktop">
+        <div class="narrativeOpenerBlock" style="margin-bottom: 72px;">
+          <p class="narrativeOpenerPrefix" style="font-family: 'Inter', sans-serif; font-size: var(--fs-lead); color: var(--ink-mute); margin-bottom: 24px; font-style: italic;">
+            Когда я в последний раз по-настоящему задавал себе вопрос:
           </p>
-          <div class="narrativeAsideQuote" style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--rule);">
-            <p class="narrativeAsideQuoteText mono" style="font-size: 12px; color: var(--ink-mute); line-height: 1.6;">
-              что для меня важно?<br />
-              как я это чувствую?<br />
-              как могу выражать в&nbsp;своей жизни?
+          <h3 class="display narrativeTitle" style="font-size: var(--fs-h1); color: var(--accent); line-height: 0.95; margin-bottom: 32px;">
+            «Чего <span style="color: var(--ink);">я<span class="narrativeNbsp">&nbsp;</span></span><br class="narrativeBr" />хочу?»
+          </h3>
+        </div>
+        <div data-grid style="display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start;">
+          <aside class="narrativeAside" style="position: sticky; top: 120px; display: flex; flex-direction: column; gap: 32px;">
+            <p class="narrativeOpener" style="font-size: var(--fs-lead); line-height: 1.45; font-weight: 300; color: var(--ink-soft); font-style: italic;">
+              Не для семьи, не для работы, не потому что «так правильно».<br />
+              <em class="narrativeOpenerAccent" style="color: var(--accent); font-style: italic; font-weight: 500;">А для себя.</em>
+            </p>
+            <p class="narrativeAsideHead display" style="font-size: var(--fs-h3); line-height: 1.2; color: var(--ink); letter-spacing: -0.01em; font-style: italic;">
+              И&nbsp;это совсем не&nbsp;риторический вопрос.
+            </p>
+          </aside>
+          <div class="narrativeBody" style="display: flex; flex-direction: column; gap: 24px; font-size: var(--fs-body); line-height: 1.65; color: var(--ink-soft); font-style: italic;">
+            <p>Для многих мужчин контакт со своими желаниями оказывается сложнее, чем кажется. Мы умеем справляться, быть полезными, брать ответственность, решать задачи. Но за всем этим легко потерять контакт с собой.</p>
+            <p>Именно поэтому мы создаём пространство, где можно исследовать свои потребности вместе с другими мужчинами&nbsp;— честно, спокойно и без необходимости быть удобным.</p>
+            <p>Через телесные ощущения, наблюдение за собой, мужской диалог и групповое взаимодействие мы будем постепенно собирать более ясное понимание:</p>
+            <blockquote class="narrativeBodyQuote" style="margin: 4px 0; padding: 4px 0 4px 24px; border-left: 2px solid var(--accent); font-size: var(--fs-lead); line-height: 1.55; color: var(--ink);">
+              что для меня важно,<br />
+              как я это чувствую<br />
+              и как могу это выражать в&nbsp;своей жизни.
+            </blockquote>
+            <hr style="width: 100%; height: 1px; border: 0; background: var(--rule); margin: 0;" />
+            <p class="narrativeBodyEmphasis" style="font-weight: 500; color: var(--ink); font-size: var(--fs-lead); margin-top: 24px;">
+              Приглашаем узнать себя лучше и прикоснуться к&nbsp;своим настоящим желаниям на&nbsp;мужской мастерской «Чего хочет мужчина?»
             </p>
           </div>
-        </aside>
-        <div class="narrativeBody" style="display: flex; flex-direction: column; gap: 24px; font-size: 17px; line-height: 1.65; color: var(--ink-soft);">
-          <p>Для многих мужчин контакт со своими желаниями оказывается сложнее, чем кажется. Мы умеем справляться, быть полезными, брать ответственность, решать задачи. Но за всем этим легко потерять контакт с собой.</p>
-          <p>Именно поэтому мы создаём пространство, где можно исследовать свои потребности вместе с другими мужчинами&nbsp;— честно, спокойно и без необходимости кем-то казаться.</p>
-          <p>Через телесные переживания, наблюдение за собой, мужской диалог и групповое взаимодействие мы будем постепенно собирать более ясное понимание себя.</p>
-          <p class="narrativeBodyEmphasis" style="font-weight: 500; color: var(--ink); font-size: 19px; padding-top: 16px; border-top: 1px solid var(--rule);">
-            Приглашаем узнать себя лучше и прикоснуться к&nbsp;своим настоящим желаниям на&nbsp;мужской мастерской «Чего хочет мужчина?»
-          </p>
         </div>
+      </div>
+
+      <!-- Mobile: linear letter, single column, uniform rhythm -->
+      <div class="narrativeMobile">
+        <h2 class="display letterHeading">Письмо <span style="color: var(--accent);">себе</span></h2>
+        <p class="letterPrefix">Когда я в последний раз по-настоящему задавал себе вопрос:</p>
+        <p class="letterTitle">«Чего <span>я</span> хочу?»</p>
+        <p>Не для семьи, не для работы, не потому что «так правильно».<br /><em class="letterAccent">А для себя.</em></p>
+        <p class="letterAside">И&nbsp;это совсем <strong>не&nbsp;риторический вопрос.</strong></p>
+        <p>Для многих мужчин контакт со своими желаниями оказывается сложнее, чем кажется. Мы умеем справляться, быть полезными, брать ответственность, решать задачи. Но за всем этим легко потерять контакт с собой.</p>
+        <p>Именно поэтому мы создаём пространство, где можно исследовать свои потребности вместе с другими мужчинами&nbsp;— честно, спокойно и без необходимости быть удобным.</p>
+        <p>Через телесные ощущения, наблюдение за собой, мужской диалог и групповое взаимодействие мы будем постепенно собирать более ясное понимание:</p>
+        <blockquote class="letterQuote">что для меня важно,<br />как я это чувствую<br />и как могу это выражать в&nbsp;своей жизни.</blockquote>
+        <hr class="letterHr" />
+        <p class="letterClose">Приглашаем узнать себя лучше и прикоснуться к&nbsp;своим настоящим желаниям на&nbsp;мужской мастерской «Чего хочет мужчина?»</p>
       </div>
     </div>
   </section>
@@ -745,55 +963,79 @@ const contacts = [
   <section id="about" style="position: relative; padding-top: 80px; padding-bottom: 80px;">
     <div style="max-width: 1280px; margin: 0 auto; padding: 0 48px;">
       <header style="max-width: 980px; margin-bottom: 96px;">
-        <div class="mono" style="font-size: 12px; color: var(--ink-mute); letter-spacing: 0.18em; margin-bottom: 24px;">03 / О ФОРМАТЕ</div>
-        <h2 class="display" style="font-size: clamp(40px, 5vw, 76px); line-height: 0.95; margin-bottom: 32px;">
+        <div class="mono" style="font-size: var(--fs-caption); color: var(--ink-mute); letter-spacing: 0.22em; margin-bottom: 24px;">03 / О ФОРМАТЕ</div>
+        <h2 class="display" style="font-size: var(--fs-h2); line-height: 0.95; margin-bottom: 32px;">
           Пространство для разговора <span style="color: var(--accent);">о&nbsp;себе</span>
         </h2>
-        <p style="font-size: 19px; line-height: 1.6; color: var(--ink-soft); max-width: 620px;">
-          Пространство, где можно слышать, что для тебя важно, как ты это чувствуешь и как можешь это выражать. Без давления, без необходимости быть кем-то другим.
-        </p>
       </header>
 
-      <div class="aboutFeatures" data-grid style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule);">
-        {aboutBlocks.map((b) => (
-          <div class="aboutFeatureCard" style="background: var(--paper); padding: 40px; display: flex; flex-direction: column; gap: 20px; min-height: 320px; position: relative;">
-            <h3 class="display" style="font-size: 28px; line-height: 1.05; color: var(--ink);">{b.title}</h3>
-            <p style="font-size: 15px; line-height: 1.55; color: var(--ink-soft);">{b.body}</p>
+      <!-- Desktop: scrollspy layout — content left, sticky nav right -->
+      <div class="aboutDesktop">
+        <div class="aboutScrollspy">
+          <div class="aboutScrollspyMain">
+            {aboutMobileBlocks.map((b, i) => (
+              <section id={`about-section-${i}`} class="aboutScrollspySection" data-about-section={i}>
+                <h3 class="display aboutScrollspyTitle" set:html={b.title.replace(/<br\s*\/?>/g, ' ')}></h3>
+                {b.subhead && <p class="aboutScrollspySubhead">{b.subhead}</p>}
+                {b.body && b.body.map((p) => <p class="aboutScrollspyP">{p}</p>)}
+                {b.intro && <p class="aboutScrollspyP">{b.intro}</p>}
+                {b.bullets && (
+                  <ul class="aboutScrollspyBullets">
+                    {b.bullets.map((it) => (
+                      <li>
+                        <span class="aboutScrollspyDot"></span>
+                        <span>{it}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {b.outro && <p class="aboutScrollspyP aboutScrollspyOutro">{b.outro}</p>}
+              </section>
+            ))}
+          </div>
+          <aside class="aboutScrollspyNav">
+            <ol class="aboutScrollspyNavList">
+              {aboutMobileBlocks.map((b, i) => (
+                <li class="aboutScrollspyNavItem" data-about-nav={i}>
+                  <a href={`#about-section-${i}`} class="aboutScrollspyNavLink" set:html={b.title.replace(/<br\s*\/?>/g, ' ')}></a>
+                </li>
+              ))}
+            </ol>
+          </aside>
+        </div>
+      </div>
+
+      <!-- Mobile: sequential blocks, one after another -->
+      <div class="aboutMobile">
+        {aboutMobileBlocks.map((b, i) => (
+          <div class="aboutMobileBlock">
+            <h3 class="display aboutMobileTitle" set:html={b.title}></h3>
+            {b.subhead && <p class="aboutMobileSubhead">{b.subhead}</p>}
+            {b.body && b.body.map((p) => <p class="aboutMobileBody">{p}</p>)}
+            {b.intro && <p class="aboutMobileBody">{b.intro}</p>}
+            {b.bullets && (
+              <ul class="aboutMobileList">
+                {b.bullets.map((it) => (
+                  <li class="aboutMobileItem">
+                    <span class="aboutMobileDot"></span>
+                    <span>{it}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {b.outro && <p class="aboutMobileBody aboutMobileOutro">{b.outro}</p>}
           </div>
         ))}
       </div>
 
-      <div class="aboutLists" data-grid style="margin-top: 96px; display: grid; grid-template-columns: 1fr 1fr; gap: 64px;">
-        <div class="aboutListBlock">
-          <div class="aboutListHead display" style="font-size: 26px; letter-spacing: -0.01em; color: var(--olive-deep); margin-bottom: 28px; font-weight: 600;">После мастерской сможете:</div>
-          <ul class="aboutListUl" style="display: flex; flex-direction: column; gap: 0;">
-            {explore.map((it) => (
-              <li class="aboutListItem" style="display: flex; gap: 20px; align-items: baseline; padding: 10px 0; font-size: 18px; line-height: 1.4; color: var(--ink);">
-                <span class="aboutListDot" style="width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; transform: translateY(-3px);"></span>
-                <span>{it}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div class="aboutListBlock">
-          <div class="aboutListHead display" style="font-size: 26px; letter-spacing: -0.01em; color: var(--accent); margin-bottom: 28px; font-weight: 600;">Как будем исследовать</div>
-          <ul class="aboutListUl" style="display: flex; flex-direction: column; gap: 0;">
-            {how.map((it) => (
-              <li class="aboutListItem" style="display: flex; gap: 20px; align-items: baseline; padding: 10px 0; font-size: 18px; line-height: 1.4; color: var(--ink);">
-                <span class="aboutListDot" style="width: 6px; height: 6px; border-radius: 50%; background: var(--olive-deep); flex-shrink: 0; transform: translateY(-3px);"></span>
-                <span>{it}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      <div style="margin-top: 80px; padding: 28px 32px; background: var(--void); color: var(--paper); display: flex; align-items: flex-start; gap: 24px; flex-wrap: wrap;">
-        <span class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: var(--accent); white-space: nowrap; line-height: 24px;">ВАЖНО!</span>
-        <span style="flex: 1; font-size: 16px; line-height: 24px; font-weight: 400;">
+      <div class="aboutImportant">
+        <div class="aboutImportantBox">
+        <span class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); white-space: nowrap; line-height: 24px;">ВАЖНО!</span>
+        <span style="flex: 1; font-size: var(--fs-body); line-height: 24px; font-weight: 400;">
           Подтверждение о регистрации только после короткого собеседования с ведущим.<br />
           Это помогает собрать честную и настроенную группу.
         </span>
+        </div>
       </div>
     </div>
   </section>
@@ -803,14 +1045,16 @@ const contacts = [
     <div style="max-width: 1280px; margin: 0 auto; padding: 0 48px;">
       <header data-grid style="margin-bottom: 56px; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: end;">
         <div>
-          <div class="mono" style="font-size: 12px; letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 24px;">04 / ВЕДУЩИЕ</div>
-          <h2 class="display" style="font-size: clamp(48px, 6vw, 96px); line-height: 0.92;">
+          <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 24px;">04 / ВЕДУЩИЕ</div>
+          <h2 class="display" style="font-size: var(--fs-h2); line-height: 0.92; margin-bottom: 32px;">
             Два <span style="color: var(--accent);">голоса</span>,<br />один разговор
           </h2>
         </div>
-        <p style="font-size: 17px; line-height: 1.6; color: var(--ink-soft); padding-bottom: 12px;">
-          Разные подходы и оптики складываются в один формат. Один работает с телом, второй — с групповой динамикой и кругом.
-        </p>
+        <div style="display: flex; flex-direction: column; gap: 12px; font-size: var(--fs-body); line-height: 1.6; color: var(--ink-soft); padding-bottom: 12px;">
+          <p>Мы разные.</p>
+          <p>У&nbsp;нас разный опыт, разные характеры и&nbsp;разные способы взаимодействия с&nbsp;миром.</p>
+          <p>Но&nbsp;нас объединяет одно: интерес к&nbsp;тому, как мужчина может жить не&nbsp;только через напряжение и&nbsp;«надо», а&nbsp;через большее понимание себя.</p>
+        </div>
       </header>
 
       <div data-grid style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
@@ -819,17 +1063,16 @@ const contacts = [
             <div style="position: relative; aspect-ratio: 4 / 5; overflow: hidden;">
               <img src={f.photo} alt={`${f.firstName} ${f.lastName}`} style={`width: 100%; height: 100%; object-fit: cover; object-position: ${f.photoPosition}; display: block;`} />
               <div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 32px 28px 24px; background: linear-gradient(to top, rgba(0,0,0,0.85), transparent); color: var(--paper);">
-                <div class="mono" style={`font-size: 11px; letter-spacing: 0.22em; color: ${f.roleColor || f.accent}; margin-bottom: 8px;`}>{f.role}</div>
                 <h3 class="display" style="font-size: 32px; line-height: 1.05; color: var(--paper);">{f.firstName}<br />{f.lastName}</h3>
               </div>
             </div>
             <div style="padding: 32px 32px 36px;">
-              <p style="font-size: 16px; line-height: 1.6; color: var(--ink-soft); margin-bottom: 24px;">{f.bio}</p>
+              <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); font-weight: 700; margin-bottom: 16px;">{f.role}</div>
+              <p style="font-size: var(--fs-body); line-height: 1.6; color: var(--ink-soft); margin-bottom: 24px;">{f.bio}</p>
               <div style="border-top: 1px solid var(--rule); padding-top: 20px; display: flex; flex-direction: column; gap: 10px;">
                 {f.links.map((l) => (
-                  <a href={l.href} target="_blank" rel="noopener noreferrer" class="mono facLink" style="font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink); text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
+                  <a href={l.href} target="_blank" rel="noopener noreferrer" class="mono facLink" style="font-size: var(--fs-caption); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink); text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
                     <span class="facLinkText">{l.label}</span>
-                    <span class="facLinkArrow" aria-hidden="true" style={`color: ${f.accent};`}>→</span>
                   </a>
                 ))}
               </div>
@@ -840,13 +1083,13 @@ const contacts = [
 
       <a href={podcastUrl} class="podcastStrip" style="margin-top: 32px; display: flex; align-items: center; justify-content: space-between; padding: 28px 36px; background: var(--void); color: var(--paper); text-decoration: none; gap: 24px; flex-wrap: wrap;">
         <div style="display: flex; align-items: center; gap: 24px;">
-          <span class="podcastPlay" style="width: 48px; height: 48px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; color: var(--ink); font-size: 18px;">▶</span>
+          <span class="podcastPlay" style="width: 48px; height: 48px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; color: var(--ink); font-size: var(--fs-lead);">▶</span>
           <div>
-            <div class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: var(--accent); margin-bottom: 4px;">ПОДКАСТ ВЕДУЩИХ</div>
-            <div class="display" style="font-size: 28px;">«Мужские голоса»</div>
+            <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 4px;">ПОДКАСТ ВЕДУЩИХ</div>
+            <div class="display" style="font-size: var(--fs-h3);">«Мужские голоса»</div>
           </div>
         </div>
-        <div class="mono podcastCta" style="font-size: 12px; letter-spacing: 0.22em; color: rgba(236,230,216,0.7);">
+        <div class="mono podcastCta" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: rgba(236,230,216,0.7);">
           <span class="podcastCtaText">СЛУШАТЬ</span>
           <span class="podcastCtaArrow" aria-hidden="true">&nbsp;→</span>
         </div>
@@ -858,22 +1101,22 @@ const contacts = [
   <section id="schedule" style="position: relative; padding-top: 80px; padding-bottom: 80px; background: var(--paper);">
     <div style="max-width: 980px; margin: 0 auto; padding: 0 48px; position: relative;">
       <header style="margin-bottom: 56px;">
-        <div class="mono" style="font-size: 12px; letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 24px;">05 / РАСПИСАНИЕ</div>
-        <h2 class="display" style="font-size: clamp(48px, 6vw, 96px); line-height: 0.92; margin-bottom: 24px; margin-left: -0.05em;">
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 24px;">05 / РАСПИСАНИЕ</div>
+        <h2 class="display" style="font-size: var(--fs-h2); line-height: 0.92; margin-bottom: 32px; margin-left: -0.05em;">
           Расписание
         </h2>
-        <div class="mono" style="font-size: 12px; letter-spacing: 0.22em; color: var(--accent);">
+        <div class="display" style="font-size: var(--fs-lead); letter-spacing: -0.005em; color: var(--accent); line-height: 1.3;">
           31 МАЯ · ВС · БАТУМИ
         </div>
       </header>
       <ul style="list-style: none; margin: 0; padding: 0;">
         {schedule.map((it, i) => (
           <li style={`display: grid; grid-template-columns: 180px 1fr; gap: 32px; align-items: baseline; padding: 16px 0; ${i === schedule.length - 1 ? '' : 'border-bottom: 1px solid var(--rule);'}`}>
-            <div class="mono" style="font-size: 13px; letter-spacing: 0.06em; color: var(--ink-mute); font-variant-numeric: tabular-nums;">
+            <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.06em; color: var(--ink-mute); font-variant-numeric: tabular-nums;">
               {it.time}
             </div>
             <div style="display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap;">
-              <span class="display" style="font-size: 19px; line-height: 1.3; color: var(--ink); letter-spacing: -0.005em;">{it.title}</span>
+              <span class="display" style="font-size: var(--fs-lead); line-height: 1.3; color: var(--ink); letter-spacing: -0.005em;">{it.title}</span>
             </div>
           </li>
         ))}
@@ -884,79 +1127,79 @@ const contacts = [
   <!-- PRICING -->
   <section id="pricing" style="position: relative; padding-top: 80px; padding-bottom: 80px; background: var(--paper-2);">
     <div style="max-width: 1280px; margin: 0 auto; padding: 0 48px;">
-      <header style="margin-bottom: 48px;">
-        <div class="mono" style="font-size: 12px; letter-spacing: 0.22em; color: var(--ink-mute);">06 / СТОИМОСТЬ И УСЛОВИЯ</div>
+      <header style="margin-bottom: 24px;">
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute);">06 / СТОИМОСТЬ И УСЛОВИЯ</div>
       </header>
 
       <div id="countdownBanner" style="background: var(--void); color: var(--paper); padding: 20px 28px; margin-bottom: 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
-        <div class="mono" style="font-size: 12px; letter-spacing: 0.22em; color: var(--accent);">
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent);">
           ДО ЗАВЕРШЕНИЯ РАННЕГО ТАРИФА
         </div>
         <div style="display: flex; gap: 24px; align-items: flex-start;" id="countdownDigits">
           <div style="text-align: center; min-width: 56px;">
             <div class="display" data-cd="d" style="font-size: 32px; color: var(--paper); letter-spacing: 0.02em;">00</div>
-            <div class="mono" style="font-size: 10px; letter-spacing: 0.22em; color: rgba(236,230,216,0.55); margin-top: 4px;">ДНЕЙ</div>
+            <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: rgba(236,230,216,0.55); margin-top: 4px;">ДНЕЙ</div>
           </div>
           <div style="text-align: center; min-width: 56px;">
             <div class="display" data-cd="h" style="font-size: 32px; color: var(--paper); letter-spacing: 0.02em;">00</div>
-            <div class="mono" style="font-size: 10px; letter-spacing: 0.22em; color: rgba(236,230,216,0.55); margin-top: 4px;">ЧАСОВ</div>
+            <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: rgba(236,230,216,0.55); margin-top: 4px;">ЧАСОВ</div>
           </div>
           <div class="display" style="font-size: 32px; color: rgba(236,230,216,0.4); line-height: 1; align-self: flex-start;">:</div>
           <div style="text-align: center; min-width: 56px;">
             <div class="display" data-cd="m" style="font-size: 32px; color: var(--paper); letter-spacing: 0.02em;">00</div>
-            <div class="mono" style="font-size: 10px; letter-spacing: 0.22em; color: rgba(236,230,216,0.55); margin-top: 4px;">МИНУТ</div>
+            <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: rgba(236,230,216,0.55); margin-top: 4px;">МИНУТ</div>
           </div>
           <div class="cdColonSeconds display" style="font-size: 32px; color: rgba(236,230,216,0.4); line-height: 1; align-self: flex-start;">:</div>
           <div class="cdSeconds" style="text-align: center; min-width: 56px;">
             <div class="display" data-cd="s" style="font-size: 32px; color: var(--paper); letter-spacing: 0.02em;">00</div>
-            <div class="mono" style="font-size: 10px; letter-spacing: 0.22em; color: rgba(236,230,216,0.55); margin-top: 4px;">СЕКУНД</div>
+            <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: rgba(236,230,216,0.55); margin-top: 4px;">СЕКУНД</div>
           </div>
         </div>
       </div>
 
       <div data-grid style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-        <div style="background: var(--paper-2); padding: 40px; position: relative; border: 2px solid var(--accent);">
+        <div class="earlyTier" style="background: var(--paper-2); padding: 40px; position: relative; border: 2px solid var(--accent);">
           <div style="position: absolute; top: -1px; right: -1px; background: var(--accent); color: var(--ink); padding: 6px 14px;">
-            <span class="mono" style="font-size: 11px; letter-spacing: 0.22em; font-weight: 500;">РАННИЙ ТАРИФ</span>
+            <span class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; font-weight: 500;">РАННИЙ ТАРИФ</span>
           </div>
-          <div class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 12px;">ДО 20 МАЯ 2026</div>
+          <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 12px;">ДО 20 МАЯ 2026</div>
           <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px;">
-            <span class="display" style="font-size: 88px; line-height: 1; color: var(--ink);">170</span>
-            <span class="display" style="font-size: 28px; color: var(--ink-mute);">₾</span>
+            <span class="display priceNum" style="font-size: var(--fs-h1); line-height: 1; color: var(--ink);">170</span>
+            <span class="display" style="font-size: var(--fs-h3); color: var(--ink-mute);">₾</span>
           </div>
-          <p style="font-size: 14px; color: var(--ink-mute); margin-bottom: 24px;">
+          <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 24px;">
             при оплате брони <strong style="color: var(--ink);">80&nbsp;лари</strong> до&nbsp;20&nbsp;мая<span class="afterEarly"><br />с&nbsp;20&nbsp;мая цена <strong style="color: var(--ink);">220&nbsp;лари</strong></span>
           </p>
           <div style="height: 1px; background: var(--rule); margin: 8px 0 24px;"></div>
           <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px;">
             {includes.map((it) => (
-              <li style="font-size: 15px; line-height: 1.4; color: var(--ink-soft); display: flex; gap: 10px;">
+              <li style="font-size: var(--fs-body); line-height: 1.4; color: var(--ink-soft); display: flex; gap: 10px;">
                 <span style="color: var(--accent); font-weight: 600;">+</span>{it}
               </li>
             ))}
           </ul>
-          <button class="cta cta--filled" data-apply-open>
+          <button class="cta cta--filled earlyTierCta" data-apply-open>
             <span>Оставить заявку</span>
             <span class="cta__arrow">→</span>
           </button>
         </div>
 
         <div class="standardTier" style="background: var(--paper-2); padding: 40px; position: relative; border: 1px solid var(--rule);">
-          <div class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 12px;">ПОСЛЕ 20 МАЯ</div>
+          <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 12px;">ПОСЛЕ 20 МАЯ</div>
           <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px;">
-            <span class="display" style="font-size: 88px; line-height: 1; color: var(--ink-soft);">220</span>
-            <span class="display" style="font-size: 28px; color: var(--ink-mute);">₾</span>
+            <span class="display priceNum" style="font-size: var(--fs-h1); line-height: 1; color: var(--ink-soft);">220</span>
+            <span class="display" style="font-size: var(--fs-h3); color: var(--ink-mute);">₾</span>
           </div>
-          <p style="font-size: 14px; color: var(--ink-mute); margin-bottom: 24px;">стандартная стоимость участия</p>
+          <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 24px;">стандартная стоимость участия</p>
           <div style="height: 1px; background: var(--rule); margin: 8px 0 24px;"></div>
           <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px;">
             {includes.map((it) => (
-              <li style="font-size: 15px; line-height: 1.4; color: var(--ink-soft); display: flex; gap: 10px;">
+              <li style="font-size: var(--fs-body); line-height: 1.4; color: var(--ink-soft); display: flex; gap: 10px;">
                 <span style="color: var(--ink-mute);">·</span>{it}
               </li>
             ))}
           </ul>
-          <button class="cta cta--outline" data-apply-open>
+          <button class="cta cta--outline standardTierCta" data-apply-open>
             <span>Оставить заявку</span>
             <span class="cta__arrow">→</span>
           </button>
@@ -968,29 +1211,29 @@ const contacts = [
   <!-- CONTACTS / FOOTER -->
   <section id="contacts" style="background: var(--void); color: var(--paper); position: relative; padding-top: 80px; padding-bottom: 40px;">
     <div style="max-width: 1280px; margin: 0 auto; padding: 0 48px; position: relative;">
-      <div class="mono" style="font-size: 12px; letter-spacing: 0.22em; color: var(--accent); margin-bottom: 32px;">07 / КОНТАКТЫ</div>
+      <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 24px;">07 / КОНТАКТЫ</div>
 
       <div class="contactGrid" data-grid style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: rgba(236,230,216,0.12); border-top: 1px solid rgba(236,230,216,0.12); border-bottom: 1px solid rgba(236,230,216,0.12);">
         {contacts.map((x) => (
           <div class="contactCell" style="background: var(--void); padding: 32px 24px;">
-            <div class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: rgba(236,230,216,0.55); margin-bottom: 12px;">{x.l}</div>
-            <div class="display" style="font-size: 22px; line-height: 1.15; color: var(--paper); margin-bottom: 6px;">
+            <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: rgba(236,230,216,0.55); margin-bottom: 12px;">{x.l}</div>
+            <div class="display" style="font-size: var(--fs-h3); line-height: 1.15; color: var(--paper); margin-bottom: 6px;">
               {x.href ? <a href={x.href} target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">{x.v}</a> : x.v}
             </div>
-            <div class="mono" style="font-size: 11px; letter-spacing: 0.18em; color: rgba(236,230,216,0.4);">{x.sub}</div>
+            <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.18em; color: rgba(236,230,216,0.4);">{x.sub}</div>
           </div>
         ))}
       </div>
 
       <div style="margin-top: 56px; display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap;">
         <div style="display: flex; align-items: center; gap: 16px;">
-          <span style="width: 32px; height: 32px; background: var(--accent); display: inline-flex; align-items: center; justify-content: center; color: var(--ink); font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: 18px;">?</span>
+          <span style="width: 32px; height: 32px; background: var(--accent); display: inline-flex; align-items: center; justify-content: center; color: var(--ink); font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: var(--fs-lead);">?</span>
           <div>
-            <div class="display" style="font-size: 16px; color: var(--paper);">Чего хочет мужчина</div>
-            <div class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: rgba(236,230,216,0.5); margin-top: 4px;">МАСТЕРСКАЯ-ТРЕНИНГ • БАТУМИ</div>
+            <div class="display" style="font-size: var(--fs-body); color: var(--paper);">Чего хочет мужчина</div>
+            <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: rgba(236,230,216,0.5); margin-top: 4px;">МАСТЕРСКАЯ-ТРЕНИНГ • БАТУМИ</div>
           </div>
         </div>
-        <div class="mono" style="font-size: 11px; letter-spacing: 0.18em; color: rgba(236,230,216,0.5); display: flex; gap: 20px;">
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.18em; color: rgba(236,230,216,0.5); display: flex; gap: 20px;">
           <span>© 2026 — права защищены</span>
           <span style="color: rgba(236,230,216,0.7);">Договор и Правила</span>
         </div>
@@ -1010,28 +1253,28 @@ const contacts = [
   <div class="applyBackdrop" data-apply-close></div>
   <div class="applyModal" role="dialog" aria-modal="true" aria-labelledby="applyTitle">
     <div class="applyTopbar">
-      <div class="mono" id="applyStepLabel" style="font-size: 11px; letter-spacing: 0.22em; color: var(--ink-mute);">ЗАЯВКА · ШАГ 1 / 4</div>
-      <button data-apply-close style="width: 40px; height: 40px; font-size: 22px; color: var(--ink-mute);" aria-label="Закрыть">×</button>
+      <div class="mono" id="applyStepLabel" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute);">ЗАЯВКА · ШАГ 1 / 5</div>
+      <button data-apply-close style="width: 40px; height: 40px; font-size: var(--fs-h3); color: var(--ink-mute);" aria-label="Закрыть">×</button>
     </div>
 
     <div class="applyProgress" id="applyProgress">
-      <span class="is-active"></span><span></span><span></span><span></span>
+      <span class="is-active"></span><span></span><span></span><span></span><span></span>
     </div>
 
     <div class="applyBody">
       <!-- Step 0: name -->
       <div class="applyStep is-active" data-step="0">
-        <div class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">01 / ИМЯ</div>
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">01 / ИМЯ</div>
         <h3 id="applyTitle" class="display" style="font-size: 36px; line-height: 1.1; margin-bottom: 12px;">Как к вам обращаться?</h3>
-        <p style="font-size: 15px; color: var(--ink-mute); margin-bottom: 28px; line-height: 1.5;">Имя, как вам комфортно. Можно неформально.</p>
+        <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 28px; line-height: 1.5;">Имя, как вам комфортно. Можно неформально.</p>
         <input class="applyField" type="text" id="applyName" placeholder="Например, Сергей" />
       </div>
 
       <!-- Step 1: contact -->
       <div class="applyStep" data-step="1">
-        <div class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">02 / КОНТАКТ</div>
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">02 / КОНТАКТ</div>
         <h3 class="display" style="font-size: 36px; line-height: 1.1; margin-bottom: 12px;">Как с вами связаться?</h3>
-        <p style="font-size: 15px; color: var(--ink-mute); margin-bottom: 28px; line-height: 1.5;">Ведущий напишет лично — никаких рассылок, только собеседование.</p>
+        <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 28px; line-height: 1.5;">Ведущий напишет лично — никаких рассылок, только собеседование.</p>
         <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;" id="contactTypeChips">
           <button type="button" class="applyChip is-active" data-contact-type="telegram">Telegram</button>
           <button type="button" class="applyChip" data-contact-type="phone">Телефон</button>
@@ -1042,34 +1285,39 @@ const contacts = [
 
       <!-- Step 2: expectations -->
       <div class="applyStep" data-step="2">
-        <div class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">03 / ОБ ЭТОМ</div>
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">03 / ЦЕЛИ</div>
         <h3 class="display" style="font-size: 36px; line-height: 1.1; margin-bottom: 12px;">Что вас сюда привело?</h3>
-        <p style="font-size: 15px; color: var(--ink-mute); margin-bottom: 28px; line-height: 1.5;">Несколько фраз — что хотелось бы исследовать на мастерской. Это поможет настроить разговор.</p>
+        <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 28px; line-height: 1.5;">Несколько фраз — что хотелось бы исследовать на мастерской. Это поможет настроить разговор.</p>
         <textarea class="applyField applyField--multi" id="applyExpectations" rows="4" placeholder="Свободно, без формальностей — для ведущего."></textarea>
-        <div class="mono" id="applyExpectationsHint" style="margin-top: 8px; font-size: 11px; letter-spacing: 0.22em; color: var(--ink-mute);">МИНИМУМ 6 СИМВОЛОВ</div>
-        <div style="margin-top: 16px;">
-          <div class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 8px;">УДОБНОЕ ВРЕМЯ ДЛЯ СОБЕСЕДОВАНИЯ</div>
-          <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="interviewChips">
-            <button type="button" class="applyChip applyChip--accent is-active" data-interview="weekday-evening">Будни, вечер</button>
-            <button type="button" class="applyChip applyChip--accent" data-interview="weekend">Выходные</button>
-            <button type="button" class="applyChip applyChip--accent" data-interview="any">Любое</button>
-          </div>
+        <div class="mono" id="applyExpectationsHint" style="margin-top: 8px; font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute);">МИНИМУМ 6 СИМВОЛОВ</div>
+      </div>
+
+      <!-- Step 3: call time -->
+      <div class="applyStep" data-step="3">
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">04 / ВРЕМЯ ЗВОНКА</div>
+        <h3 class="display" style="font-size: 36px; line-height: 1.1; margin-bottom: 12px;">Когда удобнее созвониться?</h3>
+        <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 28px; line-height: 1.5;">Ведущий свяжется с&nbsp;вами и&nbsp;предложит созвон-знакомство.</p>
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 8px;">УДОБНОЕ ВРЕМЯ ДЛЯ созвона-знакомства</div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="interviewChips">
+          <button type="button" class="applyChip applyChip--accent is-active" data-interview="weekday-evening">Будни, вечер</button>
+          <button type="button" class="applyChip applyChip--accent" data-interview="weekend">Выходные</button>
+          <button type="button" class="applyChip applyChip--accent" data-interview="any">Любое</button>
         </div>
       </div>
 
-      <!-- Step 3: confirmation -->
-      <div class="applyStep" data-step="3">
-        <div class="mono" style="font-size: 11px; letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">04 / ПОДТВЕРЖДЕНИЕ</div>
+      <!-- Step 4: confirmation -->
+      <div class="applyStep" data-step="4">
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">05 / ПОДТВЕРЖДЕНИЕ</div>
         <h3 class="display" style="font-size: 36px; line-height: 1.1; margin-bottom: 12px;">Почти готово</h3>
-        <p style="font-size: 15px; color: var(--ink-mute); margin-bottom: 28px; line-height: 1.5;">Прежде чем отправить — пара важных деталей.</p>
-        <div style="background: var(--paper-2); padding: 24px; margin-bottom: 20px; font-size: 14px; line-height: 1.6; color: var(--ink-soft);">
+        <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 28px; line-height: 1.5;">Прежде чем отправить — пара важных деталей.</p>
+        <div style="background: var(--paper-2); padding: 24px; margin-bottom: 20px; font-size: var(--fs-body); line-height: 1.6; color: var(--ink-soft);">
           <p style="margin-bottom: 12px;">· Ведущий напишет в&nbsp;течение 1–2&nbsp;дней для короткого разговора.</p>
           <p style="margin-bottom: 12px;">· После собеседования мы&nbsp;подтвердим регистрацию и&nbsp;пришлём реквизиты для оплаты брони (80&nbsp;лари).</p>
           <p style="margin-bottom: 0;">· Заявка не&nbsp;обязывает — это начало разговора.</p>
         </div>
         <label id="applyAgreeWrap" style="display: flex; gap: 12px; padding: 16px; border: 1px solid var(--rule); cursor: pointer; align-items: flex-start; transition: border-color 200ms;">
           <input type="checkbox" id="applyAgree" style="margin-top: 4px; accent-color: var(--accent);" />
-          <span style="font-size: 14px; color: var(--ink-soft); line-height: 1.5;">
+          <span style="font-size: var(--fs-body); color: var(--ink-soft); line-height: 1.5;">
             Согласен(на) с обработкой персональных данных и условиями участия.
           </span>
         </label>
@@ -1079,7 +1327,7 @@ const contacts = [
       <div class="applyDone" id="applyDone">
         <div class="display" style="font-size: 64px; margin-bottom: 16px; color: var(--accent);">✓</div>
         <h3 class="display" style="font-size: 36px; margin-bottom: 16px; line-height: 1.1;">Заявка принята</h3>
-        <p style="font-size: 16px; line-height: 1.6; color: var(--ink-soft); max-width: 460px; margin: 0 auto 28px;" id="applyDoneText">
+        <p style="font-size: var(--fs-body); line-height: 1.6; color: var(--ink-soft); max-width: 460px; margin: 0 auto 28px;" id="applyDoneText">
           Спасибо. Ведущий свяжется с вами в течение 1–2 дней для короткого собеседования.
         </p>
         <button class="cta cta--outline" data-apply-close>
@@ -1092,7 +1340,7 @@ const contacts = [
       <div class="applyDone" id="applyError">
         <div class="display" style="font-size: 64px; margin-bottom: 16px; color: var(--ink-mute);">!</div>
         <h3 class="display" style="font-size: 36px; margin-bottom: 16px; line-height: 1.1;">Не удалось отправить</h3>
-        <p style="font-size: 16px; line-height: 1.6; color: var(--ink-soft); max-width: 460px; margin: 0 auto 28px;">
+        <p style="font-size: var(--fs-body); line-height: 1.6; color: var(--ink-soft); max-width: 460px; margin: 0 auto 28px;">
           Что-то пошло не так с отправкой. Напишите Анри напрямую в Telegram — он свяжется с вами для собеседования.
         </p>
         <a class="cta cta--filled" href="https://t.me/sensologist" target="_blank" rel="noopener noreferrer" style="margin-bottom: 12px;">
@@ -1119,6 +1367,20 @@ const contacts = [
 </div>
 
 <script is:inline>
+  // -- after-early-tier mode -------------------------------------------------
+  // Switches pricing UI when the early-bird window closes:
+  // 2026-05-20 00:00 GMT+4  ==  2026-05-19 20:00 UTC
+  (function () {
+    const EARLY_END_UTC = Date.UTC(2026, 4, 19, 20, 0, 0); // month is 0-indexed; 4 = May
+    const params = new URLSearchParams(location.search);
+    const force = params.get('after-early');
+    let isAfter;
+    if (force === '1') isAfter = true;
+    else if (force === '0') isAfter = false;
+    else isAfter = Date.now() >= EARLY_END_UTC;
+    if (isAfter) document.body.classList.add('is-after-early');
+  })();
+
   // -- nav scrolled state ----------------------------------------------------
   const nav = document.getElementById('siteNav');
   const onScroll = () => {
@@ -1146,6 +1408,32 @@ const contacts = [
   document.getElementById('scrollTopBtn').addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
+
+  // Scrollspy for desktop "О формате" section
+  (function () {
+    const sections = Array.from(document.querySelectorAll('[data-about-section]'));
+    const navItems = Array.from(document.querySelectorAll('[data-about-nav]'));
+    if (!sections.length || !navItems.length) return;
+    const ACTIVE_OFFSET = 0.25; // section is "active" once its top crosses 25% of viewport
+    let raf = null;
+    const update = () => {
+      raf = null;
+      const threshold = window.innerHeight * ACTIVE_OFFSET;
+      let activeIdx = -1;
+      for (let i = 0; i < sections.length; i++) {
+        const top = sections[i].getBoundingClientRect().top;
+        if (top <= threshold) activeIdx = i;
+      }
+      navItems.forEach((item, i) => {
+        item.classList.toggle('is-passed', activeIdx >= 0 && i < activeIdx);
+        item.classList.toggle('is-active', i === activeIdx);
+      });
+    };
+    const onScroll = () => { if (raf == null) raf = requestAnimationFrame(update); };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    update();
+  })();
 
   // -- mobile menu ------------------------------------------------------------
   const menu = document.getElementById('menuOverlay');
@@ -1195,7 +1483,7 @@ const contacts = [
   const doneText = document.getElementById('applyDoneText');
   const placeholders = { telegram: '@username', phone: '+995 ...', email: 'you@example.com' };
   let step = 0;
-  const totalSteps = 4;
+  const totalSteps = 5;
   const state = { name: '', contact: '', contactType: 'telegram', expectations: '', interview: 'weekday-evening', agreed: false };
 
   const setStep = (n) => {
@@ -1220,7 +1508,8 @@ const contacts = [
     if (step === 0) return state.name.trim().length > 1;
     if (step === 1) return state.contact.trim().length > 2;
     if (step === 2) return state.expectations.trim().length > 5;
-    if (step === 3) return state.agreed;
+    if (step === 3) return !!state.interview; // chip always has a default
+    if (step === 4) return state.agreed;
     return false;
   };
   const updateNextEnabled = () => {
