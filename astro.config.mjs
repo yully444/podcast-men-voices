@@ -4,8 +4,7 @@ import rehypeExternalLinks from 'rehype-external-links';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://yully444.github.io',
-  base: '/podcast-men-voices',
+  site: 'https://mensvoice.ge',
   trailingSlash: 'always',
   devToolbar: { enabled: false },
   markdown: {
