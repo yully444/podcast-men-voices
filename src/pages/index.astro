@@ -199,6 +199,7 @@ const contacts = [
       mix-blend-mode: multiply;
     }
     #top { position: relative; z-index: 2; }
+    #top > section { scroll-margin-top: 40px; }
     .display { font-family: 'Unbounded', sans-serif; font-weight: 800; letter-spacing: -0.02em; line-height: 0.92; }
     .mono { font-family: 'JetBrains Mono', monospace; font-weight: 400; }
     .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: var(--fs-caption); letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-mute); }
@@ -576,13 +577,21 @@ const contacts = [
       #top [data-grid] { grid-template-columns: 1fr !important; gap: 20px !important; }
       #facilitators header[data-grid] { gap: 0 !important; }
       #top h1.display, #top h2.display { line-height: 0.98 !important; }
-      #hero h1.display { font-size: clamp(44px, 12vw, 88px) !important; line-height: 0.9 !important; }
+      #hero h1.display { font-size: clamp(38px, 10.5vw, 68px) !important; line-height: 0.9 !important; }
+      .heroTitle .heroTitleW, .heroTitle .heroTitleQ { display: block; }
+      .heroTitle .heroTitleBr { display: none; }
       #top section p { font-size: var(--fs-body) !important; line-height: 1.55 !important; }
       .nav { padding: 10px 16px !important; }
+      #top > section { scroll-margin-top: 20px !important; }
       .nav__items { gap: 6px !important; }
       .navLink { display: none !important; }
       .navBurger { display: inline-flex !important; }
-      .heroCanvas { aspect-ratio: 5/3 !important; }
+      #hero { padding-top: 24px !important; padding-bottom: 24px !important; }
+      .heroBanner { margin-bottom: 8px !important; }
+      .heroInfoMobile { padding: 6px 0 !important; }
+      .heroCanvasWrap { padding: 0 !important; max-width: none !important; }
+      .heroCanvas { aspect-ratio: 887/811 !important; width: 120% !important; margin-left: -10% !important; }
+      .heroVoid img { transform: scale(1) !important; }
       .heroCredit {
         position: static !important;
         right: auto !important; bottom: auto !important; top: auto !important;
@@ -590,6 +599,8 @@ const contacts = [
         margin-top: 24px !important;
         padding: 0 4px !important;
       }
+      .heroCredit .mensVoicesLink { font-size: var(--fs-lead) !important; }
+      .heroCredit .mensVoicesArrow { font-size: var(--fs-body) !important; }
       .heroCtaRow {
         flex-direction: column !important;
         align-items: stretch !important;
@@ -794,7 +805,7 @@ const contacts = [
 <div id="top">
   <!-- Nav -->
   <nav id="siteNav" class="nav">
-    <a href="#top" class="nav__brand">
+    <a href="#narrative" class="nav__brand">
       <span class="nav__mark">?</span>
       <span class="nav__name">Чего хочет мужчина</span>
     </a>
@@ -814,7 +825,7 @@ const contacts = [
   <!-- Mobile menu overlay -->
   <div id="menuOverlay" class="menuOverlay">
     <div class="menuOverlay__head">
-      <span class="display" style="font-size: var(--fs-caption); color: var(--ink);">Меню</span>
+      <span class="display" style="font-size: 14px; color: var(--ink); letter-spacing: -0.005em; line-height: 0.92;">Меню</span>
       <button id="menuClose" class="menuOverlay__close" aria-label="Закрыть">×</button>
     </div>
     <div class="menuOverlay__list">
@@ -830,7 +841,7 @@ const contacts = [
   <!-- HERO -->
   <section id="hero" style="position: relative; min-height: 100vh; padding-top: 80px; padding-bottom: 80px; overflow: hidden;">
     <!-- Event banner -->
-    <div style="max-width: 1280px; margin: 0 auto; padding: 0 48px; position: relative; z-index: 3; margin-bottom: 48px;">
+    <div class="heroBanner" style="max-width: 1280px; margin: 0 auto; padding: 0 48px; position: relative; z-index: 3; margin-bottom: 48px;">
       <div class="heroInfoMobile mono" style="display: none; padding: 12px 0; font-size: 14px; letter-spacing: 0.04em; color: var(--ink); font-weight: 700; text-align: center; line-height: 1.4;">
         <div>Мастерская-тренинг</div>
         <div><span style="color: var(--accent);">31 мая 2026</span> · Батуми</div>
@@ -839,7 +850,7 @@ const contacts = [
         {heroInfo.map((x) => (
           <div style="background: var(--paper); padding: 24px 24px;">
             <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 12px;">{x.l}</div>
-            <div class="display" style="font-size: var(--fs-h3); line-height: 1.15; color: var(--ink); margin-bottom: 6px; letter-spacing: -0.01em;">{x.v}</div>
+            <div class="display" style="font-size: var(--fs-h3); line-height: 1.15; color: var(--ink); margin-bottom: 6px; letter-spacing: -0.01em; font-weight: 600;">{x.v}</div>
             <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.18em; color: var(--ink-mute);">{x.sub}</div>
           </div>
         ))}
@@ -847,20 +858,20 @@ const contacts = [
     </div>
 
     <!-- Hero canvas: paper background with the void hole and title -->
-    <div style="position: relative; max-width: 1280px; margin: 0 auto; padding: 0 48px;">
+    <div class="heroCanvasWrap" style="position: relative; max-width: 1280px; margin: 0 auto; padding: 0 48px;">
       <div class="heroCanvas" style="position: relative; aspect-ratio: 1180 / 760; width: 100%;">
         <!-- Void image -->
         <div id="heroVoid" class="heroVoid" style="position: absolute; inset: 0; transition: transform 80ms linear;">
           <picture>
             <source media="(max-width: 768px)" srcset={`${baseUrl}hero-void-mobile.jpg`} />
-            <img src={`${baseUrl}hero-void-desktop.jpg`} alt="" style="width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; -webkit-mask-image: radial-gradient(circle at center, #000 28%, transparent 62%); mask-image: radial-gradient(circle at center, #000 28%, transparent 62%);" />
+            <img src={`${baseUrl}hero-void-desktop.jpg`} alt="" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; transform: scale(1.15); -webkit-mask-image: radial-gradient(circle at center, #000 42%, transparent 80%); mask-image: radial-gradient(circle at center, #000 42%, transparent 80%);" />
           </picture>
         </div>
 
         <!-- Title -->
         <div id="heroTitle" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
-          <h1 class="display" style="font-size: clamp(72px, 13vw, 200px); line-height: 0.86; color: var(--accent); text-align: center; font-weight: 900; letter-spacing: -0.025em; text-shadow: 0 6px 40px rgba(0,0,0,0.35);">
-            Чего хочет<br />мужчина<span style="color: var(--accent-soft);">?</span>
+          <h1 class="display heroTitle" style="font-size: clamp(72px, 13vw, 200px); line-height: 0.86; color: var(--accent); text-align: center; font-weight: 600; letter-spacing: -0.025em; text-shadow: 0 6px 40px rgba(0,0,0,0.35);">
+            <span class="heroTitleW">Чего</span> <span class="heroTitleW">хочет</span><br class="heroTitleBr" /><span class="heroTitleW">мужчина</span><span class="heroTitleQ" style="color: var(--accent-soft);">?</span>
           </h1>
         </div>
 
@@ -868,8 +879,8 @@ const contacts = [
 
       <!-- Pod credit (outside canvas so it sits below the void on mobile) -->
       <div class="heroCredit" style="position: absolute; right: 50px; bottom: 4%; text-align: right;">
-        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 4px;">ОТ АВТОРОВ ПОДКАСТА</div>
-        <a href={podcastUrl} class="display mensVoicesLink" style="font-size: var(--fs-h3); color: var(--olive-deep); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; position: relative;">
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 4px;">от авторов подкаста</div>
+        <a href={podcastUrl} class="display mensVoicesLink" style="font-size: var(--fs-h3); color: var(--olive-deep); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; position: relative; font-weight: 600;">
           <span class="mensVoicesText">«Мужские голоса»</span>
           <span class="mensVoicesArrow" aria-hidden="true" style="font-size: var(--fs-lead);">→</span>
         </a>
@@ -948,7 +959,7 @@ const contacts = [
       <!-- Mobile: linear letter, single column, uniform rhythm -->
       <div class="narrativeMobile">
         <h2 class="display letterHeading">Письмо <span style="color: var(--accent);">себе</span></h2>
-        <p class="letterPrefix">Когда я в последний раз по-настоящему задавал себе вопрос:</p>
+        <p>Когда я в последний раз по-настоящему задавал себе вопрос:</p>
         <p class="letterTitle">«Чего <span>я</span> хочу?»</p>
         <p>Не для семьи, не для работы, не потому что «так правильно».<br /><em class="letterAccent">А для себя.</em></p>
         <p class="letterAside">И&nbsp;это совсем <strong>не&nbsp;риторический вопрос.</strong></p>
@@ -1103,24 +1114,20 @@ const contacts = [
   <!-- SCHEDULE -->
   <section id="schedule" style="position: relative; padding-top: 80px; padding-bottom: 80px; background: var(--paper);">
     <div style="max-width: 980px; margin: 0 auto; padding: 0 48px; position: relative;">
-      <header style="margin-bottom: 56px;">
+      <header style="margin-bottom: 28px;">
         <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 24px;">05 / РАСПИСАНИЕ</div>
         <h2 class="display" style="font-size: var(--fs-h2); line-height: 0.92; margin-bottom: 32px; margin-left: -0.05em;">
           Расписание
         </h2>
-        <div class="display" style="font-size: var(--fs-lead); letter-spacing: -0.005em; color: var(--accent); line-height: 1.3; font-weight: 400;">
+        <div class="display" style="font-size: var(--fs-body); letter-spacing: -0.005em; color: var(--accent); line-height: 1.3; font-weight: 600;">
           31 МАЯ · ВС · БАТУМИ
         </div>
       </header>
-      <ul style="list-style: none; margin: 0; padding: 0;">
-        {schedule.map((it, i) => (
-          <li style={`display: grid; grid-template-columns: 180px 1fr; gap: 32px; align-items: baseline; padding: 16px 0; ${i === schedule.length - 1 ? '' : 'border-bottom: 1px solid var(--rule);'}`}>
-            <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.06em; color: var(--ink-mute); font-variant-numeric: tabular-nums;">
-              {it.time}
-            </div>
-            <div style="display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap;">
-              <span class="display" style={`font-size: var(--fs-lead); line-height: 1.3; color: ${it.title === "Практическая работа" ? "var(--accent)" : "var(--ink)"}; letter-spacing: -0.005em; font-weight: 400;`}>{it.title}</span>
-            </div>
+      <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px;">
+        {schedule.map((it) => (
+          <li style="display: flex; gap: 14px; font-size: var(--fs-body); line-height: 1.5; color: var(--ink); font-variant-numeric: tabular-nums;">
+            <span style="color: var(--ink-mute); flex-shrink: 0;">{it.time}</span>
+            <span>{it.title}</span>
           </li>
         ))}
       </ul>
@@ -1171,7 +1178,7 @@ const contacts = [
             <span class="display" style="font-size: var(--fs-h3); color: var(--ink-mute);">₾</span>
           </div>
           <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 24px;">
-            при оплате брони <strong style="color: var(--ink);">90&nbsp;лари</strong> (50%) до&nbsp;20&nbsp;мая<span class="afterEarly"><br />с&nbsp;20&nbsp;мая цена <strong style="color: var(--ink);">230&nbsp;лари</strong></span>
+            при оплате брони <strong style="color: var(--ink);">90&nbsp;лари</strong> (50%)<span class="afterEarly"><br />с&nbsp;20&nbsp;мая цена <strong style="color: var(--ink);">230&nbsp;лари</strong></span>
           </p>
           <div style="height: 1px; background: var(--rule); margin: 8px 0 24px;"></div>
           <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px;">
