@@ -164,9 +164,8 @@ const contacts = [
   <link rel="shortcut icon" href={`${baseUrl}favicon/favicon.ico`} />
   <title>Чего хочет мужчина? — Мастерская-тренинг, Батуми, 31 мая 2026</title>
 
-  <!-- Preload LCP hero image (mobile-first, swapped for desktop via <picture>) -->
-  <link rel="preload" as="image" href={`${baseUrl}hero-void-mobile.webp`} type="image/webp" fetchpriority="high" media="(max-width: 760px)" />
-  <link rel="preload" as="image" href={`${baseUrl}hero-void-desktop.webp`} type="image/webp" fetchpriority="high" media="(min-width: 761px)" />
+  <!-- Preload LCP hero image -->
+  <link rel="preload" as="image" href={`${baseUrl}hero-void-mobile.webp`} type="image/webp" fetchpriority="high" />
 
   <!-- Preload critical font subsets (Cyrillic, since UI is in Russian) -->
   <link rel="preload" as="font" type="font/woff2" href={`${baseUrl}fonts/inter-cyrillic.woff2`} crossorigin />
@@ -981,9 +980,8 @@ const contacts = [
         <!-- Void image -->
         <div id="heroVoid" class="heroVoid" style="position: absolute; inset: 0; transition: transform 80ms linear;">
           <picture>
-            <source media="(min-width: 761px)" srcset={`${baseUrl}hero-void-desktop.webp`} type="image/webp" />
             <source srcset={`${baseUrl}hero-void-mobile.webp`} type="image/webp" />
-            <img src={`${baseUrl}hero-void-mobile.jpg`} alt="" width="640" height="585" fetchpriority="high" decoding="async" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; -webkit-mask-image: radial-gradient(circle at center, #000 42%, transparent 80%); mask-image: radial-gradient(circle at center, #000 42%, transparent 80%);" />
+            <img src={`${baseUrl}hero-void-mobile.jpg`} alt="" width="887" height="811" fetchpriority="high" decoding="async" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; -webkit-mask-image: radial-gradient(circle at center, #000 42%, transparent 80%); mask-image: radial-gradient(circle at center, #000 42%, transparent 80%);" />
           </picture>
         </div>
 
