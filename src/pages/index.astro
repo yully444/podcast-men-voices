@@ -10,8 +10,8 @@ const pageUrl = new URL(baseUrl, Astro.site).toString();
 const navItems = [
   { label: "О формате", href: "#about" },
   { label: "Ведущие", href: "#facilitators" },
-  { label: "Расписание", href: "#schedule" },
   { label: "Стоимость", href: "#pricing" },
+  { label: "Расписание", href: "#schedule" },
   { label: "Подкаст", href: podcastUrl },
 ];
 
@@ -52,12 +52,11 @@ const aboutMobileBlocks = [
     title: "Два ведущих —<br />одна цель",
     body: [
       "Формат с двумя ведущими позволяет создать более устойчивое, живое и безопасное пространство.",
-      "Участники получают возможность исследовать себя через разные подходы — телесную практику, групповое взаимодействие и мужской диалог.",
       "А сама работа становится глубже благодаря сочетанию двух разных мужских опытов и способов ведения.",
     ],
   },
   {
-    title: "В чем мне поможет эта мастерская?",
+    title: "Что даст мастерская",
     bullets: [
       "лучше различать свои желания и автоматические «надо»",
       "замечать сигналы тела и внутреннего напряжения",
@@ -75,16 +74,6 @@ const aboutMobileBlocks = [
       "прикладные способы лучше слышать и понимать себя",
     ],
   },
-  {
-    title: "Количество мест ограничено",
-    intro: "Мы намеренно делаем небольшую группу, чтобы сохранить:",
-    bullets: [
-      "глубину работы",
-      "возможность личного взаимодействия",
-      "безопасность и качество группового процесса",
-    ],
-    outro: "Это оправдывает ограничение мест.",
-  },
 ];
 
 const facilitators = [
@@ -98,7 +87,7 @@ const facilitators = [
     accent: "var(--accent)",
     links: [
       { label: "Личный сайт", href: "https://menstherapy.tilda.ws/" },
-      { label: "Telegram-канал", href: "https://t.me/sensologist" },
+      { label: "Telegram-канал", href: "https://t.me/menswells" },
     ],
   },
   {
@@ -111,7 +100,7 @@ const facilitators = [
     accent: "var(--olive-deep)",
     roleColor: "var(--accent)",
     links: [
-      { label: "Telegram-канал", href: "https://t.me/AlexanderOlnev" },
+      { label: "Telegram-канал", href: "https://t.me/whole_live_is_a_game" },
     ],
   },
 ];
@@ -636,6 +625,7 @@ const contacts = [
       }
       .heroLead { max-width: none !important; transform: none !important; }
       .heroLead p { text-align: center !important; }
+      .heroLeadBr { display: none !important; }
       .heroCtas { flex-wrap: nowrap !important; gap: 8px !important; justify-content: center !important; }
       .heroCtas .cta {
         flex: 1 1 0 !important;
@@ -648,13 +638,19 @@ const contacts = [
       #schedule ul li { grid-template-columns: 92px 1fr !important; gap: 14px !important; }
       #schedule ul li .display { font-size: var(--fs-body) !important; }
       #pricing .display { font-size: var(--fs-h3) !important; }
-      #pricing .priceNum { font-size: 88px !important; }
+      #pricing .priceNum { font-size: 56px !important; }
+      #pricing .pricingImportant {
+        flex-direction: column !important;
+        gap: 10px !important;
+        padding: 20px 22px !important;
+      }
+      #pricing .pricingImportantLabel { padding-top: 0 !important; line-height: 1.4 !important; }
       #top > section:first-of-type { min-height: auto !important; }
       .heroInfoGrid { display: none !important; }
       .heroInfoMobile { display: block !important; }
-      #narrative .narrativeEyebrow { margin-bottom: 24px !important; }
-      #narrative .narrativeDesktop { display: none !important; }
-      #narrative .narrativeMobile {
+      #letter .narrativeEyebrow { margin-bottom: 24px !important; }
+      #letter .narrativeDesktop { display: none !important; }
+      #letter .narrativeMobile {
         display: flex !important;
         flex-direction: column;
         gap: 16px;
@@ -664,37 +660,37 @@ const contacts = [
         font-style: italic;
         color: var(--ink);
       }
-      #narrative .narrativeMobile p { margin: 0; font-size: var(--fs-body) !important; line-height: 1.65 !important; color: var(--ink); }
-      #narrative .narrativeMobile .letterHeading {
+      #letter .narrativeMobile p { margin: 0; font-size: var(--fs-body) !important; line-height: 1.65 !important; color: var(--ink); }
+      #letter .narrativeMobile .letterHeading {
         font-size: var(--fs-h2);
         line-height: 0.95;
         margin-bottom: 32px;
         font-style: normal;
       }
-      #narrative .narrativeMobile .letterTitle {
+      #letter .narrativeMobile .letterTitle {
         font-family: 'Unbounded', sans-serif;
         font-weight: 800;
         color: var(--accent);
         letter-spacing: -0.01em;
       }
-      #narrative .narrativeMobile .letterTitle span { color: var(--ink); }
-      #narrative .narrativeMobile .letterAccent {
+      #letter .narrativeMobile .letterTitle span { color: var(--ink); }
+      #letter .narrativeMobile .letterAccent {
         color: var(--accent);
         font-weight: 500;
         font-style: italic;
       }
-      #narrative .narrativeMobile .letterQuote {
+      #letter .narrativeMobile .letterQuote {
         margin: 0;
         padding: 0 0 0 16px;
         border-left: 2px solid var(--accent);
         font-size: var(--fs-body) !important;
         line-height: 1.65 !important;
       }
-      #narrative .narrativeMobile .letterHr {
+      #letter .narrativeMobile .letterHr {
         width: 100%; height: 1px; border: 0;
         background: var(--rule); margin: 0;
       }
-      #narrative .narrativeMobile .letterClose { margin: 16px 0 0; }
+      #letter .narrativeMobile .letterClose { margin: 16px 0 0; }
       #about > div > header { margin-bottom: 24px !important; }
       #about .aboutDesktop { display: none !important; }
       #about .aboutMobile {
@@ -832,7 +828,7 @@ const contacts = [
   <!-- Nav -->
   <nav id="siteNav" class="nav">
     <div class="nav__inner">
-      <a href="#narrative" class="nav__brand">
+      <a href="#letter" class="nav__brand">
         <span class="nav__mark">?</span>
         <span class="nav__name">Чего хочет мужчина</span>
       </a>
@@ -840,11 +836,11 @@ const contacts = [
         {navItems.map((it) => (
           <a href={it.href} class="navLink">{it.label}</a>
         ))}
-        <button id="burgerBtn" class="navBurger" aria-label="Открыть меню">
-          <span><span></span><span></span><span></span></span>
-        </button>
         <button class="cta cta--filled cta--sm" data-apply-open style="margin-left: 12px; font-weight: 700;">
           <span>Участвовать</span>
+        </button>
+        <button id="burgerBtn" class="navBurger" aria-label="Открыть меню">
+          <span><span></span><span></span><span></span></span>
         </button>
       </div>
     </div>
@@ -916,7 +912,7 @@ const contacts = [
     <div class="heroCtaRow" style="max-width: 1280px; margin: 0 auto; padding: 48px 48px 0; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
       <div class="heroLead" style="max-width: 460px; transform: translateY(-32px);">
         <p style="font-size: var(--fs-lead); line-height: 1.5; color: var(--ink-soft); font-weight: 400;">
-          Один день для встречи с собой среди мужчин — телесные практики, мужской круг и честный разговор без необходимости кем-то казаться.
+          Хочешь узнать себя лучше и прикоснуться к своим настоящим желаниям?<br class="heroLeadBr" /> Ждём тебя на нашей мастерской «Чего хочет мужчина?»
         </p>
       </div>
       <div class="heroCtas" style="display: flex; gap: 12px; flex-wrap: wrap;">
@@ -932,7 +928,7 @@ const contacts = [
   </section>
 
   <!-- NARRATIVE -->
-  <section id="narrative" style="position: relative; padding-top: 80px; padding-bottom: 80px;">
+  <section id="letter" style="position: relative; padding-top: 80px; padding-bottom: 80px;">
     <div style="background: var(--paper-2); position: absolute; inset: 0; z-index: -1;"></div>
     <div style="max-width: 1100px; margin: 0 auto; padding: 0 48px; position: relative;">
       <div class="narrativeEyebrow" style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 24px;">
@@ -1062,15 +1058,6 @@ const contacts = [
         ))}
       </div>
 
-      <div class="aboutImportant">
-        <div class="aboutImportantBox">
-        <span class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); white-space: nowrap; line-height: 24px;">ВАЖНО!</span>
-        <span style="flex: 1; font-size: var(--fs-body); line-height: 24px; font-weight: 400;">
-          Подтверждение о регистрации только после короткого собеседования с ведущим.<br />
-          Это помогает собрать честную и настроенную группу.
-        </span>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -1131,37 +1118,14 @@ const contacts = [
     </div>
   </section>
 
-  <!-- SCHEDULE -->
-  <section id="schedule" style="position: relative; padding-top: 80px; padding-bottom: 80px; background: var(--paper);">
-    <div style="max-width: 980px; margin: 0 auto; padding: 0 48px; position: relative;">
-      <header style="margin-bottom: 28px;">
-        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 24px;">05 / РАСПИСАНИЕ</div>
-        <h2 class="display" style="font-size: var(--fs-h2); line-height: 0.92; margin-bottom: 32px; margin-left: -0.05em;">
-          Расписание
-        </h2>
-        <div class="display" style="font-size: var(--fs-body); letter-spacing: -0.005em; color: var(--accent); line-height: 1.3; font-weight: 600;">
-          31 МАЯ · ВС · БАТУМИ
-        </div>
-      </header>
-      <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px;">
-        {schedule.map((it) => (
-          <li style="display: flex; gap: 14px; font-size: var(--fs-body); line-height: 1.5; color: var(--ink); font-variant-numeric: tabular-nums;">
-            <span style="color: var(--ink-mute); flex-shrink: 0;">{it.time}</span>
-            <span>{it.title}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </section>
-
   <!-- PRICING -->
-  <section id="pricing" style="position: relative; padding-top: 80px; padding-bottom: 80px; background: var(--paper-2);">
+  <section id="pricing" style="position: relative; padding-top: 80px; padding-bottom: 80px; background: var(--paper);">
     <div style="max-width: 1280px; margin: 0 auto; padding: 0 48px;">
       <header style="margin-bottom: 24px;">
-        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute);">06 / СТОИМОСТЬ И УСЛОВИЯ</div>
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute);">05 / СТОИМОСТЬ И УСЛОВИЯ</div>
       </header>
 
-      <div id="countdownBanner" style="background: var(--void); color: var(--paper); padding: 20px 28px; margin-bottom: 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
+      <div id="countdownBanner" style="background: var(--void); color: var(--paper); padding: 20px 28px; margin-bottom: 22px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
         <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent);">
           ДО ЗАВЕРШЕНИЯ РАННЕГО ТАРИФА
         </div>
@@ -1235,6 +1199,50 @@ const contacts = [
           </button>
         </div>
       </div>
+
+      <div class="pricingNotes" style="margin-top: 28px; display: flex; flex-direction: column; gap: 24px;">
+        <div class="pricingImportant" style="background: var(--void); color: var(--paper); padding: 28px 32px; display: flex; gap: 24px; align-items: flex-start;">
+          <span class="mono pricingImportantLabel" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); white-space: nowrap; line-height: 1.6; font-weight: 700; padding-top: 2px;">ВАЖНО!</span>
+          <span class="pricingImportantText" style="flex: 1; font-size: var(--fs-body); line-height: 1.6;">
+            Подтверждение о регистрации только после короткого собеседования с ведущим.<br />
+            Это помогает сохранить глубину работы, личное взаимодействие с каждым и сохраняет качество и безопасность группового процесса.
+          </span>
+        </div>
+
+        <div style="background: var(--paper-2); padding: 32px; border: 1px solid var(--rule); display: none;">
+          <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 14px; font-weight: 700;">КОЛИЧЕСТВО МЕСТ ОГРАНИЧЕНО</div>
+          <p style="font-size: var(--fs-body); line-height: 1.55; color: var(--ink-soft); margin: 0 0 14px;">Мы намеренно делаем небольшую группу, чтобы сохранить:</p>
+          <ul style="list-style: none; margin: 0 0 14px; padding: 0; display: flex; flex-direction: column; gap: 8px;">
+            <li style="font-size: var(--fs-body); line-height: 1.5; color: var(--ink-soft); display: flex; gap: 10px;"><span style="color: var(--accent); font-weight: 600;">+</span>глубину работы</li>
+            <li style="font-size: var(--fs-body); line-height: 1.5; color: var(--ink-soft); display: flex; gap: 10px;"><span style="color: var(--accent); font-weight: 600;">+</span>возможность личного взаимодействия</li>
+            <li style="font-size: var(--fs-body); line-height: 1.5; color: var(--ink-soft); display: flex; gap: 10px;"><span style="color: var(--accent); font-weight: 600;">+</span>безопасность и качество группового процесса</li>
+          </ul>
+          <p style="font-size: var(--fs-body); line-height: 1.55; color: var(--ink); margin: 0;">Подтверждение о регистрации только после короткого собеседования с ведущим.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCHEDULE -->
+  <section id="schedule" style="position: relative; padding-top: 80px; padding-bottom: 80px; background: var(--paper-2);">
+    <div style="max-width: 980px; margin: 0 auto; padding: 0 48px; position: relative;">
+      <header style="margin-bottom: 28px;">
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 24px;">06 / РАСПИСАНИЕ</div>
+        <h2 class="display" style="font-size: var(--fs-h2); line-height: 0.92; margin-bottom: 32px; margin-left: -0.05em;">
+          Расписание
+        </h2>
+        <div class="display" style="font-size: var(--fs-body); letter-spacing: -0.005em; color: var(--accent); line-height: 1.3; font-weight: 600;">
+          31 МАЯ · ВС · БАТУМИ
+        </div>
+      </header>
+      <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px;">
+        {schedule.map((it) => (
+          <li style="display: flex; gap: 14px; font-size: var(--fs-body); line-height: 1.5; color: var(--ink); font-variant-numeric: tabular-nums;">
+            <span style="color: var(--ink-mute); flex-shrink: 0;">{it.time}</span>
+            <span>{it.title}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   </section>
 
