@@ -58,20 +58,20 @@ const aboutMobileBlocks = [
   {
     title: "Что даст мастерская",
     bullets: [
-      "лучше различать свои желания и автоматические «надо»",
-      "замечать сигналы тела и внутреннего напряжения",
-      "понимать, как они обходятся со своими потребностями",
-      "получить опыт честного мужского взаимодействия без конкуренции",
-      "чувствовать больше ясности и контакта с собой",
+      "лучше различать свои желания и автоматические «надо»,",
+      "замечать сигналы тела и внутреннего напряжения,",
+      "понимать, как они обходятся со своими потребностями,",
+      "получить опыт честного мужского взаимодействия без конкуренции,",
+      "чувствовать больше ясности и контакта с собой.",
     ],
   },
   {
     title: "Форматы работы",
     bullets: [
-      "телесные практики для работы с внутренними сигналами",
-      "мужские круги и живой обмен историями",
-      "работа в парах и мини-группах",
-      "прикладные способы лучше слышать и понимать себя",
+      "телесные практики для работы с внутренними сигналами,",
+      "мужские круги и живой обмен историями,",
+      "работа в парах и мини-группах,",
+      "прикладные способы лучше слышать и понимать себя.",
     ],
   },
 ];
@@ -119,10 +119,10 @@ const schedule = [
 ];
 
 const includes = [
-  "Зал для практик",
-  "Кофе-брейк",
-  "Итальянская пицца на обед",
-  "Все материалы и поддержка ведущих",
+  "Зал для практик,",
+  "Кофе-брейк,",
+  "Итальянская пицца на обед,",
+  "Все материалы и поддержка ведущих.",
 ];
 
 const contacts = [
@@ -558,6 +558,84 @@ const contacts = [
       font-weight: 800;
     }
 
+    /* About — desktop v2: two grouped grids, compact cards */
+    .aboutMainHeading { display: none; }
+    .aboutGroups {
+      display: flex;
+      flex-direction: column;
+      gap: 56px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .aboutGroup { display: flex; flex-direction: column; gap: 20px; }
+    .aboutGroupTitle {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 28px;
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin: 0;
+    }
+    .aboutGroupTitle .accent { color: var(--accent); }
+    .aboutGroupGrid { display: grid; gap: 20px; align-items: stretch; }
+    .aboutGroupGrid--3 { grid-template-columns: repeat(3, 1fr); }
+    .aboutGroupGrid--2 { grid-template-columns: repeat(2, 1fr); }
+    .aboutCard {
+      background: var(--paper-2);
+      border: 1px solid var(--rule);
+      padding: 24px 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .aboutCardTitle {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 19px;
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--ink);
+      margin: 0;
+    }
+    .aboutCardSubhead {
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--ink);
+      margin: 0;
+      font-weight: 500;
+    }
+    .aboutCardP {
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--ink-soft);
+      margin: 0;
+    }
+    .aboutCardP--outro { color: var(--ink); }
+    .aboutCardBullets {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .aboutCardBullets li {
+      display: flex;
+      gap: 10px;
+      align-items: baseline;
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--ink-soft);
+    }
+    .aboutCardDot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+      transform: translateY(-2px);
+    }
+
     /* About "ВАЖНО" callout: aligns to the left content column on desktop, full width on mobile */
     .aboutImportant {
       max-width: 1100px;
@@ -664,7 +742,7 @@ const contacts = [
       #letter .narrativeMobile .letterHeading {
         font-size: var(--fs-h2);
         line-height: 0.95;
-        margin-bottom: 32px;
+        margin-bottom: 12px;
         font-style: normal;
       }
       #letter .narrativeMobile .letterTitle {
@@ -692,6 +770,7 @@ const contacts = [
       }
       #letter .narrativeMobile .letterClose { margin: 16px 0 0; }
       #about > div > header { margin-bottom: 24px !important; }
+      #about .aboutMainHeading { display: block !important; }
       #about .aboutDesktop { display: none !important; }
       #about .aboutMobile {
         display: flex !important;
@@ -937,11 +1016,11 @@ const contacts = [
       </div>
       <!-- Desktop: 2-column with sticky aside -->
       <div class="narrativeDesktop">
-        <div class="narrativeOpenerBlock" style="margin-bottom: 72px;">
+        <div class="narrativeOpenerBlock" style="margin-bottom: 30px;">
           <p class="narrativeOpenerPrefix" style="font-family: 'Inter', sans-serif; font-size: var(--fs-lead); color: var(--ink-mute); margin-bottom: 24px; font-style: italic;">
             Когда я в последний раз по-настоящему задавал себе вопрос:
           </p>
-          <h3 class="display narrativeTitle" style="font-size: var(--fs-h1); color: var(--accent); line-height: 0.95; margin-bottom: 32px;">
+          <h3 class="display narrativeTitle" style="font-size: var(--fs-h2); color: var(--accent); line-height: 0.95; margin-bottom: 0;">
             «Чего <span style="color: var(--ink);">я<span class="narrativeNbsp">&nbsp;</span></span><br class="narrativeBr" />хочу?»
           </h3>
         </div>
@@ -959,7 +1038,7 @@ const contacts = [
             <p>Для многих мужчин контакт со своими желаниями оказывается сложнее, чем кажется. Мы умеем справляться, быть полезными, брать ответственность, решать задачи. Но за всем этим легко потерять контакт с собой.</p>
             <p>Именно поэтому мы создаём пространство, где можно исследовать свои потребности вместе с другими мужчинами&nbsp;— честно, спокойно и без необходимости быть удобным.</p>
             <p>Через телесные ощущения, наблюдение за собой, мужской диалог и групповое взаимодействие мы будем постепенно собирать более ясное понимание:</p>
-            <blockquote class="narrativeBodyQuote" style="margin: 4px 0; padding: 4px 0 4px 24px; border-left: 2px solid var(--accent); font-size: var(--fs-lead); line-height: 1.55; color: var(--ink);">
+            <blockquote class="narrativeBodyQuote" style="margin: 4px 0; padding: 4px 0 4px 24px; border-left: 2px solid var(--accent); font-size: var(--fs-body); line-height: 1.65; color: var(--ink-soft);">
               что для меня важно,<br />
               как я это чувствую<br />
               и как могу это выражать в&nbsp;своей жизни.
@@ -992,46 +1071,65 @@ const contacts = [
   <!-- ABOUT -->
   <section id="about" style="position: relative; padding-top: 80px; padding-bottom: 80px;">
     <div style="max-width: 1280px; margin: 0 auto; padding: 0 48px;">
-      <header style="max-width: 980px; margin-bottom: 96px;">
+      <header style="max-width: 980px; margin-bottom: 40px;">
         <div class="mono" style="font-size: var(--fs-caption); color: var(--ink-mute); letter-spacing: 0.22em; margin-bottom: 24px;">03 / О ФОРМАТЕ</div>
-        <h2 class="display" style="font-size: var(--fs-h2); line-height: 0.95; margin-bottom: 32px;">
+        <h2 class="display aboutMainHeading" style="font-size: var(--fs-h2); line-height: 0.95; margin-bottom: 32px;">
           Пространство для безопасной <span style="color: var(--accent);">встречи&nbsp;с&nbsp;собой</span>
         </h2>
       </header>
 
-      <!-- Desktop: scrollspy layout — content left, sticky nav right -->
+      <!-- Desktop: two grouped grids -->
       <div class="aboutDesktop">
-        <div class="aboutScrollspy">
-          <div class="aboutScrollspyMain">
-            {aboutMobileBlocks.map((b, i) => (
-              <section id={`about-section-${i}`} class="aboutScrollspySection" data-about-section={i}>
-                <h3 class="display aboutScrollspyTitle" set:html={b.title.replace(/<br\s*\/?>/g, ' ')}></h3>
-                {b.subhead && <p class="aboutScrollspySubhead">{b.subhead}</p>}
-                {b.body && b.body.map((p) => <p class="aboutScrollspyP">{p}</p>)}
-                {b.intro && <p class="aboutScrollspyP">{b.intro}</p>}
-                {b.bullets && (
-                  <ul class="aboutScrollspyBullets">
-                    {b.bullets.map((it) => (
-                      <li>
-                        <span class="aboutScrollspyDot"></span>
-                        <span>{it}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {b.outro && <p class="aboutScrollspyP aboutScrollspyOutro">{b.outro}</p>}
-              </section>
-            ))}
-          </div>
-          <aside class="aboutScrollspyNav">
-            <ol class="aboutScrollspyNavList">
-              {aboutMobileBlocks.map((b, i) => (
-                <li class="aboutScrollspyNavItem" data-about-nav={i}>
-                  <a href={`#about-section-${i}`} class="aboutScrollspyNavLink" set:html={b.title.replace(/<br\s*\/?>/g, ' ')}></a>
-                </li>
+        <div class="aboutGroups">
+          <div class="aboutGroup">
+            <h3 class="aboutGroupTitle">Теория через <span class="accent">практику</span></h3>
+            <div class="aboutGroupGrid aboutGroupGrid--3">
+              {aboutMobileBlocks.slice(0, 3).map((b) => (
+                <article class="aboutCard">
+                  <h4 class="aboutCardTitle" set:html={b.title.replace(/<br\s*\/?>/g, ' ')}></h4>
+                  {b.subhead && <p class="aboutCardSubhead">{b.subhead}</p>}
+                  {b.body && b.body.map((p) => <p class="aboutCardP">{p}</p>)}
+                  {b.intro && <p class="aboutCardP">{b.intro}</p>}
+                  {b.bullets && (
+                    <ul class="aboutCardBullets">
+                      {b.bullets.map((it) => (
+                        <li>
+                          <span class="aboutCardDot"></span>
+                          <span>{it}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {b.outro && <p class="aboutCardP aboutCardP--outro">{b.outro}</p>}
+                </article>
               ))}
-            </ol>
-          </aside>
+            </div>
+          </div>
+
+          <div class="aboutGroup">
+            <h3 class="aboutGroupTitle">Пространство для безопасной <span class="accent">встречи&nbsp;с&nbsp;собой</span></h3>
+            <div class="aboutGroupGrid aboutGroupGrid--2">
+              {aboutMobileBlocks.slice(3, 5).map((b) => (
+                <article class="aboutCard">
+                  <h4 class="aboutCardTitle" set:html={b.title.replace(/<br\s*\/?>/g, ' ')}></h4>
+                  {b.subhead && <p class="aboutCardSubhead">{b.subhead}</p>}
+                  {b.body && b.body.map((p) => <p class="aboutCardP">{p}</p>)}
+                  {b.intro && <p class="aboutCardP">{b.intro}</p>}
+                  {b.bullets && (
+                    <ul class="aboutCardBullets">
+                      {b.bullets.map((it) => (
+                        <li>
+                          <span class="aboutCardDot"></span>
+                          <span>{it}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {b.outro && <p class="aboutCardP aboutCardP--outro">{b.outro}</p>}
+                </article>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1158,7 +1256,7 @@ const contacts = [
           </div>
           <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 12px;">ДО 20 МАЯ 2026</div>
           <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px;">
-            <span class="display priceNum" style="font-size: var(--fs-h1); line-height: 1; color: var(--ink);">180</span>
+            <span class="display priceNum" style="font-size: var(--fs-h2); line-height: 1; color: var(--ink);">180</span>
             <span class="display" style="font-size: var(--fs-h3); color: var(--ink-mute);">₾</span>
           </div>
           <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 24px;">
@@ -1181,7 +1279,7 @@ const contacts = [
         <div class="standardTier" style="background: var(--paper-2); padding: 40px; position: relative; border: 1px solid var(--rule);">
           <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 12px;">ПОСЛЕ 20 МАЯ</div>
           <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px;">
-            <span class="display priceNum" style="font-size: var(--fs-h1); line-height: 1; color: var(--ink-soft);">230</span>
+            <span class="display priceNum" style="font-size: var(--fs-h2); line-height: 1; color: var(--ink-soft);">230</span>
             <span class="display" style="font-size: var(--fs-h3); color: var(--ink-mute);">₾</span>
           </div>
           <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 24px;">стандартная стоимость участия</p>
@@ -1205,7 +1303,7 @@ const contacts = [
           <span class="mono pricingImportantLabel" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); white-space: nowrap; line-height: 1.6; font-weight: 700; padding-top: 2px;">ВАЖНО!</span>
           <span class="pricingImportantText" style="flex: 1; font-size: var(--fs-body); line-height: 1.6;">
             Подтверждение о регистрации только после короткого собеседования с ведущим.<br />
-            Это помогает сохранить глубину работы, личное взаимодействие с каждым и сохраняет качество и безопасность группового процесса.
+            Это помогает сохранить глубину работы, сохраняет качество и безопасность группового процесса.
           </span>
         </div>
 
@@ -1213,9 +1311,9 @@ const contacts = [
           <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 14px; font-weight: 700;">КОЛИЧЕСТВО МЕСТ ОГРАНИЧЕНО</div>
           <p style="font-size: var(--fs-body); line-height: 1.55; color: var(--ink-soft); margin: 0 0 14px;">Мы намеренно делаем небольшую группу, чтобы сохранить:</p>
           <ul style="list-style: none; margin: 0 0 14px; padding: 0; display: flex; flex-direction: column; gap: 8px;">
-            <li style="font-size: var(--fs-body); line-height: 1.5; color: var(--ink-soft); display: flex; gap: 10px;"><span style="color: var(--accent); font-weight: 600;">+</span>глубину работы</li>
-            <li style="font-size: var(--fs-body); line-height: 1.5; color: var(--ink-soft); display: flex; gap: 10px;"><span style="color: var(--accent); font-weight: 600;">+</span>возможность личного взаимодействия</li>
-            <li style="font-size: var(--fs-body); line-height: 1.5; color: var(--ink-soft); display: flex; gap: 10px;"><span style="color: var(--accent); font-weight: 600;">+</span>безопасность и качество группового процесса</li>
+            <li style="font-size: var(--fs-body); line-height: 1.5; color: var(--ink-soft); display: flex; gap: 10px;"><span style="color: var(--accent); font-weight: 600;">+</span>глубину работы,</li>
+            <li style="font-size: var(--fs-body); line-height: 1.5; color: var(--ink-soft); display: flex; gap: 10px;"><span style="color: var(--accent); font-weight: 600;">+</span>возможность личного взаимодействия,</li>
+            <li style="font-size: var(--fs-body); line-height: 1.5; color: var(--ink-soft); display: flex; gap: 10px;"><span style="color: var(--accent); font-weight: 600;">+</span>безопасность и качество группового процесса.</li>
           </ul>
           <p style="font-size: var(--fs-body); line-height: 1.55; color: var(--ink); margin: 0;">Подтверждение о регистрации только после короткого собеседования с ведущим.</p>
         </div>
