@@ -28,3 +28,8 @@ pnpm-debug.log*
 
 # local notes (instructions, drafts) — kept on disk, not pushed
 NOTES.md
+
+# spreadsheet exports and Excel lock files (kept out of repo)
+*.xlsx
+*.xls
+~$*
