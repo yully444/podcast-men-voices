@@ -1,4 +1,6 @@
 ---
+import promos from '../data/promos.json';
+
 const baseUrl = import.meta.env.BASE_URL;
 const podcastUrl = `${baseUrl}podcast/`;
 
@@ -487,6 +489,19 @@ const contacts = [
     }
     .applyBack:disabled { color: var(--paper-deep); cursor: not-allowed; }
     .applyNext.is-disabled { opacity: 0.4; pointer-events: none; }
+    .applyPromoResult {
+      margin-top: 14px;
+      font-size: var(--fs-body);
+      line-height: 1.5;
+      color: var(--ink-mute);
+      min-height: 1.5em;
+    }
+    .applyPromoResult.is-ok { color: var(--ink); }
+    .applyPromoResult.is-err { color: var(--ink-mute); }
+    .applyPromoActions {
+      display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px;
+    }
+    #applyPromoCheck[disabled] { opacity: 0.5; pointer-events: none; }
 
     /* Facilitator card hover lift */
     .facCard { transition: transform 300ms ease, box-shadow 300ms ease; }
@@ -1430,12 +1445,12 @@ const contacts = [
   <div class="applyBackdrop" data-apply-close></div>
   <div class="applyModal" role="dialog" aria-modal="true" aria-labelledby="applyTitle">
     <div class="applyTopbar">
-      <div class="mono" id="applyStepLabel" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute);">ЗАЯВКА · ШАГ 1 / 5</div>
+      <div class="mono" id="applyStepLabel" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute);">ЗАЯВКА · ШАГ 1 / 6</div>
       <button data-apply-close style="width: 40px; height: 40px; font-size: var(--fs-h3); color: var(--ink-mute);" aria-label="Закрыть">×</button>
     </div>
 
     <div class="applyProgress" id="applyProgress">
-      <span class="is-active"></span><span></span><span></span><span></span><span></span>
+      <span class="is-active"></span><span></span><span></span><span></span><span></span><span></span>
     </div>
 
     <div class="applyBody">
@@ -1469,9 +1484,27 @@ const contacts = [
         <div class="mono" id="applyExpectationsHint" style="margin-top: 8px; font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute);">МИНИМУМ 6 СИМВОЛОВ</div>
       </div>
 
-      <!-- Step 3: call time -->
+      <!-- Step 3: promo -->
       <div class="applyStep" data-step="3">
-        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">04 / ВРЕМЯ ЗВОНКА</div>
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">04 / ПРОМОКОД</div>
+        <h3 class="display" style="font-size: 36px; line-height: 1.1; margin-bottom: 12px;">Есть ли у вас промокод?</h3>
+        <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 28px; line-height: 1.5;">Если есть, впишите в&nbsp;поле ниже.</p>
+        <input class="applyField" type="text" id="applyPromo" placeholder="Промокод" autocomplete="off" autocapitalize="characters" />
+        <div id="applyPromoResult" class="applyPromoResult" aria-live="polite"></div>
+        <div class="applyPromoActions">
+          <button type="button" id="applyPromoCheck" class="cta cta--outline">
+            <span id="applyPromoCheckLabel">Проверить</span>
+          </button>
+          <button type="button" id="applyPromoSkip" class="cta cta--outline">
+            <span id="applyPromoSkipLabel">Пропустить</span>
+            <span class="cta__arrow">→</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 4: call time -->
+      <div class="applyStep" data-step="4">
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">05 / ВРЕМЯ ЗВОНКА</div>
         <h3 class="display" style="font-size: 36px; line-height: 1.1; margin-bottom: 12px;">Когда удобнее созвониться?</h3>
         <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 28px; line-height: 1.5;">Ведущий свяжется с&nbsp;вами и&nbsp;предложит созвон-знакомство.</p>
         <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 8px;">УДОБНОЕ ВРЕМЯ ДЛЯ созвона-знакомства</div>
@@ -1482,9 +1515,9 @@ const contacts = [
         </div>
       </div>
 
-      <!-- Step 4: confirmation -->
-      <div class="applyStep" data-step="4">
-        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">05 / ПОДТВЕРЖДЕНИЕ</div>
+      <!-- Step 5: confirmation -->
+      <div class="applyStep" data-step="5">
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">06 / ПОДТВЕРЖДЕНИЕ</div>
         <h3 class="display" style="font-size: 36px; line-height: 1.1; margin-bottom: 12px;">Почти готово</h3>
         <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 28px; line-height: 1.5;">Прежде чем отправить — пара важных деталей.</p>
         <div style="background: var(--paper-2); padding: 24px; margin-bottom: 20px; font-size: var(--fs-body); line-height: 1.6; color: var(--ink-soft);">
@@ -1543,6 +1576,11 @@ const contacts = [
   </div>
 </div>
 
+<script is:inline define:vars={{ PROMOS: promos }}>
+  // PROMOS is injected from src/data/promos.json at build time.
+  // To add/remove a promo code, edit that JSON file (no other changes needed).
+  window.__PROMOS = PROMOS;
+</script>
 <script is:inline>
   // -- after-early-tier mode -------------------------------------------------
   // Switches pricing UI when the early-bird window closes:
@@ -1662,8 +1700,8 @@ const contacts = [
   const doneText = document.getElementById('applyDoneText');
   const placeholders = { telegram: '@username', phone: '+995 ...', email: 'you@example.com' };
   let step = 0;
-  const totalSteps = 5;
-  const state = { name: '', contact: '', contactType: 'telegram', expectations: '', interview: 'weekday-evening', agreed: false };
+  const totalSteps = 6;
+  const state = { name: '', contact: '', contactType: 'telegram', expectations: '', interview: 'weekday-evening', agreed: false, promo: '', promoPrice: null };
 
   const setStep = (n) => {
     step = Math.max(0, Math.min(totalSteps - 1, n));
@@ -1676,6 +1714,8 @@ const contacts = [
     });
     backBtn.disabled = step === 0;
     nextLabel.textContent = step === totalSteps - 1 ? 'Отправить заявку' : 'Дальше';
+    // promo step uses inline buttons (Проверить / Пропустить-Дальше) instead of the global Next
+    nextBtn.style.display = step === 3 ? 'none' : '';
     updateNextEnabled();
     setTimeout(() => {
       const focus = document.querySelector('.applyStep.is-active input, .applyStep.is-active textarea');
@@ -1687,8 +1727,9 @@ const contacts = [
     if (step === 0) return state.name.trim().length > 1;
     if (step === 1) return state.contact.trim().length > 2;
     if (step === 2) return state.expectations.trim().length > 5;
-    if (step === 3) return !!state.interview; // chip always has a default
-    if (step === 4) return state.agreed;
+    if (step === 3) return true; // promo step has its own inline buttons
+    if (step === 4) return !!state.interview; // chip always has a default
+    if (step === 5) return state.agreed;
     return false;
   };
   const updateNextEnabled = () => {
@@ -1767,6 +1808,65 @@ const contacts = [
 
   backBtn.addEventListener('click', () => { if (step > 0) setStep(step - 1); });
 
+  // -- promo code lookup -----------------------------------------------------
+  // Source list lives in src/data/promos.json (injected as window.__PROMOS).
+  const PROMOS = Array.isArray(window.__PROMOS) ? window.__PROMOS : [];
+  const promoInput = document.getElementById('applyPromo');
+  const promoResult = document.getElementById('applyPromoResult');
+  const promoCheckBtn = document.getElementById('applyPromoCheck');
+  const promoCheckLabel = document.getElementById('applyPromoCheckLabel');
+  const promoSkipBtn = document.getElementById('applyPromoSkip');
+  const promoSkipLabel = document.getElementById('applyPromoSkipLabel');
+  const isAfterEarly = () => document.body.classList.contains('is-after-early');
+
+  const resetPromoUI = () => {
+    promoResult.textContent = '';
+    promoResult.classList.remove('is-ok', 'is-err');
+    promoSkipLabel.textContent = 'Пропустить';
+    state.promo = '';
+    state.promoPrice = null;
+  };
+
+  promoInput.addEventListener('input', () => {
+    // any edit invalidates a previously-confirmed promo
+    if (state.promo || state.promoPrice != null || promoResult.textContent) resetPromoUI();
+  });
+
+  promoCheckBtn.addEventListener('click', () => {
+    const code = promoInput.value.trim();
+    if (!code) {
+      promoResult.textContent = 'Введите промокод.';
+      promoResult.classList.remove('is-ok');
+      promoResult.classList.add('is-err');
+      return;
+    }
+    const match = PROMOS.find((p) => String(p.code || '').trim().toLowerCase() === code.toLowerCase());
+    if (match) {
+      const after = isAfterEarly();
+      const promoPrice = Number(after ? match.priceAfter : match.priceBefore);
+      const normalPrice = after ? 230 : 180;
+      state.promo = String(match.code || '').trim();
+      state.promoPrice = isFinite(promoPrice) ? promoPrice : null;
+      const priceText = state.promoPrice != null ? String(state.promoPrice) : '—';
+      promoResult.innerHTML = `Цена по промокоду — <strong>${priceText} лари</strong>. Без промокода ${normalPrice}.`;
+      promoResult.classList.remove('is-err');
+      promoResult.classList.add('is-ok');
+      promoSkipLabel.textContent = 'Дальше';
+    } else {
+      state.promo = '';
+      state.promoPrice = null;
+      promoResult.textContent = 'Такого промокода нет.';
+      promoResult.classList.remove('is-ok');
+      promoResult.classList.add('is-err');
+      promoSkipLabel.textContent = 'Пропустить';
+    }
+  });
+
+  promoSkipBtn.addEventListener('click', () => {
+    // works as both "Пропустить" (no valid promo) and "Дальше" (with valid promo)
+    setStep(step + 1);
+  });
+
   const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScezKnWmzmj9BC58Mns5o0Irs1b4H145dc4jlPgtIwtfqFD1Q/formResponse';
   const CONTACT_TYPE_MAP = { telegram: 'Telegram', phone: 'Телефон', email: 'Email' };
   const INTERVIEW_MAP = { 'weekday-evening': 'Будни, вечер', weekend: 'Выходные', any: 'Любое' };
@@ -1797,6 +1897,8 @@ const contacts = [
     body.set('entry.1979587863', CONTACT_TYPE_MAP[state.contactType] || '');
     body.set('entry.204819364', state.contact);
     body.set('entry.454240511', state.expectations);
+    body.set('entry.1868885060', state.promo || '');
+    body.set('entry.492386249', state.promoPrice != null ? String(state.promoPrice) : '');
     body.set('entry.1045321552', INTERVIEW_MAP[state.interview] || '');
 
     fetch(FORM_URL, { method: 'POST', mode: 'no-cors', body })
