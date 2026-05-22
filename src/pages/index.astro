@@ -968,7 +968,7 @@ const contacts = [
         {navItems.map((it) => (
           <a href={it.href} class="navLink">{it.label}</a>
         ))}
-        <button class="cta cta--filled cta--sm" data-apply-open style="margin-left: 12px; font-weight: 700;">
+        <button class="cta cta--filled cta--sm" data-apply-open data-apply-source="header" style="margin-left: 12px; font-weight: 700;">
           <span>Участвовать</span>
         </button>
         <button id="burgerBtn" class="navBurger" aria-label="Открыть меню">
@@ -989,7 +989,7 @@ const contacts = [
         <a href={it.href} data-menu-link>{it.label}</a>
       ))}
     </div>
-    <button class="cta cta--filled" data-apply-open style="margin-top: 32px; font-weight: 700;">
+    <button class="cta cta--filled" data-apply-open data-apply-source="menu" style="margin-top: 32px; font-weight: 700;">
       <span>Участвовать</span>
     </button>
   </div>
@@ -1054,7 +1054,7 @@ const contacts = [
         <a href="#pricing" class="cta cta--outline">
           <span>Узнать условия</span>
         </a>
-        <button class="cta cta--filled" data-apply-open style="font-weight: 700;">
+        <button class="cta cta--filled" data-apply-open data-apply-source="hero" style="font-weight: 700;">
           <span>Оставить заявку</span>
         </button>
       </div>
@@ -1326,7 +1326,7 @@ const contacts = [
               </li>
             ))}
           </ul>
-          <button class="cta cta--filled earlyTierCta" data-apply-open>
+          <button class="cta cta--filled earlyTierCta" data-apply-open data-apply-source="pricing-early">
             <span>Оставить заявку</span>
             <span class="cta__arrow">→</span>
           </button>
@@ -1347,7 +1347,7 @@ const contacts = [
               </li>
             ))}
           </ul>
-          <button class="cta cta--outline standardTierCta" data-apply-open>
+          <button class="cta cta--outline standardTierCta" data-apply-open data-apply-source="pricing-standard">
             <span>Оставить заявку</span>
             <span class="cta__arrow">→</span>
           </button>
@@ -1745,6 +1745,13 @@ const contacts = [
 
   document.querySelectorAll('[data-apply-open]').forEach((b) => {
     b.addEventListener('click', () => {
+      const source = b.getAttribute('data-apply-source') || 'unknown';
+      if (typeof window.ym === 'function') {
+        window.ym(109241048, 'reachGoal', 'apply_click', { source });
+      }
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'apply_click', { source });
+      }
       overlay.classList.add('is-open');
       overlay.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
@@ -1903,6 +1910,12 @@ const contacts = [
 
     fetch(FORM_URL, { method: 'POST', mode: 'no-cors', body })
       .then(() => {
+        if (typeof window.ym === 'function') {
+          window.ym(109241048, 'reachGoal', 'apply_submit');
+        }
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'apply_submit');
+        }
         stepLabel.textContent = 'ЗАЯВКА · ПРИНЯТА';
         const firstName = (state.name.split(' ')[0] || 'брат').trim();
         doneText.textContent = `Спасибо, ${firstName}. Ведущий свяжется с вами в течение 1–2 дней для короткого собеседования. После него мы подтвердим регистрацию и вышлем реквизиты для оплаты брони.`;
