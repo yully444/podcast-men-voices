@@ -490,18 +490,119 @@ const contacts = [
     .applyBack:disabled { color: var(--paper-deep); cursor: not-allowed; }
     .applyNext.is-disabled { opacity: 0.4; pointer-events: none; }
     .applyPromoResult {
-      margin-top: 14px;
-      font-size: var(--fs-body);
+      margin-top: 10px;
+      font-size: var(--fs-caption);
+      letter-spacing: 0.04em;
       line-height: 1.5;
       color: var(--ink-mute);
-      min-height: 1.5em;
+      min-height: 0;
     }
+    .applyPromoResult:empty { display: none; }
     .applyPromoResult.is-ok { color: var(--ink); }
     .applyPromoResult.is-err { color: var(--ink-mute); }
-    .applyPromoActions {
-      display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px;
+    .applyPromoResult strong { color: var(--accent); font-weight: 600; }
+
+    /* Inline link inside info bullets on the confirmation step */
+    .applyInlineLink {
+      color: var(--olive-deep);
+      text-decoration: underline;
+      text-decoration-color: var(--rule);
+      text-underline-offset: 3px;
+      transition: color 200ms, text-decoration-color 200ms;
     }
-    #applyPromoCheck[disabled] { opacity: 0.5; pointer-events: none; }
+    .applyInlineLink:hover {
+      color: var(--accent);
+      text-decoration-color: var(--accent);
+    }
+
+    /* Compact promo field under consent */
+    .applyPromoInline {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border: 1px dashed var(--rule);
+      background: transparent;
+    }
+    .applyPromoInlineHead {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+    .applyPromoInlineLabel {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: var(--fs-caption);
+      letter-spacing: 0.22em;
+      color: var(--ink);
+      font-weight: 700;
+    }
+    .applyPromoInlineOpt {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: var(--fs-caption);
+      letter-spacing: 0.18em;
+      color: var(--ink-mute);
+      text-transform: lowercase;
+    }
+    .applyPromoInlineField {
+      width: 100%;
+      padding: 8px 0;
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 500;
+      font-size: var(--fs-lead);
+      letter-spacing: 0.02em;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--ink);
+      color: var(--ink);
+      outline: none;
+    }
+    .applyPromoInlineField::placeholder {
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: var(--fs-body);
+      letter-spacing: 0;
+      color: var(--ink-mute);
+    }
+
+    /* "Условия отмены и возврата" link in pricing section */
+    .pricingRefundLink {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: var(--fs-caption);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--ink);
+      transition: color 200ms, border-color 200ms;
+    }
+    .pricingRefundLink:hover {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    .pricingRefundLinkArrow {
+      transition: transform 220ms cubic-bezier(.2,.8,.2,1);
+    }
+    .pricingRefundLink:hover .pricingRefundLinkArrow {
+      transform: translateX(4px) translateY(-2px) rotate(-8deg);
+    }
+
+    /* Footer secondary link */
+    .footerLinks {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .footerLinks .footerLink {
+      color: rgba(236,230,216,0.7);
+      text-decoration: none;
+      transition: color 200ms;
+    }
+    .footerLinks .footerLink:hover { color: var(--accent); }
+    .footerLinks .footerSep { color: rgba(236,230,216,0.3); }
 
     /* Facilitator card hover lift */
     .facCard { transition: transform 300ms ease, box-shadow 300ms ease; }
@@ -1355,6 +1456,16 @@ const contacts = [
       </div>
 
       <div class="pricingNotes" style="margin-top: 28px; display: flex; flex-direction: column; gap: 24px;">
+        <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: center; justify-content: space-between;">
+          <p style="font-size: var(--fs-body); line-height: 1.55; color: var(--ink-soft); margin: 0; max-width: 560px;">
+            Полная стоимость должна быть оплачена не&nbsp;позднее, чем за&nbsp;3&nbsp;дня до&nbsp;начала мероприятия.
+          </p>
+          <a href={`${baseUrl}refund/`} class="pricingRefundLink">
+            <span>Условия отмены и&nbsp;возврата</span>
+            <span class="pricingRefundLinkArrow" aria-hidden="true">↗</span>
+          </a>
+        </div>
+
         <div class="pricingImportant" style="background: var(--void); color: var(--paper); padding: 28px 32px; display: flex; gap: 24px; align-items: flex-start;">
           <span class="mono pricingImportantLabel" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); white-space: nowrap; line-height: 1.6; font-weight: 700; padding-top: 2px;">ВАЖНО!</span>
           <span class="pricingImportantText" style="flex: 1; font-size: var(--fs-body); line-height: 1.6;">
@@ -1425,8 +1536,11 @@ const contacts = [
             <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: rgba(236,230,216,0.5); margin-top: 4px;">МАСТЕРСКАЯ-ТРЕНИНГ • БАТУМИ</div>
           </div>
         </div>
-        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.18em; color: rgba(236,230,216,0.5); display: flex; gap: 20px;">
+        <div class="mono footerLinks" style="font-size: var(--fs-caption); letter-spacing: 0.18em; color: rgba(236,230,216,0.5);">
           <span>© 2026 — права защищены</span>
+          <span class="footerSep">·</span>
+          <a href={`${baseUrl}refund/`} class="footerLink">Условия отмены и&nbsp;возврата</a>
+          <span class="footerSep">·</span>
           <span style="color: rgba(236,230,216,0.7);">Договор и Правила</span>
         </div>
       </div>
@@ -1445,12 +1559,12 @@ const contacts = [
   <div class="applyBackdrop" data-apply-close></div>
   <div class="applyModal" role="dialog" aria-modal="true" aria-labelledby="applyTitle">
     <div class="applyTopbar">
-      <div class="mono" id="applyStepLabel" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute);">ЗАЯВКА · ШАГ 1 / 6</div>
+      <div class="mono" id="applyStepLabel" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute);">ЗАЯВКА · ШАГ 1 / 5</div>
       <button data-apply-close style="width: 40px; height: 40px; font-size: var(--fs-h3); color: var(--ink-mute);" aria-label="Закрыть">×</button>
     </div>
 
     <div class="applyProgress" id="applyProgress">
-      <span class="is-active"></span><span></span><span></span><span></span><span></span><span></span>
+      <span class="is-active"></span><span></span><span></span><span></span><span></span>
     </div>
 
     <div class="applyBody">
@@ -1484,27 +1598,9 @@ const contacts = [
         <div class="mono" id="applyExpectationsHint" style="margin-top: 8px; font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute);">МИНИМУМ 6 СИМВОЛОВ</div>
       </div>
 
-      <!-- Step 3: promo -->
+      <!-- Step 3: call time -->
       <div class="applyStep" data-step="3">
-        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">04 / ПРОМОКОД</div>
-        <h3 class="display" style="font-size: 36px; line-height: 1.1; margin-bottom: 12px;">Есть ли у вас промокод?</h3>
-        <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 28px; line-height: 1.5;">Если есть, впишите в&nbsp;поле ниже.</p>
-        <input class="applyField" type="text" id="applyPromo" placeholder="Промокод" autocomplete="off" autocapitalize="characters" />
-        <div id="applyPromoResult" class="applyPromoResult" aria-live="polite"></div>
-        <div class="applyPromoActions">
-          <button type="button" id="applyPromoCheck" class="cta cta--outline">
-            <span id="applyPromoCheckLabel">Проверить</span>
-          </button>
-          <button type="button" id="applyPromoSkip" class="cta cta--outline">
-            <span id="applyPromoSkipLabel">Пропустить</span>
-            <span class="cta__arrow">→</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Step 4: call time -->
-      <div class="applyStep" data-step="4">
-        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">05 / ВРЕМЯ ЗВОНКА</div>
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">04 / ВРЕМЯ ЗВОНКА</div>
         <h3 class="display" style="font-size: 36px; line-height: 1.1; margin-bottom: 12px;">Когда удобнее созвониться?</h3>
         <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 28px; line-height: 1.5;">Ведущий свяжется с&nbsp;вами и&nbsp;предложит созвон-знакомство.</p>
         <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 8px;">УДОБНОЕ ВРЕМЯ ДЛЯ созвона-знакомства</div>
@@ -1515,22 +1611,33 @@ const contacts = [
         </div>
       </div>
 
-      <!-- Step 5: confirmation -->
-      <div class="applyStep" data-step="5">
-        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">06 / ПОДТВЕРЖДЕНИЕ</div>
-        <h3 class="display" style="font-size: 36px; line-height: 1.1; margin-bottom: 12px;">Почти готово</h3>
-        <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 28px; line-height: 1.5;">Прежде чем отправить — пара важных деталей.</p>
-        <div style="background: var(--paper-2); padding: 24px; margin-bottom: 20px; font-size: var(--fs-body); line-height: 1.6; color: var(--ink-soft);">
-          <p style="margin-bottom: 12px;">· Ведущий напишет в&nbsp;течение 1–2&nbsp;дней для короткого разговора.</p>
-          <p style="margin-bottom: 12px;">· После собеседования мы&nbsp;подтвердим регистрацию и&nbsp;пришлём реквизиты для оплаты брони (90&nbsp;лари, 50%).</p>
-          <p style="margin-bottom: 0;">· Заявка не&nbsp;обязывает — это начало разговора.</p>
+      <!-- Step 4: confirmation -->
+      <div class="applyStep" data-step="4">
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">05 / ПОДТВЕРЖДЕНИЕ</div>
+        <h3 class="display" style="font-size: 36px; line-height: 1.1; margin-bottom: 20px;">Важные детали</h3>
+        <div style="background: var(--paper-2); padding: 20px 22px; margin-bottom: 18px; font-size: 14.5px; line-height: 1.55; color: var(--ink-soft);">
+          <p style="margin-bottom: 10px;">· Ведущий напишет в&nbsp;течение 1–2&nbsp;дней для короткого разговора.</p>
+          <p style="margin-bottom: 10px;">· После собеседования мы&nbsp;подтвердим регистрацию и&nbsp;пришлём реквизиты для оплаты брони (90&nbsp;лари, 50%).</p>
+          <p style="margin-bottom: 10px;">· Полная стоимость участия должна быть оплачена <strong style="color: var(--ink); font-weight: 600;">не&nbsp;позднее 28&nbsp;мая</strong> (за&nbsp;3&nbsp;дня).</p>
+          <p style="margin-bottom: 0;">· <strong style="color: var(--ink); font-weight: 600;">Условия отмены и&nbsp;возврата.</strong> До&nbsp;25&nbsp;мая — 100% возврат оплаченной суммы. До&nbsp;28&nbsp;мая — возврат 50% (удерживается бронь). После 28&nbsp;мая возврат не&nbsp;осуществляется. <a href={`${baseUrl}refund/`} target="_blank" rel="noopener" class="applyInlineLink">Подробнее на&nbsp;странице условий&nbsp;↗</a></p>
         </div>
+
         <label id="applyAgreeWrap" style="display: flex; gap: 12px; padding: 16px; border: 1px solid var(--rule); cursor: pointer; align-items: flex-start; transition: border-color 200ms;">
           <input type="checkbox" id="applyAgree" style="margin-top: 4px; accent-color: var(--accent);" />
           <span style="font-size: var(--fs-body); color: var(--ink-soft); line-height: 1.5;">
-            Согласен(на) с обработкой персональных данных и условиями участия.
+            Согласен(на) с обработкой персональных данных и условиями участия, включая правила отмены и&nbsp;возврата.
           </span>
         </label>
+
+        <!-- Promo code field (optional, under consent) -->
+        <div class="applyPromoInline">
+          <div class="applyPromoInlineHead">
+            <span class="applyPromoInlineLabel">ПРОМОКОД</span>
+            <span class="applyPromoInlineOpt">необязательно</span>
+          </div>
+          <input class="applyPromoInlineField" type="text" id="applyPromo" placeholder="Если есть — впишите сюда" autocomplete="off" autocapitalize="characters" />
+          <div id="applyPromoResult" class="applyPromoResult" aria-live="polite"></div>
+        </div>
       </div>
 
       <!-- Done state -->
@@ -1700,7 +1807,7 @@ const contacts = [
   const doneText = document.getElementById('applyDoneText');
   const placeholders = { telegram: '@username', phone: '+995 ...', email: 'you@example.com' };
   let step = 0;
-  const totalSteps = 6;
+  const totalSteps = 5;
   const state = { name: '', contact: '', contactType: 'telegram', expectations: '', interview: 'weekday-evening', agreed: false, promo: '', promoPrice: null };
 
   const setStep = (n) => {
@@ -1714,12 +1821,10 @@ const contacts = [
     });
     backBtn.disabled = step === 0;
     nextLabel.textContent = step === totalSteps - 1 ? 'Отправить заявку' : 'Дальше';
-    // promo step uses inline buttons (Проверить / Пропустить-Дальше) instead of the global Next
-    nextBtn.style.display = step === 3 ? 'none' : '';
     updateNextEnabled();
     setTimeout(() => {
-      const focus = document.querySelector('.applyStep.is-active input, .applyStep.is-active textarea');
-      if (focus) focus.focus();
+      const focus = document.querySelector('.applyStep.is-active input:not([type="checkbox"]), .applyStep.is-active textarea');
+      if (focus && focus.id !== 'applyPromo') focus.focus();
     }, 50);
   };
 
@@ -1727,9 +1832,8 @@ const contacts = [
     if (step === 0) return state.name.trim().length > 1;
     if (step === 1) return state.contact.trim().length > 2;
     if (step === 2) return state.expectations.trim().length > 5;
-    if (step === 3) return true; // promo step has its own inline buttons
-    if (step === 4) return !!state.interview; // chip always has a default
-    if (step === 5) return state.agreed;
+    if (step === 3) return !!state.interview; // chip always has a default
+    if (step === 4) return state.agreed;
     return false;
   };
   const updateNextEnabled = () => {
@@ -1817,34 +1921,21 @@ const contacts = [
 
   // -- promo code lookup -----------------------------------------------------
   // Source list lives in src/data/promos.json (injected as window.__PROMOS).
+  // Lives on the confirmation step now: a soft input under consent that recalculates
+  // price live as the user types, with a small debounce so partial entries don't flash an error.
   const PROMOS = Array.isArray(window.__PROMOS) ? window.__PROMOS : [];
   const promoInput = document.getElementById('applyPromo');
   const promoResult = document.getElementById('applyPromoResult');
-  const promoCheckBtn = document.getElementById('applyPromoCheck');
-  const promoCheckLabel = document.getElementById('applyPromoCheckLabel');
-  const promoSkipBtn = document.getElementById('applyPromoSkip');
-  const promoSkipLabel = document.getElementById('applyPromoSkipLabel');
   const isAfterEarly = () => document.body.classList.contains('is-after-early');
 
-  const resetPromoUI = () => {
-    promoResult.textContent = '';
-    promoResult.classList.remove('is-ok', 'is-err');
-    promoSkipLabel.textContent = 'Пропустить';
-    state.promo = '';
-    state.promoPrice = null;
-  };
-
-  promoInput.addEventListener('input', () => {
-    // any edit invalidates a previously-confirmed promo
-    if (state.promo || state.promoPrice != null || promoResult.textContent) resetPromoUI();
-  });
-
-  promoCheckBtn.addEventListener('click', () => {
+  let promoDebounce = null;
+  const evaluatePromo = () => {
     const code = promoInput.value.trim();
     if (!code) {
-      promoResult.textContent = 'Введите промокод.';
-      promoResult.classList.remove('is-ok');
-      promoResult.classList.add('is-err');
+      promoResult.textContent = '';
+      promoResult.classList.remove('is-ok', 'is-err');
+      state.promo = '';
+      state.promoPrice = null;
       return;
     }
     const match = PROMOS.find((p) => String(p.code || '').trim().toLowerCase() === code.toLowerCase());
@@ -1855,23 +1946,31 @@ const contacts = [
       state.promo = String(match.code || '').trim();
       state.promoPrice = isFinite(promoPrice) ? promoPrice : null;
       const priceText = state.promoPrice != null ? String(state.promoPrice) : '—';
-      promoResult.innerHTML = `Цена по промокоду — <strong>${priceText} лари</strong>. Без промокода ${normalPrice}.`;
+      promoResult.innerHTML = `Цена по&nbsp;промокоду — <strong>${priceText}&nbsp;лари</strong>. Без промокода ${normalPrice}.`;
       promoResult.classList.remove('is-err');
       promoResult.classList.add('is-ok');
-      promoSkipLabel.textContent = 'Дальше';
     } else {
-      state.promo = '';
+      // Save the entered code anyway (for Excel tracking) but don't recalc price
+      state.promo = code;
       state.promoPrice = null;
-      promoResult.textContent = 'Такого промокода нет.';
+      promoResult.textContent = 'Такого промокода нет — но мы передадим организатору.';
       promoResult.classList.remove('is-ok');
       promoResult.classList.add('is-err');
-      promoSkipLabel.textContent = 'Пропустить';
     }
-  });
+  };
 
-  promoSkipBtn.addEventListener('click', () => {
-    // works as both "Пропустить" (no valid promo) and "Дальше" (with valid promo)
-    setStep(step + 1);
+  promoInput.addEventListener('input', () => {
+    if (promoDebounce) clearTimeout(promoDebounce);
+    // clear UI immediately, evaluate after pause
+    promoResult.textContent = '';
+    promoResult.classList.remove('is-ok', 'is-err');
+    state.promo = '';
+    state.promoPrice = null;
+    promoDebounce = setTimeout(evaluatePromo, 400);
+  });
+  promoInput.addEventListener('blur', () => {
+    if (promoDebounce) { clearTimeout(promoDebounce); promoDebounce = null; }
+    evaluatePromo();
   });
 
   const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScezKnWmzmj9BC58Mns5o0Irs1b4H145dc4jlPgtIwtfqFD1Q/formResponse';
