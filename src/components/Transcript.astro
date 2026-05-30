@@ -6,7 +6,18 @@ interface Props {
 }
 
 const { vttRaw } = Astro.props;
-const cues = vttRaw ? parseVtt(vttRaw) : [];
+const rawCues = vttRaw ? parseVtt(vttRaw) : [];
+
+// Split a leading "Speaker: " prefix so the name can be rendered in bold.
+const SPEAKER_RE = /^([^:]{1,40}):\s+(.*)$/s;
+const cues = rawCues.map((cue) => {
+  const m = cue.text.match(SPEAKER_RE);
+  return {
+    ...cue,
+    speaker: m ? m[1] : null,
+    body: m ? m[2] : cue.text,
+  };
+});
 ---
 
 <section class="transcript">
@@ -33,7 +44,10 @@ const cues = vttRaw ? parseVtt(vttRaw) : [];
             >
               {formatTime(cue.start)}
             </button>
-            <p class="cue-text">{cue.text}</p>
+            <p class="cue-text">
+              {cue.speaker && <span class="cue-speaker">{cue.speaker}: </span>}
+              {cue.body}
+            </p>
           </li>
         ))}
       </ol>
@@ -96,6 +110,10 @@ const cues = vttRaw ? parseVtt(vttRaw) : [];
 
   .cue-text {
     margin: 0;
+  }
+
+  .cue-speaker {
+    font-weight: 700;
   }
 
   @media (max-width: 540px) {
