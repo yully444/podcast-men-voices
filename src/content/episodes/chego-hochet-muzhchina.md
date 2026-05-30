@@ -38,12 +38,8 @@ chapters:
 
 И, возможно, главный вопрос всего этого - КТО Я, если убрать роли, обязанности и всё привычное «надо»?
 
-*Мы на связи:
-*
+**Мы на связи:**
 
-*Сайт проекта - https://mensvoice.ge/podcast/*
-
-*Анри: ТГ - [https://t.me/sensologist ](https://t.me/sensologist )и сайт - [https://menstherapy.tilda.ws/
-](https://menstherapy.tilda.ws/)*
-
-*Александр: ТГ - https://t.me/AlexanderOlnev*
+* Сайт проекта - https://mensvoice.ge/podcast/
+* Анри: ТГ - https://t.me/sensologist и сайт - https://menstherapy.tilda.ws/
+* Александр: ТГ - https://t.me/AlexanderOlnev
