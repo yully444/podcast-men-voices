@@ -4,10 +4,10 @@ import promos from '../data/promos.json';
 const baseUrl = import.meta.env.BASE_URL;
 const podcastUrl = `${baseUrl}podcast/`;
 
-const pageTitle = "Чего хочет мужчина? — Мастерская-тренинг, Тбилиси, 21 июня 2026";
-const pageDescription = "Мастерская-тренинг «Чего хочет мужчина?». Один день для встречи с собой среди мужчин — телесные практики, мужской круг и честный разговор. 21 июня 2026, Тбилиси.";
+const pageTitle = "Чего хочет мужчина? — Мастерская-тренинг, Батуми, 31 мая 2026";
+const pageDescription = "Мастерская-тренинг «Чего хочет мужчина?». Один день для встречи с собой среди мужчин — телесные практики, мужской круг и честный разговор. 31 мая 2026, Батуми.";
 const ogImage = new URL(`${baseUrl}sharing.jpg`, Astro.site).toString();
-const pageUrl = new URL(baseUrl, Astro.site).toString();
+const pageUrl = new URL(`${baseUrl}batumi/`, Astro.site).toString();
 
 const navItems = [
   { label: "О формате", href: "#about" },
@@ -19,8 +19,8 @@ const navItems = [
 
 const heroInfo = [
   { l: "ЧТО", v: "Мастерская-тренинг", sub: "" },
-  { l: "ГДЕ", v: "Тбилиси", sub: "адрес — после регистрации" },
-  { l: "КОГДА", v: "21 июня 2026", sub: "воскресенье · 11—15" },
+  { l: "ГДЕ", v: "Батуми", sub: "адрес — после регистрации" },
+  { l: "КОГДА", v: "31 мая 2026", sub: "воскресенье · 11—19" },
   { l: "ДЛЯ КОГО", v: "Только мужчины", sub: "" },
 ];
 
@@ -111,8 +111,12 @@ const schedule = [
   { time: "11:00 – 11:30", title: "Знакомство с ведущими и введение" },
   { time: "11:30 – 12:30", title: "Практическая работа" },
   { time: "12:30 – 12:45", title: "Кофе-брейк" },
-  { time: "12:45 – 14:30", title: "Практическая работа" },
-  { time: "14:30 – 15:00", title: "Подведение итогов и завершение" },
+  { time: "12:45 – 14:00", title: "Практическая работа" },
+  { time: "14:00 – 15:00", title: "Обед" },
+  { time: "15:00 – 16:30", title: "Практическая работа" },
+  { time: "16:30 – 16:45", title: "Кофе-брейк" },
+  { time: "16:45 – 18:30", title: "Практическая работа" },
+  { time: "18:30 – 19:00", title: "Подведение итогов и завершение" },
 ];
 
 const includes = [
@@ -125,8 +129,8 @@ const includes = [
 const contacts = [
   { l: "СВЯЗЬ С ОРГАНИЗАТОРОМ", v: "Анри Савиновский", sub: "по всем вопросам" },
   { l: "ТЕЛЕГРАМ", v: "@sensologist", sub: "написать Анри Савинскому", href: "https://t.me/sensologist" },
-  { l: "МЕСТО", v: "г. Тбилиси", sub: "адрес — после регистрации" },
-  { l: "ДАТА", v: "21 июня 2026", sub: "воскресенье" },
+  { l: "МЕСТО", v: "г. Батуми", sub: "адрес — после регистрации" },
+  { l: "ДАТА", v: "31 мая 2026", sub: "воскресенье" },
 ];
 ---
 
@@ -160,7 +164,7 @@ const contacts = [
   <link rel="apple-touch-icon" sizes="180x180" href={`${baseUrl}favicon/apple-touch-icon.png`} />
   <link rel="manifest" href={`${baseUrl}favicon/site.webmanifest`} />
   <link rel="shortcut icon" href={`${baseUrl}favicon/favicon.ico`} />
-  <title>Чего хочет мужчина? — Мастерская-тренинг, Тбилиси, 21 июня 2026</title>
+  <title>Чего хочет мужчина? — Мастерская-тренинг, Батуми, 31 мая 2026</title>
 
   <!-- Yandex.Metrika counter -->
   <script type="text/javascript" is:inline>
@@ -1025,7 +1029,7 @@ const contacts = [
     }
     .afterEarly { display: none; }
 
-    /* AFTER-EARLY MODE — applied to <body> when current time >= 2026-06-14 00:00 GMT+4
+    /* AFTER-EARLY MODE — applied to <body> when current time >= 2026-05-20 00:00 GMT+4
        (or via ?after-early=1 URL param for testing) */
     .is-after-early #countdownBanner { display: none !important; }
     .is-after-early .earlyTierCta { display: none !important; }
@@ -1065,7 +1069,7 @@ const contacts = [
         {navItems.map((it) => (
           <a href={it.href} class="navLink">{it.label}</a>
         ))}
-        <button class="cta cta--filled cta--sm" data-apply-open data-apply-source="header" style="margin-left: 12px; font-weight: 700;">
+        <button class="cta cta--filled cta--sm" data-apply-open data-apply-source="header" style="margin-left: 12px; font-weight: 700; display: none;">
           <span>Участвовать</span>
         </button>
         <button id="burgerBtn" class="navBurger" aria-label="Открыть меню">
@@ -1086,7 +1090,7 @@ const contacts = [
         <a href={it.href} data-menu-link>{it.label}</a>
       ))}
     </div>
-    <button class="cta cta--filled" data-apply-open data-apply-source="menu" style="margin-top: 32px; font-weight: 700;">
+    <button class="cta cta--filled" data-apply-open data-apply-source="menu" style="margin-top: 32px; font-weight: 700; display: none;">
       <span>Участвовать</span>
     </button>
   </div>
@@ -1097,7 +1101,7 @@ const contacts = [
     <div class="heroBanner" style="max-width: 1280px; margin: 0 auto; padding: 0 48px; position: relative; z-index: 3; margin-bottom: 4px;">
       <div class="heroInfoMobile mono" style="display: none; padding: 12px 0; font-size: 14px; letter-spacing: 0.04em; color: var(--ink); font-weight: 700; text-align: center; line-height: 1.4;">
         <div>Мастерская-тренинг</div>
-        <div><span style="color: var(--accent);">21 июня 2026</span> · Тбилиси</div>
+        <div><span style="color: var(--accent);">31 мая 2026</span> · Батуми</div>
       </div>
       <div class="heroInfoGrid" data-grid style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--rule); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink);">
         {heroInfo.map((x) => (
@@ -1151,7 +1155,7 @@ const contacts = [
         <a href="#pricing" class="cta cta--outline">
           <span>Узнать условия</span>
         </a>
-        <button class="cta cta--filled" data-apply-open data-apply-source="hero" style="font-weight: 700;">
+        <button class="cta cta--filled" data-apply-open data-apply-source="hero" style="font-weight: 700; display: none;">
           <span>Оставить заявку</span>
         </button>
       </div>
@@ -1407,13 +1411,13 @@ const contacts = [
           <div style="position: absolute; top: -1px; right: -1px; background: var(--accent); color: var(--ink); padding: 6px 14px;">
             <span class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; font-weight: 500;">РАННИЙ ТАРИФ</span>
           </div>
-          <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 12px;">ДО 14 ИЮНЯ 2026</div>
+          <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 12px;">ДО 20 МАЯ 2026</div>
           <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px;">
-            <span class="display priceNum" style="font-size: var(--fs-h2); line-height: 1; color: var(--ink);">95</span>
+            <span class="display priceNum" style="font-size: var(--fs-h2); line-height: 1; color: var(--ink);">180</span>
             <span class="display" style="font-size: var(--fs-h3); color: var(--ink-mute);">₾</span>
           </div>
           <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 24px;">
-            при оплате брони <strong style="color: var(--ink);">90&nbsp;лари</strong><span class="afterEarly"><br />с&nbsp;14&nbsp;июня цена <strong style="color: var(--ink);">135&nbsp;лари</strong></span>
+            при оплате брони <strong style="color: var(--ink);">90&nbsp;лари</strong> (50%)<span class="afterEarly"><br />с&nbsp;20&nbsp;мая цена <strong style="color: var(--ink);">230&nbsp;лари</strong></span>
           </p>
           <div style="height: 1px; background: var(--rule); margin: 8px 0 24px;"></div>
           <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px;">
@@ -1423,16 +1427,16 @@ const contacts = [
               </li>
             ))}
           </ul>
-          <button class="cta cta--filled earlyTierCta" data-apply-open data-apply-source="pricing-early">
+          <button class="cta cta--filled earlyTierCta" data-apply-open data-apply-source="pricing-early" style="display: none;">
             <span>Оставить заявку</span>
             <span class="cta__arrow">→</span>
           </button>
         </div>
 
         <div class="standardTier" style="background: var(--paper-2); padding: 40px; position: relative; border: 1px solid var(--rule);">
-          <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 12px;">ПОСЛЕ 14 ИЮНЯ</div>
+          <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 12px;">ПОСЛЕ 20 МАЯ</div>
           <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px;">
-            <span class="display priceNum" style="font-size: var(--fs-h2); line-height: 1; color: var(--ink-soft);">135</span>
+            <span class="display priceNum" style="font-size: var(--fs-h2); line-height: 1; color: var(--ink-soft);">230</span>
             <span class="display" style="font-size: var(--fs-h3); color: var(--ink-mute);">₾</span>
           </div>
           <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 24px;">стандартная стоимость участия</p>
@@ -1444,7 +1448,7 @@ const contacts = [
               </li>
             ))}
           </ul>
-          <button class="cta cta--outline standardTierCta" data-apply-open data-apply-source="pricing-standard">
+          <button class="cta cta--outline standardTierCta" data-apply-open data-apply-source="pricing-standard" style="display: none;">
             <span>Оставить заявку</span>
             <span class="cta__arrow">→</span>
           </button>
@@ -1493,7 +1497,7 @@ const contacts = [
           Расписание
         </h2>
         <div class="display" style="font-size: var(--fs-body); letter-spacing: -0.005em; color: var(--accent); line-height: 1.3; font-weight: 600;">
-          21 ИЮНЯ · ВС · ТБИЛИСИ
+          31 МАЯ · ВС · БАТУМИ
         </div>
       </header>
       <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px;">
@@ -1529,7 +1533,7 @@ const contacts = [
           <span style="width: 32px; height: 32px; background: var(--accent); display: inline-flex; align-items: center; justify-content: center; color: var(--ink); font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: var(--fs-lead);">?</span>
           <div>
             <div class="display" style="font-size: var(--fs-body); color: var(--paper);">Чего хочет мужчина</div>
-            <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: rgba(236,230,216,0.5); margin-top: 4px;">МАСТЕРСКАЯ-ТРЕНИНГ • ТБИЛИСИ</div>
+            <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: rgba(236,230,216,0.5); margin-top: 4px;">МАСТЕРСКАЯ-ТРЕНИНГ • БАТУМИ</div>
           </div>
         </div>
         <div class="mono footerLinks" style="font-size: var(--fs-caption); letter-spacing: 0.18em; color: rgba(236,230,216,0.5);">
@@ -1613,9 +1617,9 @@ const contacts = [
         <h3 class="display" style="font-size: 36px; line-height: 1.1; margin-bottom: 20px;">Важные детали</h3>
         <div style="background: var(--paper-2); padding: 20px 22px; margin-bottom: 18px; font-size: 14.5px; line-height: 1.55; color: var(--ink-soft);">
           <p style="margin-bottom: 10px;">· Ведущий напишет в&nbsp;течение 1–2&nbsp;дней для короткого разговора.</p>
-          <p style="margin-bottom: 10px;">· После собеседования мы&nbsp;подтвердим регистрацию и&nbsp;пришлём реквизиты для оплаты брони (90&nbsp;лари).</p>
-          <p style="margin-bottom: 10px;">· Полная стоимость участия должна быть оплачена <strong style="color: var(--ink); font-weight: 600;">не&nbsp;позднее 18&nbsp;июня</strong> (за&nbsp;3&nbsp;дня).</p>
-          <p style="margin-bottom: 0;">· <strong style="color: var(--ink); font-weight: 600;">Условия отмены и&nbsp;возврата.</strong> До&nbsp;15&nbsp;июня — 100% возврат оплаченной суммы. До&nbsp;18&nbsp;июня — возврат 50% (удерживается бронь). После 18&nbsp;июня возврат не&nbsp;осуществляется. <a href={`${baseUrl}refund/`} target="_blank" rel="noopener" class="applyInlineLink">Подробнее на&nbsp;странице условий&nbsp;↗</a></p>
+          <p style="margin-bottom: 10px;">· После собеседования мы&nbsp;подтвердим регистрацию и&nbsp;пришлём реквизиты для оплаты брони (90&nbsp;лари, 50%).</p>
+          <p style="margin-bottom: 10px;">· Полная стоимость участия должна быть оплачена <strong style="color: var(--ink); font-weight: 600;">не&nbsp;позднее 28&nbsp;мая</strong> (за&nbsp;3&nbsp;дня).</p>
+          <p style="margin-bottom: 0;">· <strong style="color: var(--ink); font-weight: 600;">Условия отмены и&nbsp;возврата.</strong> До&nbsp;25&nbsp;мая — 100% возврат оплаченной суммы. До&nbsp;28&nbsp;мая — возврат 50% (удерживается бронь). После 28&nbsp;мая возврат не&nbsp;осуществляется. <a href={`${baseUrl}refund/`} target="_blank" rel="noopener" class="applyInlineLink">Подробнее на&nbsp;странице условий&nbsp;↗</a></p>
         </div>
 
         <label id="applyAgreeWrap" style="display: flex; gap: 12px; padding: 16px; border: 1px solid var(--rule); cursor: pointer; align-items: flex-start; transition: border-color 200ms;">
@@ -1687,9 +1691,9 @@ const contacts = [
 <script is:inline>
   // -- after-early-tier mode -------------------------------------------------
   // Switches pricing UI when the early-bird window closes:
-  // 2026-06-14 00:00 GMT+4  ==  2026-06-13 20:00 UTC
+  // 2026-05-20 00:00 GMT+4  ==  2026-05-19 20:00 UTC
   (function () {
-    const EARLY_END_UTC = Date.UTC(2026, 5, 13, 20, 0, 0); // month is 0-indexed; 5 = June
+    const EARLY_END_UTC = Date.UTC(2026, 4, 19, 20, 0, 0); // month is 0-indexed; 4 = May
     const params = new URLSearchParams(location.search);
     const force = params.get('after-early');
     let isAfter;
@@ -1768,7 +1772,7 @@ const contacts = [
   });
 
   // -- countdown --------------------------------------------------------------
-  const target = new Date('2026-06-13T23:59:00+04:00').getTime();
+  const target = new Date('2026-05-20T23:59:00+04:00').getTime();
   const cdEls = {
     d: document.querySelector('[data-cd="d"]'),
     h: document.querySelector('[data-cd="h"]'),
@@ -1938,7 +1942,7 @@ const contacts = [
     if (match) {
       const after = isAfterEarly();
       const promoPrice = Number(after ? match.priceAfter : match.priceBefore);
-      const normalPrice = after ? 135 : 95;
+      const normalPrice = after ? 230 : 180;
       state.promo = String(match.code || '').trim();
       state.promoPrice = isFinite(promoPrice) ? promoPrice : null;
       const priceText = state.promoPrice != null ? String(state.promoPrice) : '—';
