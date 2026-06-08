@@ -1408,11 +1408,11 @@ const contacts = [
           </div>
           <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 12px;">ДО 14 ИЮНЯ 2026</div>
           <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px;">
-            <span class="display priceNum" style="font-size: var(--fs-h2); line-height: 1; color: var(--ink);">95</span>
+            <span class="display priceNum" style="font-size: var(--fs-h2); line-height: 1; color: var(--ink);">120</span>
             <span class="display" style="font-size: var(--fs-h3); color: var(--ink-mute);">₾</span>
           </div>
           <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 24px;">
-            при оплате брони <strong style="color: var(--ink);">50&nbsp;лари</strong><span class="afterEarly"><br />с&nbsp;14&nbsp;июня цена <strong style="color: var(--ink);">135&nbsp;лари</strong></span>
+            при оплате брони <strong style="color: var(--ink);">60&nbsp;лари</strong><span class="afterEarly"><br />с&nbsp;14&nbsp;июня цена <strong style="color: var(--ink);">150&nbsp;лари</strong></span>
           </p>
           <div style="height: 1px; background: var(--rule); margin: 8px 0 24px;"></div>
           <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px;">
@@ -1431,7 +1431,7 @@ const contacts = [
         <div class="standardTier" style="background: var(--paper-2); padding: 40px; position: relative; border: 1px solid var(--rule);">
           <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 12px;">ПОСЛЕ 14 ИЮНЯ</div>
           <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px;">
-            <span class="display priceNum" style="font-size: var(--fs-h2); line-height: 1; color: var(--ink-soft);">135</span>
+            <span class="display priceNum" style="font-size: var(--fs-h2); line-height: 1; color: var(--ink-soft);">150</span>
             <span class="display" style="font-size: var(--fs-h3); color: var(--ink-mute);">₾</span>
           </div>
           <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 24px;">стандартная стоимость участия</p>
@@ -1612,7 +1612,7 @@ const contacts = [
         <h3 class="display" style="font-size: 36px; line-height: 1.1; margin-bottom: 20px;">Важные детали</h3>
         <div style="background: var(--paper-2); padding: 20px 22px; margin-bottom: 18px; font-size: 14.5px; line-height: 1.55; color: var(--ink-soft);">
           <p style="margin-bottom: 10px;">· Ведущий напишет в&nbsp;течение 1–2&nbsp;дней для короткого разговора.</p>
-          <p style="margin-bottom: 10px;">· После собеседования мы&nbsp;подтвердим регистрацию и&nbsp;пришлём реквизиты для оплаты брони (50&nbsp;лари).</p>
+          <p style="margin-bottom: 10px;">· После собеседования мы&nbsp;подтвердим регистрацию и&nbsp;пришлём реквизиты для оплаты брони (60&nbsp;лари).</p>
           <p style="margin-bottom: 10px;">· Полная стоимость участия должна быть оплачена <strong style="color: var(--ink); font-weight: 600;">не&nbsp;позднее 18&nbsp;июня</strong> (за&nbsp;3&nbsp;дня).</p>
           <p style="margin-bottom: 0;">· <strong style="color: var(--ink); font-weight: 600;">Условия отмены и&nbsp;возврата.</strong> До&nbsp;15&nbsp;июня — 100% возврат оплаченной суммы. До&nbsp;18&nbsp;июня — возврат 50% (удерживается бронь). После 18&nbsp;июня возврат не&nbsp;осуществляется. <a href={`${baseUrl}refund/`} target="_blank" rel="noopener" class="applyInlineLink">Подробнее на&nbsp;странице условий&nbsp;↗</a></p>
         </div>
@@ -1937,7 +1937,7 @@ const contacts = [
     if (match) {
       const after = isAfterEarly();
       const promoPrice = Number(after ? match.priceAfter : match.priceBefore);
-      const normalPrice = after ? 135 : 95;
+      const normalPrice = after ? 150 : 120;
       state.promo = String(match.code || '').trim();
       state.promoPrice = isFinite(promoPrice) ? promoPrice : null;
       const priceText = state.promoPrice != null ? String(state.promoPrice) : '—';
