@@ -1,0 +1,2025 @@
+---
+import promos from '../data/promos.json';
+
+const baseUrl = import.meta.env.BASE_URL;
+const podcastUrl = `${baseUrl}podcast/`;
+
+const pageTitle = "Чего хочет мужчина? — Мастерская-тренинг, Тбилиси, 21 июня 2026";
+const pageDescription = "Мастерская-тренинг «Чего хочет мужчина?». Один день для встречи с собой среди мужчин — телесные практики, мужской круг и честный разговор. 21 июня 2026, Тбилиси.";
+const ogImage = new URL(`${baseUrl}sharing.jpg`, Astro.site).toString();
+const pageUrl = new URL(`${baseUrl}tbilisi/`, Astro.site).toString();
+
+const navItems = [
+  { label: "О формате", href: "#about" },
+  { label: "Ведущие", href: "#facilitators" },
+  { label: "Стоимость", href: "#pricing" },
+  { label: "Расписание", href: "#schedule" },
+  { label: "Подкаст", href: podcastUrl },
+];
+
+const heroInfo = [
+  { l: "ЧТО", v: "Мастерская-тренинг", sub: "" },
+  { l: "ГДЕ", v: "Тбилиси", sub: "адрес — после регистрации" },
+  { l: "КОГДА", v: "21 июня 2026", sub: "воскресенье · 11—15" },
+  { l: "ДЛЯ КОГО", v: "Только мужчины", sub: "" },
+];
+
+const aboutMobileBlocks = [
+  {
+    title: "Групповой формат",
+    subhead: "Даёт возможность увидеть себя через других.",
+    intro: "В группе мужчина начинает замечать:",
+    bullets: [
+      "как по-разному мужчины обходятся со своими желаниями,",
+      "какие стратегии помогают,",
+      "а какие приводят к напряжению, усталости или внутренней пустоте.",
+    ],
+    outro: "Чужой опыт становится зеркалом, в котором легче увидеть себя.",
+  },
+  {
+    title: "Мужчины для мужчин",
+    body: [
+      "Для многих мужчин привычная модель взаимодействия — сравнение, соперничество, проверка статуса.",
+      "В безопасной группе появляется другой опыт:",
+    ],
+    bullets: [
+      "быть услышанным,",
+      "быть принятым,",
+      "получать поддержку,",
+      "видеть силу не только в достижениях.",
+    ],
+    outro: "Это редкий и очень ценный опыт.",
+  },
+  {
+    title: "Два ведущих —<br />одна цель",
+    body: [
+      "Формат с двумя ведущими позволяет создать более устойчивое, живое и безопасное пространство.",
+      "А сама работа становится глубже благодаря сочетанию двух разных мужских опытов и способов ведения.",
+    ],
+  },
+  {
+    title: "Что даст мастерская",
+    bullets: [
+      "лучше различать свои желания и автоматические «надо»,",
+      "замечать сигналы тела и внутреннего напряжения,",
+      "понимать, как они обходятся со своими потребностями,",
+      "получить опыт честного мужского взаимодействия без конкуренции.",
+    ],
+  },
+  {
+    title: "Форматы работы",
+    bullets: [
+      "телесные практики для работы с внутренними сигналами,",
+      "мужские круги и живой обмен историями,",
+      "работа в парах и мини-группах,",
+      "прикладные способы лучше слышать и понимать себя.",
+    ],
+  },
+];
+
+const facilitators = [
+  {
+    firstName: "Анри",
+    lastName: "Савиновский",
+    role: "ВЕДУЩИЙ • ТЕЛО",
+    photo: `${baseUrl}masterclass/henri.jpg`,
+    photoPosition: "center 25%",
+    bio: "Телесно-ориентированный психотерапевт и коуч, ведущий мужских групп, со-автор подкаста «Мужские голоса».<br />С 2021 года помогаю мужчинам лучше слышать себя через тело, эмоции и внутренние сигналы.",
+    accent: "var(--accent)",
+    links: [
+      { label: "Личный сайт", href: "https://menstherapy.tilda.ws/" },
+      { label: "Telegram-канал", href: "https://t.me/menswells" },
+    ],
+  },
+  {
+    firstName: "Александр",
+    lastName: "Ольнев",
+    role: "ВЕДУЩИЙ • КРУГ",
+    photo: `${baseUrl}masterclass/alex.jpg`,
+    photoPosition: "center 30%",
+    bio: "Фасилитатор мужских кругов, IT-специалист, со-автор подкаста «Мужские голоса». Работаю с групповым взаимодействием, поддержкой и созданием пространства, где быть собой безопасно.",
+    accent: "var(--olive-deep)",
+    roleColor: "var(--accent)",
+    links: [
+      { label: "Telegram-канал", href: "https://t.me/whole_live_is_a_game" },
+    ],
+  },
+];
+
+const schedule = [
+  { time: "10:45 – 11:00", title: "Сбор" },
+  { time: "11:00 – 11:30", title: "Знакомство с ведущими и введение" },
+  { time: "11:30 – 12:30", title: "Практическая работа" },
+  { time: "12:30 – 12:45", title: "Кофе-брейк" },
+  { time: "12:45 – 14:30", title: "Практическая работа" },
+  { time: "14:30 – 15:00", title: "Подведение итогов и завершение" },
+];
+
+const includes = [
+  "Зал для практик,",
+  "Кофе-брейк,",
+  "Все материалы и поддержка ведущих.",
+];
+
+const contacts = [
+  { l: "СВЯЗЬ С ОРГАНИЗАТОРОМ", v: "Анри Савиновский", sub: "по всем вопросам" },
+  { l: "ТЕЛЕГРАМ", v: "@sensologist", sub: "написать Анри Савинскому", href: "https://t.me/sensologist" },
+  { l: "МЕСТО", v: "г. Тбилиси", sub: "адрес — после регистрации" },
+  { l: "ДАТА", v: "21 июня 2026", sub: "воскресенье" },
+];
+---
+
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content={pageDescription} />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={pageTitle} />
+  <meta property="og:description" content={pageDescription} />
+  <meta property="og:url" content={pageUrl} />
+  <meta property="og:site_name" content="Чего хочет мужчина" />
+  <meta property="og:locale" content="ru_RU" />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:image:width" content="1197" />
+  <meta property="og:image:height" content="706" />
+  <meta property="og:image:alt" content="Мастерская-тренинг «Чего хочет мужчина?»" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={pageTitle} />
+  <meta name="twitter:description" content={pageDescription} />
+  <meta name="twitter:image" content={ogImage} />
+
+  <link rel="icon" type="image/png" sizes="32x32" href={`${baseUrl}favicon/favicon-32x32.png`} />
+  <link rel="icon" type="image/png" sizes="16x16" href={`${baseUrl}favicon/favicon-16x16.png`} />
+  <link rel="apple-touch-icon" sizes="180x180" href={`${baseUrl}favicon/apple-touch-icon.png`} />
+  <link rel="manifest" href={`${baseUrl}favicon/site.webmanifest`} />
+  <link rel="shortcut icon" href={`${baseUrl}favicon/favicon.ico`} />
+  <title>Чего хочет мужчина? — Мастерская-тренинг, Тбилиси, 21 июня 2026</title>
+
+  <!-- Yandex.Metrika counter -->
+  <script type="text/javascript" is:inline>
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=109241048', 'ym');
+
+    ym(109241048, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+  </script>
+  <noscript><div><img src="https://mc.yandex.ru/watch/109241048" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+  <!-- /Yandex.Metrika counter -->
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KBY7G1DT53" is:inline></script>
+  <script is:inline>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-KBY7G1DT53');
+  </script>
+
+  <!-- Preload LCP hero image -->
+  <link rel="preload" as="image" href={`${baseUrl}hero-void-mobile.webp`} type="image/webp" fetchpriority="high" />
+
+  <!-- Preload critical font subsets (Cyrillic, since UI is in Russian) -->
+  <link rel="preload" as="font" type="font/woff2" href={`${baseUrl}fonts/inter-cyrillic.woff2`} crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href={`${baseUrl}fonts/unbounded-cyrillic.woff2`} crossorigin />
+
+  <!-- Self-hosted variable fonts — inline so registration doesn't wait on the external stylesheet bundle. -->
+  <style is:inline>
+    @font-face { font-family: 'Inter'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('/fonts/inter-cyrillic.woff2') format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+    @font-face { font-family: 'Inter'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('/fonts/inter-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+    @font-face { font-family: 'Unbounded'; font-style: normal; font-weight: 200 900; font-display: swap; src: url('/fonts/unbounded-cyrillic.woff2') format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+    @font-face { font-family: 'Unbounded'; font-style: normal; font-weight: 200 900; font-display: swap; src: url('/fonts/unbounded-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+    @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 100 800; font-display: swap; src: url('/fonts/jetbrainsmono-cyrillic.woff2') format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+    @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 100 800; font-display: swap; src: url('/fonts/jetbrainsmono-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  </style>
+
+  <style>
+    :root {
+      --paper: #ece6d8;
+      --paper-2: #e3dccb;
+      --paper-deep: #d8d0bc;
+      --ink: #232220;
+      --ink-soft: #3a3a37;
+      --ink-mute: #6a6760;
+      --void: #2b2b29;
+      --accent: #e8951f;
+      --accent-soft: #f0a838;
+      --olive: #6a6a2c;
+      --olive-deep: #4d5224;
+      --rule: rgba(35,34,32,0.16);
+
+      /* Type scale — 6 levels */
+      --fs-caption: 12px;
+      --fs-body: 17px;
+      --fs-lead: 22px;
+      --fs-h3: 28px;
+      --fs-h2: clamp(34px, 7vw, 88px);
+      --fs-h1: clamp(48px, 9vw, 112px);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      background-image:
+        radial-gradient(ellipse at 20% 30%, rgba(0,0,0,0.025) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 70%, rgba(0,0,0,0.02) 0%, transparent 55%),
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.045 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+      pointer-events: none;
+      z-index: 1;
+      mix-blend-mode: multiply;
+    }
+    #top { position: relative; z-index: 2; }
+    #top > section { scroll-margin-top: 40px; }
+    .display { font-family: 'Unbounded', sans-serif; font-weight: 800; letter-spacing: -0.02em; line-height: 0.92; }
+    .heroTitle .heroTitleW, .heroTitle .heroTitleQ { display: block; }
+    .heroTitle .heroTitleBr { display: none; }
+    .mono { font-family: 'JetBrains Mono', monospace; font-weight: 400; }
+    .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: var(--fs-caption); letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-mute); }
+    ::selection { background: var(--accent); color: #fff; }
+    a { color: inherit; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+    input, textarea { font-family: inherit; }
+
+    /* Hover-line link patterns */
+    .mensVoicesLink { transition: color 240ms; }
+    .mensVoicesLink .mensVoicesText {
+      background-image: linear-gradient(currentColor, currentColor);
+      background-size: 0% 1px; background-position: 0 100%;
+      background-repeat: no-repeat;
+      transition: background-size 320ms cubic-bezier(.2,.8,.2,1);
+      padding-bottom: 2px;
+    }
+    .mensVoicesLink .mensVoicesArrow {
+      display: inline-block;
+      transition: transform 320ms cubic-bezier(.2,.8,.2,1);
+    }
+    .mensVoicesLink:hover { color: var(--accent); }
+    .mensVoicesLink:hover .mensVoicesText { background-size: 100% 1px; }
+    .mensVoicesLink:hover .mensVoicesArrow { transform: translateX(6px) rotate(-8deg); }
+
+    .podcastCta { display: inline-flex; align-items: center; gap: 4px; }
+    .podcastCtaText {
+      background-image: linear-gradient(currentColor, currentColor);
+      background-size: 0% 1px; background-position: 0 100%;
+      background-repeat: no-repeat;
+      transition: background-size 320ms cubic-bezier(.2,.8,.2,1);
+      padding-bottom: 2px;
+    }
+    .podcastCtaArrow { display: inline-block; transition: transform 320ms cubic-bezier(.2,.8,.2,1); }
+    .podcastStrip:hover .podcastCta { color: var(--accent) !important; }
+    .podcastStrip:hover .podcastCtaText { background-size: 100% 1px; }
+    .podcastStrip:hover .podcastCtaArrow { transform: translateX(6px) rotate(-8deg); }
+    .podcastStrip .podcastPlay { transition: transform 320ms cubic-bezier(.2,.8,.2,1); }
+    .podcastStrip:hover .podcastPlay { transform: scale(1.08); }
+
+    .facLink { transition: color 240ms; }
+    .facLinkText {
+      background-image: linear-gradient(currentColor, currentColor);
+      background-size: 0% 1px; background-position: 0 100%;
+      background-repeat: no-repeat;
+      transition: background-size 320ms cubic-bezier(.2,.8,.2,1);
+      padding-bottom: 2px;
+    }
+    .facLinkArrow { display: inline-block; transition: transform 320ms cubic-bezier(.2,.8,.2,1); }
+    .facLink:hover { color: var(--facAccent, var(--accent)); }
+    .facLink:hover .facLinkText { background-size: 100% 1px; }
+    .facLink:hover .facLinkArrow { transform: translateX(6px) rotate(-8deg); }
+
+    /* CTA button */
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 26px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 500;
+      border-radius: 0;
+      transition: all 200ms ease;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+      border: 1px solid transparent;
+    }
+    .cta--sm { padding: 10px 18px; font-size: var(--fs-caption); }
+    .cta--filled { background: var(--accent); color: #1a1a18; border-color: var(--accent); }
+    .cta--filled:hover { background: var(--accent-soft); border-color: var(--accent-soft); }
+    .cta--outline { background: transparent; color: var(--ink); border-color: var(--ink); }
+    .cta--outline:hover { background: var(--ink); color: var(--paper); }
+    .cta__arrow { font-size: 14px; transform: translateY(-1px); }
+
+    /* Nav */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+      padding: 20px 48px;
+      background: transparent;
+      border-bottom: 1px solid transparent;
+      transition: all 280ms ease;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 24px;
+    }
+    .nav__inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .nav.is-scrolled {
+      padding: 12px 48px;
+      background: rgba(236,230,216,0.92);
+      backdrop-filter: blur(12px) saturate(150%);
+      -webkit-backdrop-filter: blur(12px) saturate(150%);
+      border-bottom-color: var(--rule);
+    }
+    .nav__brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); }
+    .nav__mark {
+      width: 28px; height: 28px; background: var(--accent);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: var(--fs-body);
+      color: var(--ink);
+    }
+    .nav__name { font-family: 'Unbounded', sans-serif; font-weight: 800;
+      letter-spacing: -0.005em; font-size: 14px; line-height: 0.92; }
+    .nav__items { display: flex; align-items: center; gap: 4px; }
+    .navLink {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: var(--fs-caption); letter-spacing: 0.18em; text-transform: uppercase;
+      padding: 10px 14px; color: var(--ink-soft); text-decoration: none;
+      transition: color 160ms;
+    }
+    .navLink:hover { color: var(--accent); }
+    .navBurger {
+      display: none;
+      width: 40px; height: 40px; margin-left: 8px;
+      background: transparent; border: 1px solid var(--ink);
+      cursor: pointer; padding: 0;
+      align-items: center; justify-content: center;
+    }
+    .navBurger > span {
+      display: block; position: relative; width: 18px; height: 12px;
+    }
+    .navBurger > span > span {
+      position: absolute; left: 0; right: 0; height: 1.5px; background: var(--ink);
+    }
+    .navBurger > span > span:nth-child(1) { top: 0; }
+    .navBurger > span > span:nth-child(2) { top: 5px; }
+    .navBurger > span > span:nth-child(3) { top: 10px; }
+
+    .menuOverlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 60;
+      background: var(--paper);
+      flex-direction: column;
+      padding: 20px 24px;
+      overflow-y: auto;
+    }
+    .menuOverlay.is-open { display: flex; }
+    .menuOverlay__head { display: flex; justify-content: space-between; align-items: center; }
+    .menuOverlay__close {
+      width: 40px; height: 40px;
+      background: transparent; border: 1px solid var(--ink);
+      font-size: var(--fs-lead); color: var(--ink); line-height: 1;
+    }
+    .menuOverlay__list { margin-top: 32px; display: flex; flex-direction: column; gap: 0; }
+    .menuOverlay__list a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: var(--fs-caption); letter-spacing: 0.18em; text-transform: uppercase;
+      padding: 16px 0 16px 26px; color: var(--ink-soft);
+      text-decoration: none; border-bottom: 1px solid var(--rule);
+    }
+
+    /* Scroll-top */
+    .scrollTop {
+      position: fixed; right: 20px; bottom: 20px; z-index: 45;
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--ink); color: var(--paper);
+      border: 0; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transform: translateY(20px); pointer-events: none;
+      transition: opacity 240ms, transform 240ms;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+    }
+    .scrollTop.is-visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+
+    /* Apply modal */
+    @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+    .applyOverlay { display: none; position: fixed; inset: 0; z-index: 100; }
+    .applyOverlay.is-open { display: flex; animation: fade 200ms ease; }
+    .applyBackdrop { position: absolute; inset: 0; background: rgba(20,20,18,0.7); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+    .applyModal {
+      position: relative; margin: auto;
+      width: min(720px, 92vw); max-height: 90vh; overflow: auto;
+      background: var(--paper);
+      box-shadow: 0 60px 100px -30px rgba(0,0,0,0.5);
+      animation: slideUp 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .applyTopbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 28px;
+      border-bottom: 1px solid var(--rule);
+      background: var(--paper-2);
+    }
+    .applyProgress { display: flex; gap: 4px; padding: 0 28px; margin-top: 12px; }
+    .applyProgress > span { flex: 1; height: 3px; background: var(--paper-deep); transition: background 300ms; }
+    .applyProgress > span.is-active { background: var(--accent); }
+    .applyBody { padding: 40px 48px 48px; }
+    .applyField {
+      width: 100%; padding: 16px 0; font-size: var(--fs-h3);
+      font-family: 'Unbounded', sans-serif; font-weight: 400;
+      background: transparent; border: none;
+      border-bottom: 1px solid var(--ink);
+      color: var(--ink); outline: none;
+      letter-spacing: -0.01em;
+    }
+    .applyField--multi { resize: vertical; min-height: 96px; }
+    .applyChip {
+      padding: 10px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: var(--fs-caption); letter-spacing: 0.18em; text-transform: uppercase;
+      background: transparent; color: var(--ink);
+      border: 1px solid var(--rule);
+      transition: all 180ms;
+    }
+    .applyChip.is-active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+    .applyChip--accent.is-active { background: var(--accent); color: var(--ink); border-color: var(--accent); }
+    .applyStep { display: none; }
+    .applyStep.is-active { display: block; }
+    .applyDone { display: none; text-align: center; padding: 20px 0 16px; }
+    .applyDone.is-active { display: block; }
+    .applyNav {
+      margin-top: 36px; display: flex;
+      justify-content: space-between; align-items: center; gap: 16px;
+    }
+    .applyBack {
+      font-family: 'JetBrains Mono', monospace; font-size: var(--fs-caption);
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--ink-mute); cursor: pointer;
+      padding: 12px 8px;
+      margin-left: -8px;
+    }
+    .applyBack:disabled { color: var(--paper-deep); cursor: not-allowed; }
+    .applyNext.is-disabled { opacity: 0.4; pointer-events: none; }
+    .applyPromoResult {
+      margin-top: 10px;
+      font-size: var(--fs-caption);
+      letter-spacing: 0.04em;
+      line-height: 1.5;
+      color: var(--ink-mute);
+      min-height: 0;
+    }
+    .applyPromoResult:empty { display: none; }
+    .applyPromoResult.is-ok { color: var(--ink); }
+    .applyPromoResult.is-err { color: var(--ink-mute); }
+    .applyPromoResult strong { color: var(--accent); font-weight: 600; }
+
+    /* Inline link inside info bullets on the confirmation step */
+    .applyInlineLink {
+      color: var(--olive-deep);
+      text-decoration: underline;
+      text-decoration-color: var(--rule);
+      text-underline-offset: 3px;
+      transition: color 200ms, text-decoration-color 200ms;
+    }
+    .applyInlineLink:hover {
+      color: var(--accent);
+      text-decoration-color: var(--accent);
+    }
+
+    /* Compact promo field under consent */
+    .applyPromoInline {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border: 1px dashed var(--rule);
+      background: transparent;
+    }
+    .applyPromoInlineHead {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+    .applyPromoInlineLabel {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: var(--fs-caption);
+      letter-spacing: 0.22em;
+      color: var(--ink);
+      font-weight: 700;
+    }
+    .applyPromoInlineOpt {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: var(--fs-caption);
+      letter-spacing: 0.18em;
+      color: var(--ink-mute);
+      text-transform: lowercase;
+    }
+    .applyPromoInlineField {
+      width: 100%;
+      padding: 8px 0;
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 500;
+      font-size: var(--fs-lead);
+      letter-spacing: 0.02em;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--ink);
+      color: var(--ink);
+      outline: none;
+    }
+    .applyPromoInlineField::placeholder {
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: var(--fs-body);
+      letter-spacing: 0;
+      color: var(--ink-mute);
+    }
+
+    /* "Условия отмены и возврата" link in pricing section */
+    .pricingRefundLink {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: var(--fs-caption);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--ink);
+      transition: color 200ms, border-color 200ms;
+    }
+    .pricingRefundLink:hover {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    .pricingRefundLinkArrow {
+      transition: transform 220ms cubic-bezier(.2,.8,.2,1);
+    }
+    .pricingRefundLink:hover .pricingRefundLinkArrow {
+      transform: translateX(4px) translateY(-2px) rotate(-8deg);
+    }
+
+    /* Footer secondary link */
+    .footerLinks {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .footerLinks .footerLink {
+      color: rgba(236,230,216,0.7);
+      text-decoration: none;
+      transition: color 200ms;
+    }
+    .footerLinks .footerLink:hover { color: var(--accent); }
+    .footerLinks .footerSep { color: rgba(236,230,216,0.3); }
+
+    /* Facilitator card hover lift */
+    .facCard { transition: transform 300ms ease, box-shadow 300ms ease; }
+    .facCard:hover { transform: translateY(-4px); box-shadow: 0 30px 60px -30px rgba(0,0,0,0.25); }
+
+    /* About lists: no separators between items */
+    .aboutListUl { list-style: none; }
+
+    /* About desktop: scrollspy — content left, sticky nav right */
+    .aboutScrollspy {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 80px;
+      align-items: start;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .aboutScrollspyMain {
+      display: flex;
+      flex-direction: column;
+      gap: 96px;
+    }
+    .aboutScrollspySection {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      scroll-margin-top: 120px;
+    }
+    .aboutScrollspyTitle {
+      font-size: var(--fs-h3);
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.2;
+      margin: 0;
+    }
+    .aboutScrollspySubhead {
+      font-size: var(--fs-body);
+      line-height: 1.55;
+      color: var(--ink);
+      margin: 0;
+    }
+    .aboutScrollspyP {
+      font-size: var(--fs-body);
+      line-height: 1.6;
+      color: var(--ink-soft);
+      margin: 0;
+    }
+    .aboutScrollspyOutro { color: var(--ink); }
+    .aboutScrollspyBullets {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin: 0;
+      padding: 0;
+    }
+    .aboutScrollspyBullets li {
+      display: flex;
+      gap: 12px;
+      align-items: baseline;
+      font-size: var(--fs-body);
+      line-height: 1.6;
+      color: var(--ink-soft);
+    }
+    .aboutScrollspyDot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+      transform: translateY(-3px);
+    }
+    .aboutScrollspyNav {
+      position: sticky;
+      top: 120px;
+    }
+    .aboutScrollspyNavList {
+      list-style: none;
+      padding: 0 0 0 24px;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      border-left: 1px solid var(--rule);
+    }
+    .aboutScrollspyNavItem {
+      transition: opacity 350ms ease, transform 350ms ease;
+    }
+    .aboutScrollspyNavItem.is-passed {
+      opacity: 0;
+      transform: translateY(-12px);
+      pointer-events: none;
+    }
+    .aboutScrollspyNavLink {
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 600;
+      font-size: var(--fs-body);
+      color: var(--ink-mute);
+      text-decoration: none;
+      display: block;
+      line-height: 1.3;
+      transition: color 200ms ease;
+    }
+    .aboutScrollspyNavLink:hover { color: var(--ink); }
+    .aboutScrollspyNavItem.is-active .aboutScrollspyNavLink {
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    /* About — desktop v2: two grouped grids, compact cards */
+    .aboutMainHeading { display: none; }
+    .aboutGroups {
+      display: flex;
+      flex-direction: column;
+      gap: 56px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .aboutGroup { display: flex; flex-direction: column; gap: 20px; }
+    .aboutGroupTitle {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 28px;
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin: 0;
+    }
+    .aboutGroupTitle .accent { color: var(--accent); }
+    .aboutGroupGrid { display: grid; gap: 20px; align-items: stretch; }
+    .aboutGroupGrid--3 { grid-template-columns: repeat(3, 1fr); }
+    .aboutGroupGrid--2 { grid-template-columns: repeat(2, 1fr); }
+    .aboutCard {
+      background: var(--paper-2);
+      border: 1px solid var(--rule);
+      padding: 24px 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .aboutCardTitle {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 19px;
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--ink);
+      margin: 0;
+    }
+    .aboutCardSubhead {
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--ink);
+      margin: 0;
+      font-weight: 500;
+    }
+    .aboutCardP {
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--ink-soft);
+      margin: 0;
+    }
+    .aboutCardP--outro { color: var(--ink); }
+    .aboutCardBullets {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .aboutCardBullets li {
+      display: flex;
+      gap: 10px;
+      align-items: baseline;
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--ink-soft);
+    }
+    .aboutCardDot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+      transform: translateY(-2px);
+    }
+
+    /* About "ВАЖНО" callout: aligns to the left content column on desktop, full width on mobile */
+    .aboutImportant {
+      max-width: 1100px;
+      margin: 16px auto 0;
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 80px;
+    }
+    .aboutImportantBox {
+      padding: 28px 32px;
+      background: var(--void);
+      color: var(--paper);
+      display: flex;
+      align-items: flex-start;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    /* Narrative: desktop visible, mobile hidden by default; flipped in mobile media query */
+    .narrativeMobile { display: none; }
+    .aboutMobile { display: none; }
+
+    /* ========== MOBILE ========== */
+    @media (max-width: 860px) {
+      :root {
+        --fs-caption: 11px;
+        --fs-body: 15px;
+        --fs-lead: 18px;
+        --fs-h3: 22px;
+        /* --fs-h2 and --fs-h1 already fluid via clamp */
+      }
+      #top > section { padding-top: 56px !important; padding-bottom: 56px !important; }
+      #top > section:first-of-type { padding-top: 80px !important; padding-bottom: 56px !important; }
+      #contacts { padding-top: 56px !important; padding-bottom: 56px !important; }
+      #top > section > div { padding-left: 20px !important; padding-right: 20px !important; }
+      #top [data-grid] { grid-template-columns: 1fr !important; gap: 20px !important; }
+      #facilitators header[data-grid] { gap: 0 !important; }
+      #top h1.display, #top h2.display { line-height: 0.98 !important; }
+      #hero h1.display { font-size: clamp(38px, 10.5vw, 68px) !important; line-height: 0.9 !important; }
+      #top section p { font-size: var(--fs-body) !important; line-height: 1.55 !important; }
+      .nav { padding: 10px 16px !important; }
+      #top > section { scroll-margin-top: 20px !important; }
+      .nav__items { gap: 6px !important; }
+      .navLink { display: none !important; }
+      .navBurger { display: inline-flex !important; }
+      #hero { padding-top: 24px !important; padding-bottom: 24px !important; }
+      .heroBanner { margin-bottom: 8px !important; }
+      .heroInfoMobile { padding: 6px 0 !important; }
+      .heroCanvasWrap { padding: 0 !important; max-width: none !important; }
+      .heroCanvas { aspect-ratio: 887/811 !important; width: 120% !important; max-width: none !important; margin-left: -10% !important; margin-right: -10% !important; }
+      .heroCredit {
+        position: static !important;
+        right: auto !important; bottom: auto !important; top: auto !important;
+        text-align: center !important;
+        margin-top: 24px !important;
+        padding: 0 4px !important;
+      }
+      .heroCredit .mensVoicesLink { font-size: var(--fs-lead) !important; }
+      .heroCredit .mensVoicesArrow { font-size: var(--fs-body) !important; }
+      .heroCtaRow {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 24px !important;
+        padding-top: 16px !important;
+      }
+      .heroLead { max-width: none !important; transform: none !important; }
+      .heroLead p { text-align: center !important; }
+      .heroLeadBr { display: none !important; }
+      .heroCtas { flex-wrap: nowrap !important; gap: 8px !important; justify-content: center !important; }
+      .heroCtas .cta {
+        flex: 1 1 0 !important;
+        padding: 14px 12px !important;
+        font-size: var(--fs-caption) !important;
+        letter-spacing: 0.12em !important;
+        gap: 8px !important;
+        justify-content: center !important;
+      }
+      #schedule ul li { grid-template-columns: 92px 1fr !important; gap: 14px !important; }
+      #schedule ul li .display { font-size: var(--fs-body) !important; }
+      #pricing .display { font-size: var(--fs-h3) !important; }
+      #pricing .priceNum { font-size: 56px !important; }
+      #pricing .pricingImportant {
+        flex-direction: column !important;
+        gap: 10px !important;
+        padding: 20px 22px !important;
+      }
+      #pricing .pricingImportantLabel { padding-top: 0 !important; line-height: 1.4 !important; }
+      #top > section:first-of-type { min-height: auto !important; }
+      .heroInfoGrid { display: none !important; }
+      .heroInfoMobile { display: block !important; }
+      #letter .narrativeEyebrow { margin-bottom: 24px !important; }
+      #letter .narrativeDesktop { display: none !important; }
+      #letter .narrativeMobile {
+        display: flex !important;
+        flex-direction: column;
+        gap: 16px;
+        font-family: 'Inter', sans-serif;
+        font-size: var(--fs-body);
+        line-height: 1.65;
+        font-style: italic;
+        color: var(--ink);
+      }
+      #letter .narrativeMobile p { margin: 0; font-size: var(--fs-body) !important; line-height: 1.65 !important; color: var(--ink); }
+      #letter .narrativeMobile .letterHeading {
+        font-size: var(--fs-h2);
+        line-height: 0.95;
+        margin-bottom: 12px;
+        font-style: normal;
+      }
+      #letter .narrativeMobile .letterTitle {
+        font-family: 'Unbounded', sans-serif;
+        font-weight: 800;
+        color: var(--accent);
+        letter-spacing: -0.01em;
+      }
+      #letter .narrativeMobile .letterTitle span { color: var(--ink); }
+      #letter .narrativeMobile .letterAccent {
+        color: var(--accent);
+        font-weight: 500;
+        font-style: italic;
+      }
+      #letter .narrativeMobile .letterQuote {
+        margin: 0;
+        padding: 0 0 0 16px;
+        border-left: 2px solid var(--accent);
+        font-size: var(--fs-body) !important;
+        line-height: 1.65 !important;
+      }
+      #letter .narrativeMobile .letterHr {
+        width: 100%; height: 1px; border: 0;
+        background: var(--rule); margin: 0;
+      }
+      #letter .narrativeMobile .letterClose { margin: 16px 0 0; }
+      #about > div > header { margin-bottom: 24px !important; }
+      #about .aboutMainHeading { display: block !important; }
+      #about .aboutDesktop { display: none !important; }
+      #about .aboutMobile {
+        display: flex !important;
+        flex-direction: column;
+        gap: 40px;
+      }
+      #about .aboutMobileBlock {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      #about .aboutMobileTitle {
+        font-size: var(--fs-h3);
+        line-height: 1.2;
+        color: var(--ink);
+        font-weight: 700;
+        margin: 0;
+      }
+      #about .aboutMobileSubhead {
+        font-size: var(--fs-body);
+        line-height: 1.55;
+        color: var(--ink);
+        margin: 0;
+      }
+      #about .aboutMobileBody {
+        font-size: var(--fs-body);
+        line-height: 1.55;
+        color: var(--ink-soft);
+        margin: 0;
+      }
+      #about .aboutMobileOutro { color: var(--ink); }
+      #about .aboutMobileList {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin: 0;
+        padding: 0;
+      }
+      #about .aboutMobileItem {
+        display: flex;
+        gap: 12px;
+        align-items: baseline;
+        font-size: var(--fs-body);
+        line-height: 1.55;
+        color: var(--ink-soft);
+      }
+      #about .aboutMobileDot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--accent);
+        flex-shrink: 0;
+        transform: translateY(-3px);
+      }
+      #about .aboutFeatures {
+        grid-template-columns: 1fr !important; gap: 0 !important;
+        background: transparent !important; border: 0 !important;
+      }
+      #about .aboutFeatureCard {
+        min-height: auto !important; padding: 12px 0 !important; gap: 12px !important;
+        border-bottom: 1px solid var(--rule) !important; background: transparent !important;
+      }
+      #about .aboutFeatureCard:last-of-type { border-bottom: 0 !important; }
+      #about .aboutFeatureCard h3.display { font-size: var(--fs-h3) !important; }
+      #about .aboutFeatureCard p { font-size: var(--fs-body) !important; line-height: 1.5 !important; }
+      #about .aboutLists { margin-top: 12px !important; gap: 0 !important; }
+      #about .aboutListBlock {
+        padding: 12px 0 !important; border-bottom: 1px solid var(--rule);
+        display: flex; flex-direction: column; gap: 12px;
+      }
+      #about .aboutListBlock:last-of-type { border-bottom: 0; }
+      #about .aboutListHead { font-size: var(--fs-h3) !important; color: var(--ink) !important; margin-bottom: 0 !important; }
+      #about .aboutListItem { padding: 4px 0 !important; font-size: var(--fs-body) !important; line-height: 1.5 !important; gap: 12px !important; }
+      #facilitators .facCard > div:first-child { max-width: 340px !important; margin: 0 auto !important; }
+      #about .aboutImportant { grid-template-columns: 1fr !important; gap: 0 !important; max-width: 880px !important; }
+      #contacts .contactGrid {
+        display: flex !important; flex-direction: column !important;
+        gap: 0 !important; background: transparent !important; border: 0 !important;
+      }
+      #contacts .contactCell {
+        padding: 14px 0 !important;
+        border-bottom: 1px solid rgba(236,230,216,0.15) !important;
+        display: grid !important; grid-template-columns: 110px 1fr !important;
+        gap: 16px !important; align-items: baseline !important;
+      }
+      #contacts .contactCell:last-of-type { border-bottom: 0 !important; }
+      #contacts .contactCell .display { font-size: var(--fs-body) !important; margin-bottom: 0 !important; line-height: 1.3 !important; }
+      #contacts .contactCell .mono:first-of-type { font-size: var(--fs-caption) !important; margin-bottom: 0 !important; align-self: center !important; }
+      #contacts .contactCell .mono:last-of-type { display: none !important; }
+      #pricing .standardTier { display: none !important; }
+      #pricing .afterEarly { display: inline; }
+      .is-after-early #pricing .earlyTier { display: none !important; }
+      .is-after-early #pricing .standardTier { display: block !important; }
+      #pricing .cdSeconds, #pricing .cdColonSeconds { display: none !important; }
+      .podcastStrip .podcastPlay { display: none !important; }
+      .applyModal { width: 100% !important; max-width: 100% !important; height: 100% !important; max-height: 100% !important; border-radius: 0 !important; }
+    }
+    @media (max-width: 480px) {
+      #top > section > div { padding-left: 16px !important; padding-right: 16px !important; }
+      .nav .cta--filled { display: none !important; }
+    }
+    .afterEarly { display: none; }
+
+    /* AFTER-EARLY MODE — applied to <body> when current time >= 2026-06-14 00:00 GMT+4
+       (or via ?after-early=1 URL param for testing) */
+    .is-after-early #countdownBanner { display: none !important; }
+    .is-after-early .earlyTierCta { display: none !important; }
+    .is-after-early .earlyTier {
+      border-color: var(--rule) !important;
+      border-width: 1px !important;
+    }
+    .is-after-early .earlyTier > div:first-child {
+      background: var(--paper-deep) !important;
+      color: var(--ink-mute) !important;
+    }
+    .is-after-early .standardTier { border-color: var(--accent) !important; border-width: 2px !important; }
+    .is-after-early .standardTierCta {
+      background: var(--accent) !important;
+      color: var(--ink) !important;
+      border-color: var(--accent) !important;
+    }
+    .is-after-early .standardTierCta:hover {
+      background: var(--accent-soft) !important;
+      border-color: var(--accent-soft) !important;
+    }
+    .is-after-early .earlyTier .priceNum { color: var(--ink-mute) !important; }
+    .is-after-early .earlyTier strong { color: inherit !important; font-weight: 500 !important; }
+    .is-after-early .standardTier .priceNum { color: var(--ink) !important; }
+  </style>
+</head>
+<body>
+<div id="top">
+  <!-- Nav -->
+  <nav id="siteNav" class="nav">
+    <div class="nav__inner">
+      <a href="#letter" class="nav__brand">
+        <span class="nav__mark">?</span>
+        <span class="nav__name">Чего хочет мужчина</span>
+      </a>
+      <div class="nav__items">
+        {navItems.map((it) => (
+          <a href={it.href} class="navLink">{it.label}</a>
+        ))}
+        <button class="cta cta--filled cta--sm" data-apply-open data-apply-source="header" style="margin-left: 12px; font-weight: 700;">
+          <span>Участвовать</span>
+        </button>
+        <button id="burgerBtn" class="navBurger" aria-label="Открыть меню">
+          <span><span></span><span></span><span></span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile menu overlay -->
+  <div id="menuOverlay" class="menuOverlay">
+    <div class="menuOverlay__head">
+      <span class="display" style="font-size: 14px; color: var(--ink); letter-spacing: -0.005em; line-height: 0.92;">Меню</span>
+      <button id="menuClose" class="menuOverlay__close" aria-label="Закрыть">×</button>
+    </div>
+    <div class="menuOverlay__list">
+      {navItems.map((it) => (
+        <a href={it.href} data-menu-link>{it.label}</a>
+      ))}
+    </div>
+    <button class="cta cta--filled" data-apply-open data-apply-source="menu" style="margin-top: 32px; font-weight: 700;">
+      <span>Участвовать</span>
+    </button>
+  </div>
+
+  <!-- HERO -->
+  <section id="hero" style="position: relative; padding-top: 80px; padding-bottom: 80px; overflow: hidden;">
+    <!-- Event banner -->
+    <div class="heroBanner" style="max-width: 1280px; margin: 0 auto; padding: 0 48px; position: relative; z-index: 3; margin-bottom: 4px;">
+      <div class="heroInfoMobile mono" style="display: none; padding: 12px 0; font-size: 14px; letter-spacing: 0.04em; color: var(--ink); font-weight: 700; text-align: center; line-height: 1.4;">
+        <div>Мастерская-тренинг</div>
+        <div><span style="color: var(--accent);">21 июня 2026</span> · Тбилиси</div>
+      </div>
+      <div class="heroInfoGrid" data-grid style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--rule); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink);">
+        {heroInfo.map((x) => (
+          <div style="background: var(--paper); padding: 14px 20px;">
+            <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 6px;">{x.l}</div>
+            <div class="display" style="font-size: var(--fs-lead); line-height: 1.15; color: var(--ink); margin-bottom: 2px; letter-spacing: -0.01em; font-weight: 600;">{x.v}</div>
+            <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.18em; color: var(--ink-mute);">{x.sub}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Hero canvas: paper background with the void hole and title -->
+    <div class="heroCanvasWrap" style="position: relative; max-width: 1280px; margin: 0 auto; padding: 0 48px;">
+      <div class="heroCanvas" style="position: relative; aspect-ratio: 887/811; width: 100%; max-width: 640px; margin: 0 auto;">
+        <!-- Void image -->
+        <div id="heroVoid" class="heroVoid" style="position: absolute; inset: 0; transition: transform 80ms linear;">
+          <picture>
+            <source srcset={`${baseUrl}hero-void-mobile.webp`} type="image/webp" />
+            <img src={`${baseUrl}hero-void-mobile.jpg`} alt="" width="887" height="811" fetchpriority="high" decoding="async" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; -webkit-mask-image: radial-gradient(circle at center, #000 42%, transparent 80%); mask-image: radial-gradient(circle at center, #000 42%, transparent 80%);" />
+          </picture>
+        </div>
+
+        <!-- Title -->
+        <div id="heroTitle" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
+          <h1 class="display heroTitle" style="font-size: clamp(36px, 4vw, 60px); line-height: 0.9; color: var(--accent); text-align: center; font-weight: 600; letter-spacing: -0.025em; text-shadow: 0 6px 40px rgba(0,0,0,0.35);">
+            <span class="heroTitleW">Чего</span> <span class="heroTitleW">хочет</span><br class="heroTitleBr" /><span class="heroTitleW">мужчина</span><span class="heroTitleQ" style="color: var(--accent-soft);">?</span>
+          </h1>
+        </div>
+
+      </div>
+
+      <!-- Pod credit (outside canvas so it sits below the void on mobile) -->
+      <div class="heroCredit" style="position: absolute; right: 50px; bottom: 4%; text-align: right;">
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 4px;">от авторов подкаста</div>
+        <a href={podcastUrl} class="display mensVoicesLink" style="font-size: var(--fs-h3); color: var(--olive-deep); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; position: relative; font-weight: 600;">
+          <span class="mensVoicesText">«Мужские голоса»</span>
+          <span class="mensVoicesArrow" aria-hidden="true" style="font-size: var(--fs-lead);">→</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- CTA row -->
+    <div class="heroCtaRow" style="max-width: 1280px; margin: 0 auto; padding: 48px 48px 0; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
+      <div class="heroLead" style="max-width: 460px; transform: translateY(-32px);">
+        <p style="font-size: var(--fs-lead); line-height: 1.5; color: var(--ink-soft); font-weight: 400;">
+          Хочешь узнать себя лучше и прикоснуться к своим настоящим желаниям?<br class="heroLeadBr" /> Ждём тебя на нашей мастерской «Чего хочет мужчина?»
+        </p>
+      </div>
+      <div class="heroCtas" style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <a href="#pricing" class="cta cta--outline">
+          <span>Узнать условия</span>
+        </a>
+        <button class="cta cta--filled" data-apply-open data-apply-source="hero" style="font-weight: 700;">
+          <span>Оставить заявку</span>
+        </button>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- NARRATIVE -->
+  <section id="letter" style="position: relative; padding-top: 80px; padding-bottom: 80px;">
+    <div style="background: var(--paper-2); position: absolute; inset: 0; z-index: -1;"></div>
+    <div style="max-width: 1100px; margin: 0 auto; padding: 0 48px; position: relative;">
+      <div class="narrativeEyebrow" style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 24px;">
+        <span class="mono" style="font-size: var(--fs-caption); color: var(--ink-mute); letter-spacing: 0.22em;">02 / ЛИЧНОЕ ПИСЬМО</span>
+        <span style="flex: 1; height: 1px; background: var(--rule);"></span>
+      </div>
+      <!-- Desktop: 2-column with sticky aside -->
+      <div class="narrativeDesktop">
+        <div class="narrativeOpenerBlock" style="margin-bottom: 30px;">
+          <p class="narrativeOpenerPrefix" style="font-family: 'Inter', sans-serif; font-size: var(--fs-lead); color: var(--ink-mute); margin-bottom: 24px; font-style: italic;">
+            Когда я в последний раз по-настоящему задавал себе вопрос:
+          </p>
+          <h3 class="display narrativeTitle" style="font-size: var(--fs-h2); color: var(--accent); line-height: 0.95; margin-bottom: 0;">
+            «Чего <span style="color: var(--ink);">я<span class="narrativeNbsp">&nbsp;</span></span><br class="narrativeBr" />хочу?»
+          </h3>
+        </div>
+        <div data-grid style="display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start;">
+          <aside class="narrativeAside" style="position: sticky; top: 120px; display: flex; flex-direction: column; gap: 32px;">
+            <p class="narrativeOpener" style="font-size: var(--fs-lead); line-height: 1.45; font-weight: 300; color: var(--ink-soft); font-style: italic;">
+              Не для семьи, не для работы, не потому что «так правильно».<br />
+              <em class="narrativeOpenerAccent" style="color: var(--accent); font-style: italic; font-weight: 500;">А для себя.</em>
+            </p>
+            <p class="narrativeAsideHead display" style="font-size: var(--fs-h3); line-height: 1.2; color: var(--ink); letter-spacing: -0.01em; font-style: italic;">
+              И&nbsp;это совсем не&nbsp;риторический вопрос.
+            </p>
+          </aside>
+          <div class="narrativeBody" style="display: flex; flex-direction: column; gap: 24px; font-size: var(--fs-body); line-height: 1.65; color: var(--ink-soft); font-style: italic;">
+            <p>Для многих мужчин контакт со своими желаниями оказывается сложнее, чем кажется. Мы умеем справляться, быть полезными, брать ответственность, решать задачи. Но за всем этим легко потерять контакт с собой.</p>
+            <p>Именно поэтому мы создаём пространство, где можно исследовать свои потребности вместе с другими мужчинами&nbsp;— честно, спокойно и без необходимости быть удобным.</p>
+            <p>Через телесные ощущения, наблюдение за собой, мужской диалог и групповое взаимодействие мы будем постепенно собирать более ясное понимание:</p>
+            <blockquote class="narrativeBodyQuote" style="margin: 4px 0; padding: 4px 0 4px 24px; border-left: 2px solid var(--accent); font-size: var(--fs-body); line-height: 1.65; color: var(--ink-soft);">
+              что для меня важно,<br />
+              как я это чувствую<br />
+              и как могу это выражать в&nbsp;своей жизни.
+            </blockquote>
+            <hr style="width: 100%; height: 1px; border: 0; background: var(--rule); margin: 0;" />
+            <p class="narrativeBodyEmphasis" style="font-weight: 500; color: var(--ink); font-size: var(--fs-lead); margin-top: 24px;">
+              Приглашаем узнать себя лучше и прикоснуться к&nbsp;своим настоящим желаниям на&nbsp;мужской мастерской «Чего хочет мужчина?»
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile: linear letter, single column, uniform rhythm -->
+      <div class="narrativeMobile">
+        <h2 class="display letterHeading">Письмо <span style="color: var(--accent);">себе</span></h2>
+        <p>Когда я в последний раз по-настоящему задавал себе вопрос:</p>
+        <p class="letterTitle">«Чего <span>я</span> хочу?»</p>
+        <p>Не для семьи, не для работы, не потому что «так правильно».<br /><em class="letterAccent">А для себя.</em></p>
+        <p class="letterAside">И&nbsp;это совсем <strong>не&nbsp;риторический вопрос.</strong></p>
+        <p>Для многих мужчин контакт со своими желаниями оказывается сложнее, чем кажется. Мы умеем справляться, быть полезными, брать ответственность, решать задачи. Но за всем этим легко потерять контакт с собой.</p>
+        <p>Именно поэтому мы создаём пространство, где можно исследовать свои потребности вместе с другими мужчинами&nbsp;— честно, спокойно и без необходимости быть удобным.</p>
+        <p>Через телесные ощущения, наблюдение за собой, мужской диалог и групповое взаимодействие мы будем постепенно собирать более ясное понимание:</p>
+        <blockquote class="letterQuote">что для меня важно,<br />как я это чувствую<br />и как могу это выражать в&nbsp;своей жизни.</blockquote>
+        <hr class="letterHr" />
+        <p class="letterClose">Приглашаем узнать себя лучше и прикоснуться к&nbsp;своим настоящим желаниям на&nbsp;мужской мастерской «Чего хочет мужчина?»</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" style="position: relative; padding-top: 80px; padding-bottom: 80px;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 48px;">
+      <header style="max-width: 980px; margin-bottom: 40px;">
+        <div class="mono" style="font-size: var(--fs-caption); color: var(--ink-mute); letter-spacing: 0.22em; margin-bottom: 24px;">03 / О ФОРМАТЕ</div>
+        <h2 class="display aboutMainHeading" style="font-size: var(--fs-h2); line-height: 0.95; margin-bottom: 32px;">
+          Пространство для безопасной <span style="color: var(--accent);">встречи&nbsp;с&nbsp;собой</span>
+        </h2>
+      </header>
+
+      <!-- Desktop: two grouped grids -->
+      <div class="aboutDesktop">
+        <div class="aboutGroups">
+          <div class="aboutGroup">
+            <h3 class="aboutGroupTitle">Теория через <span class="accent">практику</span></h3>
+            <div class="aboutGroupGrid aboutGroupGrid--3">
+              {aboutMobileBlocks.slice(0, 3).map((b) => (
+                <article class="aboutCard">
+                  <h4 class="aboutCardTitle" set:html={b.title.replace(/<br\s*\/?>/g, ' ')}></h4>
+                  {b.subhead && <p class="aboutCardSubhead">{b.subhead}</p>}
+                  {b.body && b.body.map((p) => <p class="aboutCardP">{p}</p>)}
+                  {b.intro && <p class="aboutCardP">{b.intro}</p>}
+                  {b.bullets && (
+                    <ul class="aboutCardBullets">
+                      {b.bullets.map((it) => (
+                        <li>
+                          <span class="aboutCardDot"></span>
+                          <span>{it}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {b.outro && <p class="aboutCardP aboutCardP--outro">{b.outro}</p>}
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div class="aboutGroup">
+            <h3 class="aboutGroupTitle">Пространство для безопасной <span class="accent">встречи&nbsp;с&nbsp;собой</span></h3>
+            <div class="aboutGroupGrid aboutGroupGrid--2">
+              {aboutMobileBlocks.slice(3, 5).map((b) => (
+                <article class="aboutCard">
+                  <h4 class="aboutCardTitle" set:html={b.title.replace(/<br\s*\/?>/g, ' ')}></h4>
+                  {b.subhead && <p class="aboutCardSubhead">{b.subhead}</p>}
+                  {b.body && b.body.map((p) => <p class="aboutCardP">{p}</p>)}
+                  {b.intro && <p class="aboutCardP">{b.intro}</p>}
+                  {b.bullets && (
+                    <ul class="aboutCardBullets">
+                      {b.bullets.map((it) => (
+                        <li>
+                          <span class="aboutCardDot"></span>
+                          <span>{it}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {b.outro && <p class="aboutCardP aboutCardP--outro">{b.outro}</p>}
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile: sequential blocks, one after another -->
+      <div class="aboutMobile">
+        {aboutMobileBlocks.map((b, i) => (
+          <div class="aboutMobileBlock">
+            <h3 class="display aboutMobileTitle" set:html={b.title}></h3>
+            {b.subhead && <p class="aboutMobileSubhead">{b.subhead}</p>}
+            {b.body && b.body.map((p) => <p class="aboutMobileBody">{p}</p>)}
+            {b.intro && <p class="aboutMobileBody">{b.intro}</p>}
+            {b.bullets && (
+              <ul class="aboutMobileList">
+                {b.bullets.map((it) => (
+                  <li class="aboutMobileItem">
+                    <span class="aboutMobileDot"></span>
+                    <span>{it}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {b.outro && <p class="aboutMobileBody aboutMobileOutro">{b.outro}</p>}
+          </div>
+        ))}
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FACILITATORS -->
+  <section id="facilitators" style="position: relative; padding-top: 80px; padding-bottom: 80px; background: var(--paper-2);">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 48px;">
+      <header data-grid style="margin-bottom: 56px; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: end;">
+        <div>
+          <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 24px;">04 / ВЕДУЩИЕ</div>
+          <h2 class="display" style="font-size: var(--fs-h2); line-height: 0.92; margin-bottom: 32px;">
+            Два <span style="color: var(--accent);">голоса</span>,<br />один разговор
+          </h2>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px; font-size: var(--fs-body); line-height: 1.6; color: var(--ink-soft); padding-bottom: 12px;">
+          <p>Мы разные.</p>
+          <p>У&nbsp;нас разный опыт, разные характеры и&nbsp;разные способы взаимодействия с&nbsp;миром.</p>
+          <p>Но&nbsp;нас объединяет одно: интерес к&nbsp;тому, как мужчина может жить не&nbsp;только через напряжение и&nbsp;«надо», а&nbsp;через большее понимание себя.</p>
+        </div>
+      </header>
+
+      <div data-grid style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+        {facilitators.map((f) => (
+          <article class="facCard" style={`background: var(--paper-2); position: relative; box-shadow: 0 1px 0 rgba(0,0,0,0.05); --facAccent: ${f.accent};`}>
+            <div style="position: relative; aspect-ratio: 4 / 5; overflow: hidden;">
+              <img src={f.photo} alt={`${f.firstName} ${f.lastName}`} loading="lazy" decoding="async" width="400" height="500" style={`width: 100%; height: 100%; object-fit: cover; object-position: ${f.photoPosition}; display: block;`} />
+              <div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 32px 28px 24px; background: linear-gradient(to top, rgba(0,0,0,0.85), transparent); color: var(--paper);">
+                <h3 class="display" style="font-size: 32px; line-height: 1.05; color: var(--paper);">{f.firstName}<br />{f.lastName}</h3>
+              </div>
+            </div>
+            <div style="padding: 32px 32px 36px;">
+              <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); font-weight: 700; margin-bottom: 16px;">{f.role}</div>
+              <p style="font-size: var(--fs-body); line-height: 1.6; color: var(--ink-soft); margin-bottom: 24px;" set:html={f.bio}></p>
+              <div style="border-top: 1px solid var(--rule); padding-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+                {f.links.map((l) => (
+                  <a href={l.href} target="_blank" rel="noopener noreferrer" class="mono facLink" style="font-size: var(--fs-caption); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink); text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
+                    <span class="facLinkText">{l.label}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <a href={podcastUrl} class="podcastStrip" style="margin-top: 32px; display: flex; align-items: center; justify-content: space-between; padding: 28px 36px; background: var(--void); color: var(--paper); text-decoration: none; gap: 24px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 24px;">
+          <span class="podcastPlay" style="width: 48px; height: 48px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; color: var(--ink); font-size: var(--fs-lead);">▶</span>
+          <div>
+            <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 4px;">ПОДКАСТ ВЕДУЩИХ</div>
+            <div class="display" style="font-size: var(--fs-h3);">«Мужские голоса»</div>
+          </div>
+        </div>
+        <div class="mono podcastCta" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: rgba(236,230,216,0.7);">
+          <span class="podcastCtaText">СЛУШАТЬ</span>
+          <span class="podcastCtaArrow" aria-hidden="true">&nbsp;→</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing" style="position: relative; padding-top: 80px; padding-bottom: 80px; background: var(--paper);">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 48px;">
+      <header style="margin-bottom: 24px;">
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute);">05 / СТОИМОСТЬ И УСЛОВИЯ</div>
+      </header>
+
+      <div id="countdownBanner" style="background: var(--void); color: var(--paper); padding: 20px 28px; margin-bottom: 22px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent);">
+          ДО ЗАВЕРШЕНИЯ РАННЕГО ТАРИФА
+        </div>
+        <div style="display: flex; gap: 24px; align-items: flex-start;" id="countdownDigits">
+          <div style="text-align: center; min-width: 56px;">
+            <div class="display" data-cd="d" style="font-size: 32px; color: var(--paper); letter-spacing: 0.02em;">00</div>
+            <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: rgba(236,230,216,0.55); margin-top: 4px;">ДНЕЙ</div>
+          </div>
+          <div style="text-align: center; min-width: 56px;">
+            <div class="display" data-cd="h" style="font-size: 32px; color: var(--paper); letter-spacing: 0.02em;">00</div>
+            <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: rgba(236,230,216,0.55); margin-top: 4px;">ЧАСОВ</div>
+          </div>
+          <div class="display" style="font-size: 32px; color: rgba(236,230,216,0.4); line-height: 1; align-self: flex-start;">:</div>
+          <div style="text-align: center; min-width: 56px;">
+            <div class="display" data-cd="m" style="font-size: 32px; color: var(--paper); letter-spacing: 0.02em;">00</div>
+            <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: rgba(236,230,216,0.55); margin-top: 4px;">МИНУТ</div>
+          </div>
+          <div class="cdColonSeconds display" style="font-size: 32px; color: rgba(236,230,216,0.4); line-height: 1; align-self: flex-start;">:</div>
+          <div class="cdSeconds" style="text-align: center; min-width: 56px;">
+            <div class="display" data-cd="s" style="font-size: 32px; color: var(--paper); letter-spacing: 0.02em;">00</div>
+            <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: rgba(236,230,216,0.55); margin-top: 4px;">СЕКУНД</div>
+          </div>
+        </div>
+      </div>
+
+      <div data-grid style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        <div class="earlyTier" style="background: var(--paper-2); padding: 40px; position: relative; border: 2px solid var(--accent);">
+          <div style="position: absolute; top: -1px; right: -1px; background: var(--accent); color: var(--ink); padding: 6px 14px;">
+            <span class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; font-weight: 500;">РАННИЙ ТАРИФ</span>
+          </div>
+          <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 12px;">ДО 14 ИЮНЯ 2026</div>
+          <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px;">
+            <span class="display priceNum" style="font-size: var(--fs-h2); line-height: 1; color: var(--ink);">120</span>
+            <span class="display" style="font-size: var(--fs-h3); color: var(--ink-mute);">₾</span>
+          </div>
+          <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 24px;">
+            при оплате брони <strong style="color: var(--ink);">60&nbsp;лари</strong><span class="afterEarly"><br />с&nbsp;14&nbsp;июня цена <strong style="color: var(--ink);">150&nbsp;лари</strong></span>
+          </p>
+          <div style="height: 1px; background: var(--rule); margin: 8px 0 24px;"></div>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px;">
+            {includes.map((it) => (
+              <li style="font-size: var(--fs-body); line-height: 1.4; color: var(--ink-soft); display: flex; gap: 10px;">
+                <span style="color: var(--accent); font-weight: 600;">+</span>{it}
+              </li>
+            ))}
+          </ul>
+          <button class="cta cta--filled earlyTierCta" data-apply-open data-apply-source="pricing-early">
+            <span>Оставить заявку</span>
+            <span class="cta__arrow">→</span>
+          </button>
+        </div>
+
+        <div class="standardTier" style="background: var(--paper-2); padding: 40px; position: relative; border: 1px solid var(--rule);">
+          <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 12px;">ПОСЛЕ 14 ИЮНЯ</div>
+          <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px;">
+            <span class="display priceNum" style="font-size: var(--fs-h2); line-height: 1; color: var(--ink-soft);">150</span>
+            <span class="display" style="font-size: var(--fs-h3); color: var(--ink-mute);">₾</span>
+          </div>
+          <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 24px;">стандартная стоимость участия</p>
+          <div style="height: 1px; background: var(--rule); margin: 8px 0 24px;"></div>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px;">
+            {includes.map((it) => (
+              <li style="font-size: var(--fs-body); line-height: 1.4; color: var(--ink-soft); display: flex; gap: 10px;">
+                <span style="color: var(--ink-mute);">·</span>{it}
+              </li>
+            ))}
+          </ul>
+          <button class="cta cta--outline standardTierCta" data-apply-open data-apply-source="pricing-standard">
+            <span>Оставить заявку</span>
+            <span class="cta__arrow">→</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="pricingNotes" style="margin-top: 28px; display: flex; flex-direction: column; gap: 24px;">
+        <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: center; justify-content: space-between;">
+          <p style="font-size: var(--fs-body); line-height: 1.55; color: var(--ink-soft); margin: 0; max-width: 560px;">
+            Полная стоимость должна быть оплачена не&nbsp;позднее, чем за&nbsp;3&nbsp;дня до&nbsp;начала мероприятия.
+          </p>
+          <a href={`${baseUrl}refund/`} class="pricingRefundLink">
+            <span>Условия отмены и&nbsp;возврата</span>
+            <span class="pricingRefundLinkArrow" aria-hidden="true">↗</span>
+          </a>
+        </div>
+
+        <div class="pricingImportant" style="background: var(--void); color: var(--paper); padding: 28px 32px; display: flex; gap: 24px; align-items: flex-start;">
+          <span class="mono pricingImportantLabel" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); white-space: nowrap; line-height: 1.6; font-weight: 700; padding-top: 2px;">ВАЖНО!</span>
+          <span class="pricingImportantText" style="flex: 1; font-size: var(--fs-body); line-height: 1.6;">
+            Подтверждение о регистрации только после короткого собеседования с ведущим.<br />
+            Это помогает сохранить глубину работы, сохраняет качество и безопасность группового процесса.
+          </span>
+        </div>
+
+        <div style="background: var(--paper-2); padding: 32px; border: 1px solid var(--rule); display: none;">
+          <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 14px; font-weight: 700;">КОЛИЧЕСТВО МЕСТ ОГРАНИЧЕНО</div>
+          <p style="font-size: var(--fs-body); line-height: 1.55; color: var(--ink-soft); margin: 0 0 14px;">Мы намеренно делаем небольшую группу, чтобы сохранить:</p>
+          <ul style="list-style: none; margin: 0 0 14px; padding: 0; display: flex; flex-direction: column; gap: 8px;">
+            <li style="font-size: var(--fs-body); line-height: 1.5; color: var(--ink-soft); display: flex; gap: 10px;"><span style="color: var(--accent); font-weight: 600;">+</span>глубину работы,</li>
+            <li style="font-size: var(--fs-body); line-height: 1.5; color: var(--ink-soft); display: flex; gap: 10px;"><span style="color: var(--accent); font-weight: 600;">+</span>возможность личного взаимодействия,</li>
+            <li style="font-size: var(--fs-body); line-height: 1.5; color: var(--ink-soft); display: flex; gap: 10px;"><span style="color: var(--accent); font-weight: 600;">+</span>безопасность и качество группового процесса.</li>
+          </ul>
+          <p style="font-size: var(--fs-body); line-height: 1.55; color: var(--ink); margin: 0;">Подтверждение о регистрации только после короткого собеседования с ведущим.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCHEDULE -->
+  <section id="schedule" style="position: relative; padding-top: 80px; padding-bottom: 80px; background: var(--paper-2);">
+    <div style="max-width: 980px; margin: 0 auto; padding: 0 48px; position: relative;">
+      <header style="margin-bottom: 28px;">
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 24px;">06 / РАСПИСАНИЕ</div>
+        <h2 class="display" style="font-size: var(--fs-h2); line-height: 0.92; margin-bottom: 32px; margin-left: -0.05em;">
+          Расписание
+        </h2>
+        <div class="display" style="font-size: var(--fs-body); letter-spacing: -0.005em; color: var(--accent); line-height: 1.3; font-weight: 600;">
+          21 ИЮНЯ · ВС · ТБИЛИСИ
+        </div>
+      </header>
+      <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px;">
+        {schedule.map((it) => (
+          <li style="display: flex; gap: 14px; font-size: var(--fs-body); line-height: 1.5; color: var(--ink); font-variant-numeric: tabular-nums;">
+            <span style="color: var(--ink-mute); flex-shrink: 0;">{it.time}</span>
+            <span>{it.title}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- CONTACTS / FOOTER -->
+  <section id="contacts" style="background: var(--void); color: var(--paper); position: relative; padding-top: 80px; padding-bottom: 40px;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 48px; position: relative;">
+      <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 24px;">07 / КОНТАКТЫ</div>
+
+      <div class="contactGrid" data-grid style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: rgba(236,230,216,0.12); border-top: 1px solid rgba(236,230,216,0.12); border-bottom: 1px solid rgba(236,230,216,0.12);">
+        {contacts.map((x) => (
+          <div class="contactCell" style="background: var(--void); padding: 32px 24px;">
+            <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: rgba(236,230,216,0.55); margin-bottom: 12px;">{x.l}</div>
+            <div class="display" style="font-size: var(--fs-h3); line-height: 1.15; color: var(--paper); margin-bottom: 6px;">
+              {x.href ? <a href={x.href} target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">{x.v}</a> : x.v}
+            </div>
+            <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.18em; color: rgba(236,230,216,0.4);">{x.sub}</div>
+          </div>
+        ))}
+      </div>
+
+      <div style="margin-top: 56px; display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <span style="width: 32px; height: 32px; background: var(--accent); display: inline-flex; align-items: center; justify-content: center; color: var(--ink); font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: var(--fs-lead);">?</span>
+          <div>
+            <div class="display" style="font-size: var(--fs-body); color: var(--paper);">Чего хочет мужчина</div>
+            <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: rgba(236,230,216,0.5); margin-top: 4px;">МАСТЕРСКАЯ-ТРЕНИНГ • ТБИЛИСИ</div>
+          </div>
+        </div>
+        <div class="mono footerLinks" style="font-size: var(--fs-caption); letter-spacing: 0.18em; color: rgba(236,230,216,0.5);">
+          <span>© 2026 — права защищены</span>
+          <span class="footerSep">·</span>
+          <a href={`${baseUrl}refund/`} class="footerLink">Условия отмены и&nbsp;возврата</a>
+          <span class="footerSep">·</span>
+          <span style="color: rgba(236,230,216,0.7);">Договор и Правила</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <button id="scrollTopBtn" class="scrollTop" aria-label="Наверх">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M8 13 V3 M3 8 L8 3 L13 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="square" />
+    </svg>
+  </button>
+</div>
+
+<!-- APPLY MODAL -->
+<div id="applyOverlay" class="applyOverlay" aria-hidden="true">
+  <div class="applyBackdrop" data-apply-close></div>
+  <div class="applyModal" role="dialog" aria-modal="true" aria-labelledby="applyTitle">
+    <div class="applyTopbar">
+      <div class="mono" id="applyStepLabel" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute);">ЗАЯВКА · ШАГ 1 / 5</div>
+      <button data-apply-close style="width: 40px; height: 40px; font-size: var(--fs-h3); color: var(--ink-mute);" aria-label="Закрыть">×</button>
+    </div>
+
+    <div class="applyProgress" id="applyProgress">
+      <span class="is-active"></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <div class="applyBody">
+      <!-- Step 0: name -->
+      <div class="applyStep is-active" data-step="0">
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">01 / ИМЯ</div>
+        <h3 id="applyTitle" class="display" style="font-size: 36px; line-height: 1.1; margin-bottom: 12px;">Как к вам обращаться?</h3>
+        <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 28px; line-height: 1.5;">Имя, как вам комфортно. Можно неформально.</p>
+        <input class="applyField" type="text" id="applyName" placeholder="Например, Сергей" />
+      </div>
+
+      <!-- Step 1: contact -->
+      <div class="applyStep" data-step="1">
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">02 / КОНТАКТ</div>
+        <h3 class="display" style="font-size: 36px; line-height: 1.1; margin-bottom: 12px;">Как с вами связаться?</h3>
+        <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 28px; line-height: 1.5;">Ведущий напишет лично — никаких рассылок, только собеседование.</p>
+        <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;" id="contactTypeChips">
+          <button type="button" class="applyChip is-active" data-contact-type="telegram">Telegram</button>
+          <button type="button" class="applyChip" data-contact-type="phone">Телефон</button>
+          <button type="button" class="applyChip" data-contact-type="email">Email</button>
+        </div>
+        <input class="applyField" type="text" id="applyContact" placeholder="@username" />
+      </div>
+
+      <!-- Step 2: expectations -->
+      <div class="applyStep" data-step="2">
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">03 / ЦЕЛИ</div>
+        <h3 class="display" style="font-size: 36px; line-height: 1.1; margin-bottom: 12px;">Что вас сюда привело?</h3>
+        <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 28px; line-height: 1.5;">Несколько фраз — что хотелось бы исследовать на мастерской. Это поможет настроить разговор.</p>
+        <textarea class="applyField applyField--multi" id="applyExpectations" rows="4" placeholder="Свободно, без формальностей — для ведущего."></textarea>
+        <div class="mono" id="applyExpectationsHint" style="margin-top: 8px; font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute);">МИНИМУМ 6 СИМВОЛОВ</div>
+      </div>
+
+      <!-- Step 3: call time -->
+      <div class="applyStep" data-step="3">
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">04 / ВРЕМЯ ЗВОНКА</div>
+        <h3 class="display" style="font-size: 36px; line-height: 1.1; margin-bottom: 12px;">Когда удобнее созвониться?</h3>
+        <p style="font-size: var(--fs-body); color: var(--ink-mute); margin-bottom: 28px; line-height: 1.5;">Ведущий свяжется с&nbsp;вами и&nbsp;предложит созвон-знакомство.</p>
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--ink-mute); margin-bottom: 8px;">УДОБНОЕ ВРЕМЯ ДЛЯ созвона-знакомства</div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="interviewChips">
+          <button type="button" class="applyChip applyChip--accent is-active" data-interview="weekday-evening">Будни, вечер</button>
+          <button type="button" class="applyChip applyChip--accent" data-interview="weekend">Выходные</button>
+          <button type="button" class="applyChip applyChip--accent" data-interview="any">Любое</button>
+        </div>
+      </div>
+
+      <!-- Step 4: confirmation -->
+      <div class="applyStep" data-step="4">
+        <div class="mono" style="font-size: var(--fs-caption); letter-spacing: 0.22em; color: var(--accent); margin-bottom: 16px;">05 / ПОДТВЕРЖДЕНИЕ</div>
+        <h3 class="display" style="font-size: 36px; line-height: 1.1; margin-bottom: 20px;">Важные детали</h3>
+        <div style="background: var(--paper-2); padding: 20px 22px; margin-bottom: 18px; font-size: 14.5px; line-height: 1.55; color: var(--ink-soft);">
+          <p style="margin-bottom: 10px;">· Ведущий напишет в&nbsp;течение 1–2&nbsp;дней для короткого разговора.</p>
+          <p style="margin-bottom: 10px;">· После собеседования мы&nbsp;подтвердим регистрацию и&nbsp;пришлём реквизиты для оплаты брони (60&nbsp;лари).</p>
+          <p style="margin-bottom: 10px;">· Полная стоимость участия должна быть оплачена <strong style="color: var(--ink); font-weight: 600;">не&nbsp;позднее 18&nbsp;июня</strong> (за&nbsp;3&nbsp;дня).</p>
+          <p style="margin-bottom: 0;">· <strong style="color: var(--ink); font-weight: 600;">Условия отмены и&nbsp;возврата.</strong> До&nbsp;15&nbsp;июня — 100% возврат оплаченной суммы. До&nbsp;18&nbsp;июня — возврат 50% (удерживается бронь). После 18&nbsp;июня возврат не&nbsp;осуществляется. <a href={`${baseUrl}refund/`} target="_blank" rel="noopener" class="applyInlineLink">Подробнее на&nbsp;странице условий&nbsp;↗</a></p>
+        </div>
+
+        <label id="applyAgreeWrap" style="display: flex; gap: 12px; padding: 16px; border: 1px solid var(--rule); cursor: pointer; align-items: flex-start; transition: border-color 200ms;">
+          <input type="checkbox" id="applyAgree" style="margin-top: 4px; accent-color: var(--accent);" />
+          <span style="font-size: var(--fs-body); color: var(--ink-soft); line-height: 1.5;">
+            Согласен(на) с обработкой персональных данных и условиями участия, включая правила отмены и&nbsp;возврата.
+          </span>
+        </label>
+
+        <!-- Promo code field (optional, under consent) -->
+        <div class="applyPromoInline">
+          <div class="applyPromoInlineHead">
+            <span class="applyPromoInlineLabel">ПРОМОКОД</span>
+            <span class="applyPromoInlineOpt">необязательно</span>
+          </div>
+          <input class="applyPromoInlineField" type="text" id="applyPromo" placeholder="Если есть — впишите сюда" autocomplete="off" autocapitalize="characters" />
+          <div id="applyPromoResult" class="applyPromoResult" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <!-- Done state -->
+      <div class="applyDone" id="applyDone">
+        <div class="display" style="font-size: 64px; margin-bottom: 16px; color: var(--accent);">✓</div>
+        <h3 class="display" style="font-size: 36px; margin-bottom: 16px; line-height: 1.1;">Заявка принята</h3>
+        <p style="font-size: var(--fs-body); line-height: 1.6; color: var(--ink-soft); max-width: 460px; margin: 0 auto 28px;" id="applyDoneText">
+          Спасибо. Ведущий свяжется с вами в течение 1–2 дней для короткого собеседования.
+        </p>
+        <button class="cta cta--outline" data-apply-close>
+          <span>Закрыть</span>
+          <span class="cta__arrow">→</span>
+        </button>
+      </div>
+
+      <!-- Error state -->
+      <div class="applyDone" id="applyError">
+        <div class="display" style="font-size: 64px; margin-bottom: 16px; color: var(--ink-mute);">!</div>
+        <h3 class="display" style="font-size: 36px; margin-bottom: 16px; line-height: 1.1;">Не удалось отправить</h3>
+        <p style="font-size: var(--fs-body); line-height: 1.6; color: var(--ink-soft); max-width: 460px; margin: 0 auto 28px;">
+          Что-то пошло не так с отправкой. Напишите Анри напрямую в Telegram — он свяжется с вами для собеседования.
+        </p>
+        <a class="cta cta--filled" href="https://t.me/sensologist" target="_blank" rel="noopener noreferrer" style="margin-bottom: 12px;">
+          <span>Написать @sensologist</span>
+          <span class="cta__arrow">→</span>
+        </a>
+        <div>
+          <button class="cta cta--outline" data-apply-close>
+            <span>Закрыть</span>
+            <span class="cta__arrow">→</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="applyNav" id="applyNav">
+        <button type="button" id="applyBack" class="applyBack" disabled>← Назад</button>
+        <button type="button" id="applyNext" class="cta cta--outline applyNext is-disabled">
+          <span id="applyNextLabel">Дальше</span>
+          <span class="cta__arrow">→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline define:vars={{ PROMOS: promos }}>
+  // PROMOS is injected from src/data/promos.json at build time.
+  // To add/remove a promo code, edit that JSON file (no other changes needed).
+  window.__PROMOS = PROMOS;
+</script>
+<script is:inline>
+  // -- after-early-tier mode -------------------------------------------------
+  // Switches pricing UI when the early-bird window closes:
+  // 2026-06-14 00:00 GMT+4  ==  2026-06-13 20:00 UTC
+  (function () {
+    const EARLY_END_UTC = Date.UTC(2026, 5, 13, 20, 0, 0); // month is 0-indexed; 5 = June
+    const params = new URLSearchParams(location.search);
+    const force = params.get('after-early');
+    let isAfter;
+    if (force === '1') isAfter = true;
+    else if (force === '0') isAfter = false;
+    else isAfter = Date.now() >= EARLY_END_UTC;
+    if (isAfter) document.body.classList.add('is-after-early');
+  })();
+
+  // -- nav scrolled state ----------------------------------------------------
+  const nav = document.getElementById('siteNav');
+  const heroVoid = document.getElementById('heroVoid');
+  const heroTitle = document.getElementById('heroTitle');
+  const stb = document.getElementById('scrollTopBtn');
+  let scrollRaf = null;
+  const onScrollRaf = () => {
+    scrollRaf = null;
+    const sy = window.scrollY;
+    if (sy > 60) nav.classList.add('is-scrolled');
+    else nav.classList.remove('is-scrolled');
+    if (heroVoid && heroTitle) {
+      const voidShift = Math.min(sy * 0.15, 60);
+      const titleShift = Math.min(sy * 0.06, 24);
+      heroVoid.style.transform = `translateY(${voidShift * 0.3}px)`;
+      heroTitle.style.transform = `translateY(${-titleShift}px)`;
+    }
+    if (stb) {
+      if (sy > window.innerHeight) stb.classList.add('is-visible');
+      else stb.classList.remove('is-visible');
+    }
+  };
+  const onScroll = () => { if (scrollRaf == null) scrollRaf = requestAnimationFrame(onScrollRaf); };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScrollRaf();
+
+  document.getElementById('scrollTopBtn').addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // Scrollspy for desktop "О формате" section
+  (function () {
+    const sections = Array.from(document.querySelectorAll('[data-about-section]'));
+    const navItems = Array.from(document.querySelectorAll('[data-about-nav]'));
+    if (!sections.length || !navItems.length) return;
+    const ACTIVE_OFFSET = 0.25; // section is "active" once its top crosses 25% of viewport
+    let raf = null;
+    const update = () => {
+      raf = null;
+      const threshold = window.innerHeight * ACTIVE_OFFSET;
+      let activeIdx = -1;
+      for (let i = 0; i < sections.length; i++) {
+        const top = sections[i].getBoundingClientRect().top;
+        if (top <= threshold) activeIdx = i;
+      }
+      navItems.forEach((item, i) => {
+        item.classList.toggle('is-passed', activeIdx >= 0 && i < activeIdx);
+        item.classList.toggle('is-active', i === activeIdx);
+      });
+    };
+    const onScroll = () => { if (raf == null) raf = requestAnimationFrame(update); };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    update();
+  })();
+
+  // -- mobile menu ------------------------------------------------------------
+  const menu = document.getElementById('menuOverlay');
+  const burger = document.getElementById('burgerBtn');
+  const menuClose = document.getElementById('menuClose');
+  const openMenu = () => { menu.classList.add('is-open'); document.body.style.overflow = 'hidden'; };
+  const closeMenu = () => { menu.classList.remove('is-open'); document.body.style.overflow = ''; };
+  burger.addEventListener('click', openMenu);
+  menuClose.addEventListener('click', closeMenu);
+  document.querySelectorAll('[data-menu-link]').forEach((a) => {
+    a.addEventListener('click', closeMenu);
+  });
+
+  // -- countdown --------------------------------------------------------------
+  const target = new Date('2026-06-13T23:59:00+04:00').getTime();
+  const cdEls = {
+    d: document.querySelector('[data-cd="d"]'),
+    h: document.querySelector('[data-cd="h"]'),
+    m: document.querySelector('[data-cd="m"]'),
+    s: document.querySelector('[data-cd="s"]'),
+  };
+  const banner = document.getElementById('countdownBanner');
+  const tickCountdown = () => {
+    const diff = Math.max(0, target - Date.now());
+    if (diff <= 0) { banner.style.display = 'none'; return; }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff / 3600000) % 24);
+    const m = Math.floor((diff / 60000) % 60);
+    const s = Math.floor((diff / 1000) % 60);
+    cdEls.d.textContent = String(d).padStart(2, '0');
+    cdEls.h.textContent = String(h).padStart(2, '0');
+    cdEls.m.textContent = String(m).padStart(2, '0');
+    cdEls.s.textContent = String(s).padStart(2, '0');
+  };
+  tickCountdown();
+  setInterval(tickCountdown, 1000);
+
+  // -- apply modal ------------------------------------------------------------
+  const overlay = document.getElementById('applyOverlay');
+  const stepLabel = document.getElementById('applyStepLabel');
+  const progress = document.getElementById('applyProgress');
+  const backBtn = document.getElementById('applyBack');
+  const nextBtn = document.getElementById('applyNext');
+  const nextLabel = document.getElementById('applyNextLabel');
+  const applyNav = document.getElementById('applyNav');
+  const doneBlock = document.getElementById('applyDone');
+  const doneText = document.getElementById('applyDoneText');
+  const placeholders = { telegram: '@username', phone: '+995 ...', email: 'you@example.com' };
+  let step = 0;
+  const totalSteps = 5;
+  const state = { name: '', contact: '', contactType: 'telegram', expectations: '', interview: 'weekday-evening', agreed: false, promo: '', promoPrice: null };
+
+  const setStep = (n) => {
+    step = Math.max(0, Math.min(totalSteps - 1, n));
+    document.querySelectorAll('.applyStep').forEach((el) => {
+      el.classList.toggle('is-active', Number(el.dataset.step) === step);
+    });
+    stepLabel.textContent = `ЗАЯВКА · ШАГ ${step + 1} / ${totalSteps}`;
+    Array.from(progress.children).forEach((bar, i) => {
+      bar.classList.toggle('is-active', i <= step);
+    });
+    backBtn.disabled = step === 0;
+    nextLabel.textContent = step === totalSteps - 1 ? 'Отправить заявку' : 'Дальше';
+    updateNextEnabled();
+    setTimeout(() => {
+      const focus = document.querySelector('.applyStep.is-active input:not([type="checkbox"]), .applyStep.is-active textarea');
+      if (focus && focus.id !== 'applyPromo') focus.focus();
+    }, 50);
+  };
+
+  const canNext = () => {
+    if (step === 0) return state.name.trim().length > 1;
+    if (step === 1) return state.contact.trim().length > 2;
+    if (step === 2) return state.expectations.trim().length > 5;
+    if (step === 3) return !!state.interview; // chip always has a default
+    if (step === 4) return state.agreed;
+    return false;
+  };
+  const updateNextEnabled = () => {
+    if (canNext()) {
+      nextBtn.classList.remove('is-disabled', 'cta--outline');
+      nextBtn.classList.add('cta--filled');
+    } else {
+      nextBtn.classList.add('is-disabled');
+      nextBtn.classList.remove('cta--filled');
+      nextBtn.classList.add('cta--outline');
+    }
+  };
+
+  document.querySelectorAll('[data-apply-open]').forEach((b) => {
+    b.addEventListener('click', () => {
+      const source = b.getAttribute('data-apply-source') || 'unknown';
+      if (typeof window.ym === 'function') {
+        window.ym(109241048, 'reachGoal', 'apply_click', { source });
+      }
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'apply_click', { source });
+      }
+      overlay.classList.add('is-open');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      doneBlock.classList.remove('is-active');
+      applyNav.style.display = 'flex';
+      progress.style.display = 'flex';
+      setStep(0);
+    });
+  });
+  document.querySelectorAll('[data-apply-close]').forEach((b) => {
+    b.addEventListener('click', () => {
+      overlay.classList.remove('is-open');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    });
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && overlay.classList.contains('is-open')) {
+      overlay.classList.remove('is-open');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+  });
+
+  document.getElementById('applyName').addEventListener('input', (e) => { state.name = e.target.value; updateNextEnabled(); });
+  document.getElementById('applyContact').addEventListener('input', (e) => { state.contact = e.target.value; updateNextEnabled(); });
+  const expectationsHint = document.getElementById('applyExpectationsHint');
+  document.getElementById('applyExpectations').addEventListener('input', (e) => {
+    state.expectations = e.target.value;
+    const len = state.expectations.trim().length;
+    if (len > 5) {
+      expectationsHint.textContent = `${len} СИМВОЛОВ`;
+      expectationsHint.style.color = 'var(--accent)';
+    } else {
+      expectationsHint.textContent = len > 0 ? `${len} / 6 СИМВОЛОВ` : 'МИНИМУМ 6 СИМВОЛОВ';
+      expectationsHint.style.color = 'var(--ink-mute)';
+    }
+    updateNextEnabled();
+  });
+  document.getElementById('applyAgree').addEventListener('change', (e) => {
+    state.agreed = e.target.checked;
+    document.getElementById('applyAgreeWrap').style.borderColor = state.agreed ? 'var(--ink)' : 'var(--rule)';
+    updateNextEnabled();
+  });
+
+  document.querySelectorAll('#contactTypeChips [data-contact-type]').forEach((b) => {
+    b.addEventListener('click', () => {
+      state.contactType = b.dataset.contactType;
+      document.querySelectorAll('#contactTypeChips [data-contact-type]').forEach((x) => x.classList.toggle('is-active', x === b));
+      const inp = document.getElementById('applyContact');
+      inp.placeholder = placeholders[state.contactType];
+      inp.focus();
+    });
+  });
+  document.querySelectorAll('#interviewChips [data-interview]').forEach((b) => {
+    b.addEventListener('click', () => {
+      state.interview = b.dataset.interview;
+      document.querySelectorAll('#interviewChips [data-interview]').forEach((x) => x.classList.toggle('is-active', x === b));
+    });
+  });
+
+  backBtn.addEventListener('click', () => { if (step > 0) setStep(step - 1); });
+
+  // -- promo code lookup -----------------------------------------------------
+  // Source list lives in src/data/promos.json (injected as window.__PROMOS).
+  // Lives on the confirmation step now: a soft input under consent that recalculates
+  // price live as the user types, with a small debounce so partial entries don't flash an error.
+  const PROMOS = Array.isArray(window.__PROMOS) ? window.__PROMOS : [];
+  const promoInput = document.getElementById('applyPromo');
+  const promoResult = document.getElementById('applyPromoResult');
+  const isAfterEarly = () => document.body.classList.contains('is-after-early');
+
+  let promoDebounce = null;
+  const evaluatePromo = () => {
+    const code = promoInput.value.trim();
+    if (!code) {
+      promoResult.textContent = '';
+      promoResult.classList.remove('is-ok', 'is-err');
+      state.promo = '';
+      state.promoPrice = null;
+      return;
+    }
+    const match = PROMOS.find((p) => String(p.code || '').trim().toLowerCase() === code.toLowerCase());
+    if (match) {
+      const after = isAfterEarly();
+      const promoPrice = Number(after ? match.priceAfter : match.priceBefore);
+      const normalPrice = after ? 150 : 120;
+      state.promo = String(match.code || '').trim();
+      state.promoPrice = isFinite(promoPrice) ? promoPrice : null;
+      const priceText = state.promoPrice != null ? String(state.promoPrice) : '—';
+      promoResult.innerHTML = `Цена по&nbsp;промокоду — <strong>${priceText}&nbsp;лари</strong>. Без промокода ${normalPrice}.`;
+      promoResult.classList.remove('is-err');
+      promoResult.classList.add('is-ok');
+    } else {
+      // Save the entered code anyway (for Excel tracking) but don't recalc price
+      state.promo = code;
+      state.promoPrice = null;
+      promoResult.textContent = 'Такого промокода нет — но мы передадим организатору.';
+      promoResult.classList.remove('is-ok');
+      promoResult.classList.add('is-err');
+    }
+  };
+
+  promoInput.addEventListener('input', () => {
+    if (promoDebounce) clearTimeout(promoDebounce);
+    // clear UI immediately, evaluate after pause
+    promoResult.textContent = '';
+    promoResult.classList.remove('is-ok', 'is-err');
+    state.promo = '';
+    state.promoPrice = null;
+    promoDebounce = setTimeout(evaluatePromo, 400);
+  });
+  promoInput.addEventListener('blur', () => {
+    if (promoDebounce) { clearTimeout(promoDebounce); promoDebounce = null; }
+    evaluatePromo();
+  });
+
+  const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScezKnWmzmj9BC58Mns5o0Irs1b4H145dc4jlPgtIwtfqFD1Q/formResponse';
+  const CONTACT_TYPE_MAP = { telegram: 'Telegram', phone: 'Телефон', email: 'Email' };
+  const INTERVIEW_MAP = { 'weekday-evening': 'Будни, вечер', weekend: 'Выходные', any: 'Любое' };
+  const errorBlock = document.getElementById('applyError');
+
+  const showResult = (block) => {
+    document.querySelectorAll('.applyStep').forEach((el) => el.classList.remove('is-active'));
+    doneBlock.classList.remove('is-active');
+    errorBlock.classList.remove('is-active');
+    block.classList.add('is-active');
+    applyNav.style.display = 'none';
+    progress.style.display = 'none';
+  };
+
+  nextBtn.addEventListener('click', () => {
+    if (!canNext()) return;
+    if (step < totalSteps - 1) {
+      setStep(step + 1);
+      return;
+    }
+    // submit to Google Forms
+    nextBtn.classList.add('is-disabled');
+    backBtn.disabled = true;
+    nextLabel.textContent = 'Отправляется…';
+
+    const body = new URLSearchParams();
+    body.set('entry.1925631356', state.name);
+    body.set('entry.1979587863', CONTACT_TYPE_MAP[state.contactType] || '');
+    body.set('entry.204819364', state.contact);
+    body.set('entry.454240511', state.expectations);
+    body.set('entry.1868885060', state.promo || '');
+    body.set('entry.492386249', state.promoPrice != null ? String(state.promoPrice) : '');
+    body.set('entry.1045321552', INTERVIEW_MAP[state.interview] || '');
+
+    fetch(FORM_URL, { method: 'POST', mode: 'no-cors', body })
+      .then(() => {
+        if (typeof window.ym === 'function') {
+          window.ym(109241048, 'reachGoal', 'apply_submit');
+        }
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'apply_submit');
+        }
+        stepLabel.textContent = 'ЗАЯВКА · ПРИНЯТА';
+        const firstName = (state.name.split(' ')[0] || 'брат').trim();
+        doneText.textContent = `Спасибо, ${firstName}. Ведущий свяжется с вами в течение 1–2 дней для короткого собеседования. После него мы подтвердим регистрацию и вышлем реквизиты для оплаты брони.`;
+        showResult(doneBlock);
+      })
+      .catch(() => {
+        stepLabel.textContent = 'ЗАЯВКА · ОШИБКА';
+        showResult(errorBlock);
+      });
+  });
+</script>
+</body>
+</html>
